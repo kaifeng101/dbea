@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { selectUser } from "../redux/userSlice";
-import { Container, Avatar, Typography, Paper, Grid } from '@mui/material';
-import Button from "@mui/material/Button";
+import React, { useState, useEffect } from "react";
+import { Container, Avatar, Typography, Paper } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
 
 const Profile = () => {
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const getData = async () => {
     const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer??CustomerID=0000002313&CertificateNo=000002`; // Replace with your endpoint URL
@@ -19,7 +22,7 @@ const Profile = () => {
     try {
       const response = await fetch(url, {
         method: 'GET',
-        headers: headers
+        headers: headers,
       });
 
       if (response.ok) {
@@ -27,21 +30,49 @@ const Profile = () => {
         setData(result);
         console.log("Response Data:", result);
       } else {
-        console.error("Error:", response.status, response.statusText);
+        setError(`Error: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
-      console.error("Network Error:", error);
+      setError("Network Error: " + error.message);
+    } finally {
+      setLoading(false); // Stop loading regardless of the outcome
     }
   };
 
+  // Call getData on component mount
+  useEffect(() => {
+    getData();
+  }, []); // Empty dependency array means this runs once when the component mounts
+
   return (
     <div style={{ marginTop: "20px" }}>
+      <Card sx={{ minWidth: 275 }}>
+        <CardContent>
+          <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+            Word of the Day
+          </Typography>
+          <Typography variant="h5" component="div">
+            be
+          </Typography>
+          <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>adjective</Typography>
+          <Typography variant="body2">
+            well meaning and kindly.
+            <br />
+            {'"a benevolent smile"'}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="small">Learn More</Button>
+        </CardActions>
+      </Card>
       <Container maxWidth="sm">
         <Paper elevation={3} style={{ padding: '20px', textAlign: 'center' }}>
           <Avatar
             sx={{ width: 100, height: 100, margin: 'auto' }}
           />
-          {data ? (
+          {loading && <Typography variant="body1">Loading...</Typography>}
+          {error && <Typography variant="body1" color="error">{error}</Typography>}
+          {data && !loading && (
             <>
               <Typography variant="h4" gutterBottom>
                 Name: {data.givenName} {data.familyName}
@@ -61,10 +92,14 @@ const Profile = () => {
               <Typography variant="body2">
                 Date of Birth: {new Date(data.dateOfBirth).toLocaleDateString()}
               </Typography>
+              <Typography variant="body2">
+                Address: {data.address.streetAddress1} {data.address.postalCode}
+              </Typography>
             </>
-          ) : (
+          )}
+          {!data && !loading && (
             <Typography variant="body1">
-              No data available. Please fetch data.
+              No data available.
             </Typography>
           )}
         </Paper>

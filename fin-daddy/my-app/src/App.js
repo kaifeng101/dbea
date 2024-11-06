@@ -40,7 +40,7 @@ function App() {
             />
           </div>
         {/* )} */}
-          <div className={`dashboard--content ml-[77px]`}>
+          <div>
             <Routes>
               <Route
                 path="/"
