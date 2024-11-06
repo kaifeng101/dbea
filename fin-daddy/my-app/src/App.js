@@ -20,9 +20,10 @@ import SignUp from "./pages/signup"
 
 import { useSelector } from "react-redux";
 import { selectUser } from "./redux/userSlice";
+import CarbonMarketplace from "./pages/carbonMarketplace";
 
 function App() {
-  const user = useSelector(selectUser);
+  // const user = useSelector(selectUser);
 
   // if (user !== null) {
   //   userRole = user.role;
@@ -33,27 +34,27 @@ function App() {
     <>
       <Router>
         <div className="dashboard">
-        {user && (
+        {/* {user && ( */}
           <div className="app-navbar">
             <NavBar
             />
           </div>
-        )}
-          <div className={`dashboard--content ${user ? 'ml-[77px]' : ''}`}>
+        {/* )} */}
+          <div className={`dashboard--content ml-[77px]`}>
             <Routes>
               <Route
                 path="/"
                 element={
-                  // <Navigate to={user ? "/PersonalSchedule" : "/login"} />
-                  <Navigate to={"/login"} />
+                  <Login/>
                 }
               />
-              {/* <Route
-                path="/login"
-                                element={
-                  !user ? <Login /> : <Navigate to="/PersonalSchedule" />
-                }
-              /> */}
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/investments" element={<Investments />} />
+              <Route path="/carbonMarketplace" element={<CarbonMarketplace />} />
+              <Route path="/milesRedemption" element={<MilesRedemption />} />
+              <Route path="/onBoarding" element={<OnBoarding />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/analyticsDashboard" element={<AnalyticsDashboard />} />
             </Routes>
           </div>
         </div>

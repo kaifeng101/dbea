@@ -1,27 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  BiHome,
-  BiCalendar,
-  BiHistory,
-  BiTask,
-  BiMailSend,
-  BiLogOut,
-} from "react-icons/bi";
-import { FaBars, FaTimes } from "react-icons/fa"; // For hamburger icon
 import "../index.css";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, logout } from "../redux/userSlice";
-import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Fade from "@mui/material/Fade";
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const NavBar = ({}) => {
   const [isOpen, setIsOpen] = useState(false); // for the hamburger
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
+//   const dispatch = useDispatch();
+//   const user = useSelector(selectUser);
   let userRole = "";
   let userPosition = "";
   const menuRef = useRef(null);
@@ -49,273 +42,45 @@ const NavBar = ({}) => {
 
   const navigate = useNavigate();
 
-  const handleLogout = (e) => {
-    e.preventDefault();
-    dispatch(logout());
-    navigate("/login");
-  };
+//   const handleLogout = (e) => {
+//     e.preventDefault();
+//     dispatch(logout());
+//     navigate("/login");
+//   };
 
   return (
-    <div className="menu h-screen mr-4" ref={menuRef}>
-      {/* Hamburger Icon */}
-      {/* {user && (
-        <div className="hamburger-icon">
-          <IconButton onClick={toggleMenu}>
-            {isOpen ? <FaTimes /> : <FaBars />}{" "}
-          </IconButton>
-        </div>
-      )}
-
-      
-
-      <div className={`menu--list ${isOpen ? "open" : "closed"}`}>
-        {user && (
-          <>
-            <a href="/PersonalSchedule" className="item">
-              <IconButton>
-                <BiHome className="icon" />
-              </IconButton>{" "}
-              <Link to="/PersonalSchedule">
-                <span>Home</span>
-              </Link>
-            </a>
-            <a href="/teamSchedule" className="item">
-              <IconButton>
-                <BiCalendar className="icon" />
-              </IconButton>
-              <Link to="/teamSchedule">View Team Schedule</Link>
-            </a>
-            <a href="/auditTrail" className="item">
-              <IconButton>
-                <BiHistory className="icon"  />
-              </IconButton>
-              <Link to="/auditTrail">Audit Trail</Link>
-            </a>
-            <a href="/notifications" className="item">
-              <IconButton aria-label={notificationsLength}>
-                <Badge badgeContent={notificationsLength} color="secondary">
-                  <BiMailSend
-                    className="icon"
-                    id="basic-button"
-                    aria-controls={open ? "basic-menu" : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? "true" : undefined}
-                    onClick={handleClick}
-                  />
-                </Badge>
-              </IconButton>
-              <Link
-                to="/notifications"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                Notification
-              </Link>
-            </a>
-          </>
-        )}
-        {userRole === 1 &&
-          userPosition !== "HR Team" &&
-          userPosition !== "MD" && (
-            <>
-              <div className="item" onClick={handleOpenClick}>
-                <IconButton
-                  id="fade-button"
-                  aria-controls={open1 ? "fade-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open1 ? "true" : undefined}
-                  onClick={handleOpenClick}
-                >
-                  <BiTask className="icon" />
-                </IconButton>
-                Requests
-              </div>
-              <Menu
-                id="fade-menu"
-                MenuListProps={{
-                  "aria-labelledby": "fade-button",
-                }}
-                anchorEl={anchorEl1}
-                open={open1}
-                onClose={handleCloseClick}
-                TransitionComponent={Fade}
-              >
-                <MenuItem onClick={handleCloseClick}>
-                  <Link
-                    to="/requestsPage"
-                    className="block py-2 px-4 lg:inline-block"
-                  >
-                    My Employees Request
-                  </Link>
-                </MenuItem>
-                <MenuItem onClick={handleCloseClick}>
-                  <Link
-                    to="/myRequestsPage"
-                    className="block py-2 px-4 lg:inline-block"
-                  >
-                    My Requests
-                  </Link>
-                </MenuItem>
-              </Menu>
-            </>
-          )}
-        {userRole === 1 && userPosition === "MD" && (
-          <>
-            <div className="item" onClick={handleOpenClick}>
-              <IconButton
-                id="fade-button"
-                aria-controls={open1 ? "fade-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open1 ? "true" : undefined}
-                onClick={handleOpenClick}
-              >
-                <BiTask className="icon" />
-              </IconButton>
-              Requests
-            </div>
-            <Menu
-              id="fade-menu"
-              MenuListProps={{
-                "aria-labelledby": "fade-button",
-              }}
-              anchorEl={anchorEl1}
-              open={open1}
-              onClose={handleCloseClick}
-              TransitionComponent={Fade}
-            >
-              <MenuItem onClick={handleCloseClick}>
-                <Link
-                  to="/jackRequestsPage"
-                  className="block py-2 px-4 lg:inline-block"
-                >
-                  My Employees Request
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleCloseClick}>
-                <Link
-                  to="/jackPersonalRequestsPage"
-                  className="block py-2 px-4 lg:inline-block"
-                >
-                  My Requests
-                </Link>
-              </MenuItem>
-            </Menu>
-          </>
-        )}
-        {userRole === 1 && userPosition === "HR Team" && (
-          <>
-            <div className="item" onClick={handleOpenClick}>
-              <IconButton
-                id="fade-button"
-                aria-controls={open1 ? "fade-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open1 ? "true" : undefined}
-                onClick={handleOpenClick}
-              >
-                <BiTask className="icon" />
-              </IconButton>
-              Requests
-            </div>
-            <Menu
-              id="fade-menu"
-              MenuListProps={{
-                "aria-labelledby": "fade-button",
-              }}
-              anchorEl={anchorEl1}
-              open={open1}
-              onClose={handleCloseClick}
-              TransitionComponent={Fade}
-            >
-              <MenuItem onClick={handleCloseClick}>
-                <Link
-                  to="/employeeRequests"
-                  className="block py-2 px-4 lg:inline-block"
-                >
-                  My Employees Request
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleCloseClick}>
-                <Link
-                  to="/hrRequestsPage"
-                  className="block py-2 px-4 lg:inline-block"
-                >
-                  My Requests
-                </Link>
-              </MenuItem>
-            </Menu>
-          </>
-        )}
-        {userRole === 2 && (
-          <a href='/staffRequestsPage' className="item">
-          <IconButton>
-            <BiTask className="icon"/>
-          </IconButton>
-          <Link
-            to="/staffRequestsPage"
-          >
-            Requests
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+        
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            WEBSITE NAME
+          </Typography>
+          {/* <Button color="inherit">Login</Button> */}
+          <Link to='/transactions'>
+            <Button color="inherit">Transactions</Button>
           </Link>
-        </a>  
-        )}
-
-        {userRole === 3 && (
-          <>
-            <div className="item" onClick={handleOpenClick}>
-              <IconButton
-                id="fade-button"
-                aria-controls={open1 ? "fade-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open1 ? "true" : undefined}
-                onClick={handleOpenClick}
-              >
-                <BiTask className="icon" />
-              </IconButton>
-              Requests
-            </div>
-            <Menu
-              id="fade-menu"
-              MenuListProps={{
-                "aria-labelledby": "fade-button",
-              }}
-              anchorEl={anchorEl1}
-              open={open1}
-              onClose={handleCloseClick}
-              TransitionComponent={Fade}
-            >
-              <MenuItem onClick={handleCloseClick}>
-                <Link
-                  to="/managerRequestsPage"
-                  className="block py-2 px-4 lg:inline-block"
-                >
-                  My Employees Request
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleCloseClick}>
-                <Link
-                  to="/myManagerRequestsPage"
-                  className="block py-2 px-4 lg:inline-block"
-                >
-                  My Requests
-                </Link>
-              </MenuItem>
-            </Menu>
-          </>
-        )}
-
-      {user && (
-        <a href='/logout' className="item" onClick={(e) => handleLogout(e)}>
-          <IconButton>
-            <BiLogOut className="icon" onClick={(e) => handleLogout(e)}/>
-          </IconButton>
-          <Link
-            to="/logout"
-            onClick={(e) => handleLogout(e)}
-          >
-            Logout
+          <Link to='/analyticsDashboard'>
+            <Button color="inherit">Analytics</Button>
           </Link>
-        </a>  
-      )}
-      </div> */}
-    </div>
+          <Link to='/carbonMarketplace'>
+            <Button color="inherit">Carbon Marketplace</Button>
+          </Link>
+          <Link to='/milesRedemption'>
+            <Button color="inherit">Miles</Button>
+          </Link>
+          <Link to='/onBoarding'>
+            <Button color="inherit">Onboarding</Button>
+          </Link>
+          <Link to='/investments'>
+            <Button color="inherit">Investments</Button>
+          </Link>
+          <Link to='/profile'>
+            <Button color="inherit">Profile</Button>
+          </Link>
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 };
 
