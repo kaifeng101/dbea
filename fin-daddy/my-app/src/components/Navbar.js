@@ -13,10 +13,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const NavBar = ({}) => {
   const [isOpen, setIsOpen] = useState(false); // for the hamburger
-//   const dispatch = useDispatch();
-//   const user = useSelector(selectUser);
-  let userRole = "";
-  let userPosition = "";
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const menuRef = useRef(null);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorEl1, setAnchorEl1] = React.useState(null);
@@ -42,11 +40,11 @@ const NavBar = ({}) => {
 
   const navigate = useNavigate();
 
-//   const handleLogout = (e) => {
-//     e.preventDefault();
-//     dispatch(logout());
-//     navigate("/login");
-//   };
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
+    navigate("/login");
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
