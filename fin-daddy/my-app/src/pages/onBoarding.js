@@ -9,10 +9,10 @@ import {
     Step,
     StepLabel,
     Container,
-    MenuItem,
     RadioGroup,
     FormControlLabel,
     Radio,
+    Grid
   } from '@mui/material';
 
 const steps = ['User Details', 'Personal Details', 'Employee Details', 'Other Details'];
