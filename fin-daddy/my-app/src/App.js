@@ -33,7 +33,7 @@ function App() {
   return (
     <>
       <Router>
-        <div className="dashboard">
+        <div>
         {/* {user && ( */}
           <div className="app-navbar">
             <NavBar
