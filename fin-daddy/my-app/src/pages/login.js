@@ -8,6 +8,7 @@ const Login = () => {
   return (
     <div>
         <h1>Login PAGE</h1>
+        <h1>Register</h1>
     </div>
   );
 };
