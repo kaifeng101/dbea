@@ -1,7 +1,24 @@
-import React, { useState } from "react";
 import axios from 'axios';
+import React, {useState} from 'react';
+import {
+    Box,
+    TextField,
+    Button,
+    Typography,
+    Stepper,
+    Step,
+    StepLabel,
+    Container,
+    MenuItem,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+  } from '@mui/material';
+
+const steps = ['User Details', 'Personal Details', 'Employee Details', 'Other Details'];
 
 const OnBoarding = () => {
+    const [currentStep, setCurrentStep] = useState(0); // State for current step
     const [formData, setFormData] = useState({
         Id: 0,
         certificateNo: 0,
@@ -37,6 +54,27 @@ const OnBoarding = () => {
                 [name]: value.trim(), // Trim whitespace from other input values
             });
         }
+    };
+
+    // Handle the click of the "Next" button
+    const handleNext = () => {
+        if (currentStep < steps.length - 1) {
+            setCurrentStep(currentStep + 1);
+        }
+    };
+
+    // Handle the click of the "Previous" button
+    const handleBack = () => {
+        if (currentStep > 0) {
+            setCurrentStep(currentStep - 1);
+        }
+    };
+
+    const handleGenderChange = (e) => {
+        setFormData({
+            ...formData,
+            gender: e.target.value,
+        });
     };
 
     const handleSubmit = async (e) => {
@@ -101,49 +139,488 @@ const OnBoarding = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>Id:</label>
-                <input type="number" name="Id" onChange={handleChange} required />
-            </div>
-            <div>
-                <label>Certificate No:</label>
-                <input type="number" name="certificateNo" onChange={handleChange} required />
-            </div>
-            <div>
-                <label>Family Name:</label>
-                <input type="text" name="familyName" onChange={handleChange} />
-            </div>
-            <div>
-                <label>Given Name:</label>
-                <input type="text" name="givenName" onChange={handleChange} />
-            </div>
-            <div>
-                <label>Date of Birth:</label>
-                <input type="date" name="dateOfBirth" onChange={handleChange} required />
-            </div>
-            <div>
-                <label>Gender:</label>
-                <input type="text" name="gender" onChange={handleChange} />
-            </div>
-            <div>
-                <label>Occupation:</label>
-                <input type="text" name="occupation" onChange={handleChange} />
-            </div>
-            <div>
-                <label>Email Address:</label>
-                <input type="email" name="emailAddress" onChange={handleChange} required />
-            </div>
-            <div>
-                <label>Password:</label>
-                <input type="password" name="password" onChange={handleChange} required />
-            </div>
-            <div>
-                <label>Confirm Password:</label>
-                <input type="password" name="passwordConfirmation" onChange={handleChange} required />
-            </div>
-            <button type="submit">Register</button>
-        </form>
+        <Container sx={{ 
+          backgroundColor: '#ffffff', 
+          padding: '40px', 
+          borderRadius: '10px', 
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', 
+          marginTop: '20px',
+          position: 'relative'
+        }}>
+          <Typography variant="h4" component="h1" align="center" gutterBottom>
+            Registration
+          </Typography>
+    
+          <Stepper activeStep={currentStep} alternativeLabel sx={{ marginBottom: '20px' }}>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{label}</Typography>
+                </StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+    
+          <Box sx={{ mt: 3 }}>
+            {currentStep === 0 && (
+              <>
+                <TextField
+                  required
+                  label="Customer Type"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="User ID"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Password"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Confirm Password"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+              </>
+            )}
+            {currentStep === 1 && (
+              <>
+                <TextField
+                  required
+                  label="Certificate ID"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Date of Birth"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Family Name"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Given Name"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Country"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <RadioGroup
+                  row
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleGenderChange}
+                  sx={{ mt: 2 }}
+                >
+                  <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                  <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                </RadioGroup>
+                <TextField
+                  required
+                  label="State"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="City"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Street Address"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Postal Code"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Phone Country Code"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Phone Area Code"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Mobile Number"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Phone Local Number"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+              </>
+            )}
+            {currentStep === 2 && (
+              <>
+                <TextField
+                  required
+                  label="Occupation"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Title of Position"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Employer Name"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Annual Salary"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Year Started Service"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Office Address 1"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Office Address 2"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Office Address 3"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Office Contact Number Ext"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  required
+                  label="Office Contact Number"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+              </>
+            )}
+            {currentStep === 3 && (
+              <>
+                <TextField
+                  label="Currency Preferred"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  label="Are you working in Singapore?"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+                <TextField
+                  label="Do you wish to create a Deposit Account?"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name=""
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: { color: '#666666' },
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
+              </>
+            )}
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+              <Button 
+                variant="outlined" 
+                color="primary" 
+                onClick={handleBack} 
+                sx={{ borderRadius: '5px' }} 
+                disabled={currentStep === 0} // Disable if on the first step
+              >
+                Previous
+              </Button>
+              {currentStep === steps.length - 1 ? (
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  onClick={handleSubmit} 
+                  sx={{ borderRadius: '5px' }}
+                >
+                  Submit
+                </Button>
+              ) : (
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  onClick={handleNext} 
+                  sx={{ borderRadius: '5px' }}
+                >
+                  Next
+                </Button>
+              )}
+            </Box>
+          </Box>
+        </Container>
     );
 };
 
