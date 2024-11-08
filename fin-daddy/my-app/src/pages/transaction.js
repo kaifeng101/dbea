@@ -6,7 +6,7 @@ const Transactions = () => {
   const [category, setCategory] = useState("shopping");
   const [roundUpChoice, setRoundUpChoice] = useState("nearest dollar");
   const [customRoundUp, setCustomRoundUp] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("QR payment");
+  const [paymentMethod] = useState("QR payment");
   const [finalAmount, setFinalAmount] = useState("");
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState("");
@@ -29,7 +29,7 @@ const Transactions = () => {
     if (e.target.value !== "other") setCustomRoundUp(""); // Clear custom amount if not "other"
   };
   const handleCustomRoundUpChange = (e) => setCustomRoundUp(e.target.value);
-  const handlePaymentMethodChange = (e) => setPaymentMethod(e.target.value);
+  // const handlePaymentMethodChange = (e) => setPaymentMethod(e.target.value);
   const handleBeneficiaryChange = (e) => setSelectedBeneficiary(e.target.value);
 
   // Calculate the final amount based on the round-up choice

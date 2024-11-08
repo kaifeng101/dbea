@@ -11,7 +11,6 @@ import Investments from "./pages/investments";
 import MilesRedemption from "./pages/milesRedemption";
 import OnBoarding from "./pages/onBoarding";
 import Profile from "./pages/profile";
-import Beneficiary from "./pages/beneficiary";
 import ViewAll from "./pages/viewAll";
 import Authorisation from "./pages/authorisation";
 import Termination from "./pages/termination";
