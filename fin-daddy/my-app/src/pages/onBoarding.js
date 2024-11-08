@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import React, {useState} from 'react';
 import {
     Box,
@@ -19,6 +20,7 @@ import {
 const steps = ['User Details', 'Personal Details', 'Employee Details', 'Other Details'];
 
 const OnBoarding = () => {
+    const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(0); // State for current step
     const [formData, setFormData] = useState({
         Id: 0,
@@ -149,6 +151,7 @@ const OnBoarding = () => {
             console.log('Registration successful:', response.data);
             alert("Registration successful!"); // Alert user of success
             // Reset form data after successful registration
+            navigate('localhost:3000');
             setFormData({
               Id: 0,
               certificateNo: 0,
@@ -216,6 +219,8 @@ const OnBoarding = () => {
           <Box sx={{ mt: 3 }}>
             {currentStep === 0 && (
               <>
+              <label>Id:</label>
+              <input type="number" name="Id" onChange={handleChange} required />
                 <TextField
                     required
                     label="Customer Type"
