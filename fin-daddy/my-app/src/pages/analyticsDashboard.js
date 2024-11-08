@@ -50,8 +50,7 @@ const Analytics = () => {
 
   return (
     <div>
-        <h1>Analytics PAGE</h1>
-        <div className="w-full max-w-4xl mx-auto mt-20">
+        <div className="w-full max-w-4xl mx-auto mt-10">
           <h1 className="text-3xl font-bold mb-6">Analytics</h1>
           <Card>
             <CardHeader>
