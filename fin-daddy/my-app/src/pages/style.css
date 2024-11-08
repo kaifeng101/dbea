@@ -1,0 +1,116 @@
+/* MilesRedemption.css */
+
+.container {
+    font-family: 'Roboto', sans-serif;
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #f9fafb;
+  }
+  
+  .header {
+    font-size: 24px;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .balanceContainer {
+    background-color: #4e73df;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  .balanceText {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .miles {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 5px 0 0 0;
+  }
+  
+  .transactionsContainer {
+    margin-bottom: 20px;
+  }
+  
+  .sectionHeader {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
+  .transactionList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .transactionItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e0e4e7;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .transactionItem:hover {
+    background-color: #f0f8ff;
+  }
+  
+  .transactionDate {
+    font-size: 12px;
+    color: #7d8a97;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .button {
+    flex: 1;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    background-color: #4e73df;
+    transition: background-color 0.3s;
+    margin-right: 10px;
+  }
+  
+  .button:hover {
+    background-color: #3a5cb3;
+  }
+  
+  .redeemButton {
+    background-color: #38b000;
+    margin-right: 0;
+  }
+  
+  .redeemButton:hover {
+    background-color: #2f8e00;
+  }
+  
+  .selectedTransaction {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f1f8fb;
+    color: #2c3e50;
+  }
+  
