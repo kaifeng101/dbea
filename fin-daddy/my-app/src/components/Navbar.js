@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import "../index.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../redux/userSlice";
+//import { useDispatch } from "react-redux";
+//import { logout } from "../redux/userSlice";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,7 +12,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
 const NavBar = () => {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -24,11 +24,11 @@ const NavBar = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = (e) => {
-    e.preventDefault();
-    dispatch(logout());
-    navigate("/login");
-  };
+  // const handleLogout = (e) => {
+  //   e.preventDefault();
+  //   dispatch(logout());
+  //   navigate("/login");
+  // };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -45,16 +45,16 @@ const NavBar = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={() => navigate("/qrCreditPayment")}>
-              QR and Credit Payment
+            <MenuItem onClick={() => navigate("/transaction")}>
+              Transaction
             </MenuItem>
             <MenuItem onClick={() => navigate("/directDebitPayment")}>
               Direct Debit Payment
             </MenuItem>
+            <MenuItem onClick={() => navigate("/billPayment")}>
+              Bill Payment
+            </MenuItem>
           </Menu>
-          <Link to="/beneficiary">
-            <Button color="inherit">Beneficiary</Button>
-          </Link>
           <Link to="/analyticsDashboard">
             <Button color="inherit">Analytics</Button>
           </Link>

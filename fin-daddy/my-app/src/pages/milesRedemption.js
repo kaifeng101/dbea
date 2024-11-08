@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
+
 
 const mockTransactions = [
   { id: 1, description: "Flight Booking", points: 500, date: "2024-10-15" },

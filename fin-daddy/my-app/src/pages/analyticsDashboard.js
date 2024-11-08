@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback, useMemo} from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect} from "react";
+// import { useSelector } from "react-redux";
 import axios from 'axios';
-import { selectUser } from "../redux/userSlice";
-import { useParams, useNavigate } from "react-router-dom";
+// import { selectUser } from "../redux/userSlice";
+// import { useParams, useNavigate } from "react-router-dom";
 // import { Card, CardHeader, CardTitle, CardContent } from "@ui/card"
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Typography from '@mui/material/Typography';
+// import CardActions from '@mui/material/CardActions';
+// import Typography from '@mui/material/Typography';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 const Analytics = () => {

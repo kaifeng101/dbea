@@ -6,7 +6,7 @@ const Transactions = () => {
   const [category, setCategory] = useState("shopping");
   const [roundUpChoice, setRoundUpChoice] = useState("nearest dollar");
   const [customRoundUp, setCustomRoundUp] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("QR payment");
+  const [paymentMethod] = useState("QR payment");
   const [finalAmount, setFinalAmount] = useState("");
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState("");
@@ -29,7 +29,7 @@ const Transactions = () => {
     if (e.target.value !== "other") setCustomRoundUp(""); // Clear custom amount if not "other"
   };
   const handleCustomRoundUpChange = (e) => setCustomRoundUp(e.target.value);
-  const handlePaymentMethodChange = (e) => setPaymentMethod(e.target.value);
+  // const handlePaymentMethodChange = (e) => setPaymentMethod(e.target.value);
   const handleBeneficiaryChange = (e) => setSelectedBeneficiary(e.target.value);
 
   // Calculate the final amount based on the round-up choice
@@ -139,13 +139,13 @@ const Transactions = () => {
           </div>
         )}
 
-        <div style={styles.formGroup}>
+        {/* <div style={styles.formGroup}>
           <label>Payment Method:</label>
           <select value={paymentMethod} onChange={handlePaymentMethodChange} required style={styles.select}>
             <option value="QR payment">QR Payment</option>
             <option value="credit transfer">Credit Transfer</option>
           </select>
-        </div>
+        </div> */}
 
         {paymentMethod === "credit transfer" && (
           <div style={styles.formGroup}>
