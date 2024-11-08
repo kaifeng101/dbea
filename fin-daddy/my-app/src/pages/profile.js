@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Avatar, Typography, Grid, CardMedia } from '@mui/material';
+import { Container, Avatar, Typography, Grid, Paper, Button } from '@mui/material';
 
 const Profile = () => {
   const [data, setData] = useState(null);
@@ -42,81 +42,56 @@ const Profile = () => {
 
   return (
     <div style={{ marginTop: "20px" }}>
-      <Container sx={{
-          backgroundColor: '#ffffff',
-          padding: '40px',
-          borderRadius: '10px',
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-          marginTop: '20px',
-          position: 'relative'
-        }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6} sx={{ borderRight: '1px solid #e0e0e0', padding: 2 }}>
-            <Typography variant="h5" gutterBottom>Personal Details</Typography>
-            <Avatar sx={{ width: 100, height: 100, margin: 'auto' }} />
-            {loading && <Typography variant="body1">Loading...</Typography>}
-            {error && <Typography variant="body1" color="error">{error}</Typography>}
-            {data && !loading && (
-              <>
-                <Typography variant="h6" gutterBottom>
-                  Name: {data.givenName} {data.familyName}
-                </Typography>
-                <Typography variant="body1">
-                  Customer ID: {data.customer.customerId}
-                </Typography>
-                <Typography variant="body1">
-                  Certificate Number: {data.certificate.certificateNo}
-                </Typography>
-                <Typography variant="subtitle1" color="textSecondary">
-                  Email: {data.profile.email || "Not available"}
-                </Typography>
-                <Typography variant="body1" mt={2}>
-                  Gender: {data.profile.gender}
-                </Typography>
-                <Typography variant="body2">
-                  Date of Birth: {new Date(data.dateOfBirth).toLocaleDateString()}
-                </Typography>
-                <Typography variant="body2">
-                  Address: {data.address.streetAddress1} {data.address.postalCode}
-                </Typography>
-                <Typography variant="body2">
-                  Number: {data.cellphone.countryCode} {data.cellphone.phoneNumber}
-                </Typography>
-              </>
-            )}
-            {!data && !loading && (
-              <Typography variant="body1">No data available.</Typography>
-            )}
-          </Grid>
-          <Grid item xs={12} md={6} sx={{ padding: 2 }}>
-            <Typography variant="h5" gutterBottom>Employee Details</Typography>
-            {data && !loading && (
-              <>
-                <img src="../assets/bank.gif"></img>
-                <Typography variant="body2">
-                  My Employment Position: {data.employment.positionTitle}
-                </Typography>
-                <Typography variant="body2">
-                  Year of Service: {data.employment.yearOfService}
-                </Typography>
-                <Typography variant="body2">
-                  Employer Name: {data.employment.employerName}
-                </Typography>
-                <Typography variant="body2">
-                  Office Phone Number: {data.employment.officeContactNumber}
-                </Typography>
-                <Typography variant="body2">
-                  Registration Date: {data.maintenanceHistory.registrationDate}
-                </Typography>
-              </>
-            )}
-            {!data && !loading && (
-              <Typography variant="body1">No data available.</Typography>
-            )}
-          </Grid>
-        </Grid>
-      </Container>
+      <Container maxWidth="lg" className="my-10">
+      <Paper elevation={3} className="p-5 rounded-lg bg-white flex flex-col md:flex-row">
+        <div className="md:w-1/3 flex flex-col items-center">
+          <Avatar
+            alt="Taz Ng"
+            src="path/to/your/image.jpg" // Replace with your image path
+            sx={{ width: 120, height: 120 }}
+          />
+          <Typography variant="h5" className="mt-4">Full Name: {data?.givenName}  {data?.familyName}</Typography>
+          <Typography variant="subtitle1" className="text-gray-500">Customer ID: {data?.customer.customerId}</Typography>
+          <Typography variant="subtitle1" className="text-gray-500">Certificate Number: {data?.certificate.certificateNo}</Typography>
+          <Typography variant="body2" className="mt-2">Country: Singapore</Typography>
+          <Typography variant="body2">Number: {data?.cellphone.countryCode} {data?.cellphone.phoneNumber}</Typography>
+          <Typography variant="body2">Email: {data?.profile.email || "Not available"}</Typography>
+          <Typography variant="body2">Date of Birth: {new Date(data?.dateOfBirth).toLocaleDateString()}</Typography>
+          <Typography variant="body2">Gender: {data?.profile.gender}</Typography>
+          <Typography variant="body2">Address: {data?.address.streetAddress1} {data?.address.postalCode}</Typography>
+        </div>
+
+        <div className="md:w-2/3 md:pl-5 mt-5">
+          <Typography variant="h6" className="font-bold">Employment Details</Typography>
+          <Typography variant="h6" className="font-bold mt-6"></Typography>
+          <div>
+              <Typography>Position Title: </Typography>
+              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
+                {data?.employment.positionTitle}
+              </Typography>
+              <Typography>Year Of Service: </Typography>
+              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
+                {data?.employment.yearOfService}
+              </Typography>
+              <Typography>Employer Name: </Typography>
+              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
+              {data?.employment.employerName}
+              </Typography>
+              <Typography>Employer Address: </Typography>
+              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
+              {data?.employment.officeContactNumber}
+              </Typography>
+              <Typography>Registration Date: </Typography>
+              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
+              {data?.maintenanceHistory.registrationDate}
+              </Typography>
+          </div>
+          </div>
+      </Paper>
+    </Container>
     </div>
+
+    
   );
 };
 
