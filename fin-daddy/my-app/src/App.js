@@ -9,15 +9,13 @@ import {
 } from "react-router-dom";
 import NavBar from "./components/Navbar";
 import Login from "./pages/login";
-import Transactions from "./pages/transactions"
-import AnalyticsDashboard from "./pages/analyticsDashboard"
-import CarbonMarket from "./pages/carbonMarketplace"
-import Investments from "./pages/investments"
-import MilesRedemption from "./pages/milesRedemption"
-import OnBoarding from "./pages/onBoarding"
-import Profile from "./pages/profile"
-import SignUp from "./pages/signup"
-
+import Transactions from "./pages/transactions";
+import AnalyticsDashboard from "./pages/analyticsDashboard";
+import CarbonMarket from "./pages/carbonMarketplace";
+import Investments from "./pages/investments";
+import MilesRedemption from "./pages/milesRedemption";
+import OnBoarding from "./pages/onBoarding";
+import Profile from "./pages/profile";
 import { useSelector } from "react-redux";
 import { selectUser } from "./redux/userSlice";
 import CarbonMarketplace from "./pages/carbonMarketplace";
@@ -34,27 +32,27 @@ function App() {
     <>
       <Router>
         <div className="dashboard">
-        {/* {user && ( */}
+          {/* {user && ( */}
           <div className="app-navbar">
-            <NavBar
-            />
+            <NavBar />
           </div>
-        {/* )} */}
+          {/* )} */}
           <div>
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <Login/>
-                }
-              />
+              <Route path="/" element={<Login />} />
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/investments" element={<Investments />} />
-              <Route path="/carbonMarketplace" element={<CarbonMarketplace />} />
+              <Route
+                path="/carbonMarketplace"
+                element={<CarbonMarketplace />}
+              />
               <Route path="/milesRedemption" element={<MilesRedemption />} />
               <Route path="/onBoarding" element={<OnBoarding />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/analyticsDashboard" element={<AnalyticsDashboard />} />
+              <Route
+                path="/analyticsDashboard"
+                element={<AnalyticsDashboard />}
+              />
             </Routes>
           </div>
         </div>

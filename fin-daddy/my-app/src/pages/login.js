@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo} from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
-import { useParams, useNavigate } from "react-router-dom";
+// import { useParams, useNavigate } from "react-router-dom";
+import LoginComponent from "../components/Login";
 
 
 const Login = () => {
   return (
-    <div>
-        <h1>Login PAGE</h1>
-        <h1>Register</h1>
+    <div className="flex justify-center">
+        <LoginComponent/>
     </div>
   );
 };
