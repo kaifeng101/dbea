@@ -51,10 +51,10 @@ const NavBar = () => {
             <MenuItem onClick={() => navigate("/directDebitPayment")}>
               Direct Debit Payment
             </MenuItem>
+            <MenuItem onClick={() => navigate("/billPayment")}>
+              Bill Payment
+            </MenuItem>
           </Menu>
-          <Link to="/beneficiary">
-            <Button color="inherit">Beneficiary</Button>
-          </Link>
           <Link to="/analyticsDashboard">
             <Button color="inherit">Analytics</Button>
           </Link>

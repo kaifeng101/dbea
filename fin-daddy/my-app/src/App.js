@@ -15,6 +15,7 @@ import Beneficiary from "./pages/beneficiary";
 import ViewAll from "./pages/viewAll";
 import Authorisation from "./pages/authorisation";
 import Termination from "./pages/termination";
+import BillPayment from "./pages/billPayment"
 
 function App() {
   return (
@@ -29,12 +30,12 @@ function App() {
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/transaction" element={<Transaction />} />
+              <Route path="/billPayment" element={<BillPayment />} />
               <Route path="/directDebitPayment" element={<DirectDebitPayment />}>
                 <Route path="viewAll" element={<ViewAll />} />
                 <Route path="authorisation" element={<Authorisation />} />
                 <Route path="termination" element={<Termination />} />
               </Route>
-              <Route path="/beneficiary" element={<Beneficiary />} />
               <Route path="/investments" element={<Investments />} />
               <Route path="/carbonMarketplace" element={<CarbonMarketplace />} />
               <Route path="/milesRedemption" element={<MilesRedemption />} />
