@@ -10,6 +10,7 @@ import {
     StepLabel,
     Container,
     RadioGroup,
+    Checkbox,
     FormControlLabel,
     Radio,
     Grid
@@ -22,22 +23,48 @@ const OnBoarding = () => {
     const [formData, setFormData] = useState({
         Id: 0,
         certificateNo: 0,
+        userNo: '',
+        emailAddress: '',
+        customerType: '',
         familyName: '',
         givenName: '',
         dateOfBirth: '',
         gender: '',
         occupation: '',
         streetAddress1: '',
-        streetAddress2: '',
         city: '',
         state: '',
         country: '',
         postalCode: '',
-        emailAddress: '',
+        phoneCountryCode:'',
+        phoneAreaCode: '',
+        phoneLocalNumber: '',
         mobileNumber: '',
+        positionTitle: '',
+        yearOfService: '',
+        employerName: '',
+        salaryRange: '',
+        officeAddress1: '',
+        officeAddress2: '',
+        officeAddress3: '',
+        officeContactNumber: '',
+        officeContactNumberExt: '',
+        currency: '',
+        workingInSingapore: '',
+        createDepositAccount: '',
         password: '',
         passwordConfirmation: '',
     });
+    const [isWorkingInSingapore, setIsWorkingInSingapore] = useState(false);
+    const [wantsDepositAccount, setWantsDepositAccount] = useState(false);
+
+    const handleDepositCheckboxChange = (event) => {
+        setWantsDepositAccount(event.target.checked);
+    };
+
+    const handleCheckboxChange = (event) => {
+        setIsWorkingInSingapore(event.target.checked);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -92,8 +119,17 @@ const OnBoarding = () => {
             return;
         }
 
-        // Ensure dateOfBirth is in the correct format (YYYY-MM-DD)
-        const formattedDate = new Date(formData.dateOfBirth).toISOString().split('T')[0];
+        const dateOfBirth = new Date(formData.dateOfBirth);
+
+        // Check if dateOfBirth is valid
+        if (isNaN(dateOfBirth.getTime())) {
+            console.error("Invalid date format for dateOfBirth:", formData.dateOfBirth);
+            return;
+        }
+
+        // Format the date as YYYY-MM-DD
+        const formattedDate = dateOfBirth.toISOString().split('T')[0];
+        
         const formattedData = {
             ...formData,
             dateOfBirth: formattedDate,
@@ -114,23 +150,39 @@ const OnBoarding = () => {
             alert("Registration successful!"); // Alert user of success
             // Reset form data after successful registration
             setFormData({
-                Id: 0,
-                certificateNo: 0,
-                familyName: '',
-                givenName: '',
-                dateOfBirth: '',
-                gender: '',
-                occupation: '',
-                streetAddress1: '',
-                streetAddress2: '',
-                city: '',
-                state: '',
-                country: '',
-                postalCode: '',
-                emailAddress: '',
-                mobileNumber: '',
-                password: '',
-                passwordConfirmation: '',
+              Id: 0,
+              certificateNo: 0,
+              userNo: '',
+              emailAddress: '',
+              customerType: '',
+              familyName: '',
+              givenName: '',
+              dateOfBirth: '',
+              gender: '',
+              occupation: '',
+              streetAddress1: '',
+              city: '',
+              state: '',
+              country: '',
+              postalCode: '',
+              phoneCountryCode:'',
+              phoneAreaCode: '',
+              phoneLocalNumber: '',
+              mobileNumber: '',
+              positionTitle: '',
+              yearOfService: '',
+              employerName: '',
+              salaryRange: '',
+              officeAddress1: '',
+              officeAddress2: '',
+              officeAddress3: '',
+              officeContactNumber: '',
+              officeContactNumberExt: '',
+              currency: '',
+              workingInSingapore: '',
+              createDepositAccount: '',
+              password: '',
+              passwordConfirmation: '',
             });
         } catch (error) {
             // Log the full error response for debugging
@@ -165,387 +217,469 @@ const OnBoarding = () => {
             {currentStep === 0 && (
               <>
                 <TextField
-                  required
-                  label="Customer Type"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                    required
+                    label="Customer Type"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    name="customerType"
+                    InputLabelProps={{
+                        sx: { color: '#666666' },
+                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
-                  required
-                  label="User ID"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <TextField
-                  required
-                  label="Email"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <TextField
-                  required
-                  label="Password"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <TextField
-                  required
-                  label="Confirm Password"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                          required
+                          label="User ID"
+                          variant="outlined"
+                          fullWidth
+                          margin="normal"
+                          name="userNo"
+                          InputLabelProps={{
+                              sx: { color: '#666666' },
+                          }}
+                          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        label="Email"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="emailAddress"
+                        onChange={handleChange}
+                        InputLabelProps={{
+                          sx: { color: '#666666' },
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        label="Password"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="password"
+                        onChange={handleChange}
+                        InputLabelProps={{
+                          sx: { color: '#666666' },
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        label="Confirm Password"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="passwordConfirmation"
+                        onChange={handleChange}
+                        InputLabelProps={{
+                          sx: { color: '#666666' },
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                </Grid>
               </>
             )}
             {currentStep === 1 && (
               <>
-                <TextField
-                  required
-                  label="Certificate ID"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <TextField
-                  required
-                  label="Date of Birth"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <TextField
-                  required
-                  label="Family Name"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <TextField
-                  required
-                  label="Given Name"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <TextField
-                  required
-                  label="Country"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <RadioGroup
-                  row
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleGenderChange}
-                  sx={{ mt: 2 }}
-                >
-                  <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                  <FormControlLabel value="Female" control={<Radio />} label="Female" />
-                </RadioGroup>
-                <TextField
+              <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        label="Certificate ID"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="certificateNo"
+                        onChange={handleChange}
+                        InputLabelProps={{
+                          sx: { color: '#666666' },
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        type="date"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="dateOfBirth"
+                        onChange={handleChange}
+                        InputLabelProps={{
+                          sx: { color: '#666666' },
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        label="Family Name"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="familyName"
+                        onChange={handleChange}
+                        InputLabelProps={{
+                          sx: { color: '#666666' },
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        label="Given Name"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="givenName"
+                        onChange={handleChange}
+                        InputLabelProps={{
+                          sx: { color: '#666666' },
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        label="Country"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="country"
+                        onChange={handleChange}
+                        InputLabelProps={{
+                          sx: { color: '#666666' },
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <RadioGroup
+                        row
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleGenderChange}
+                        sx={{ mt: 2 }}
+                      >
+                        <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                        <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                      </RadioGroup>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="State"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="state"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="City"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="city"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Street Address"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="streetAddress1"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Postal Code"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="postalCode"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Phone Country Code"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="phoneCountryCode"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Phone Area Code"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="phoneAreaCode"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Mobile Number"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="mobileNumber"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Phone Local Number"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="phoneLocalNumber"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
+                    </Grid>
+                </Grid>
               </>
             )}
             {currentStep === 2 && (
               <>
-                <TextField
+              <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Occupation"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="occupation"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Title of Position"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="positionTitle"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Employer Name"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="employerName"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Annual Salary"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="salaryRange"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Year Started Service"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="yearOfService"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Office Address 1"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="officeAddress1"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Office Address 2"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="officeAddress2"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Office Address 3"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="officeAddress3"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Office Contact Number Ext"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="officeContactNumberExt"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
                   required
                   label="Office Contact Number"
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="officeContactNumber"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
+                    </Grid>
+                </Grid>
               </>
             )}
             {currentStep === 3 && (
@@ -555,37 +689,44 @@ const OnBoarding = () => {
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  name=""
+                  name="currency"
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: { color: '#666666' },
                   }}
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
                 />
-                <TextField
-                  label="Are you working in Singapore?"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
-                <TextField
-                  label="Do you wish to create a Deposit Account?"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name=""
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
+              <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={isWorkingInSingapore}
+                                onChange={handleCheckboxChange}
+                                color="primary"
+                            />
+                        }
+                        label="Are you working in Singapore?"
+                        name="workingInSingapore"
+                        sx={{ color: '#666666' }} // Optional styling for the label
+                    />
+            
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <FormControlLabel
+                      control={
+                          <Checkbox
+                              checked={wantsDepositAccount}
+                              onChange={handleDepositCheckboxChange}
+                              color="primary"
+                          />
+                            }
+                            label="Do you wish to create a Deposit Account?"
+                            name="createDepositAccount"
+                            sx={{ color: '#666666' }} // Optional styling for the label
+                        />
+                    </Grid>
+                </Grid>
               </>
             )}
 
