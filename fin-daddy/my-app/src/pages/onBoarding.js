@@ -219,8 +219,19 @@ const OnBoarding = () => {
           <Box sx={{ mt: 3 }}>
             {currentStep === 0 && (
               <>
-              <label>Id:</label>
-              <input type="number" name="Id" onChange={handleChange} required />
+                <TextField
+                      required
+                      label="ID"
+                      variant="outlined"
+                      fullWidth
+                      margin="normal"
+                      name="Id"
+                      onChange={handleChange}
+                      InputLabelProps={{
+                          sx: { color: '#666666' },
+                      }}
+                      sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                />
                 <TextField
                     required
                     label="Customer Type"
