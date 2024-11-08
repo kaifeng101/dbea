@@ -45,8 +45,8 @@ const NavBar = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={() => navigate("/qrCreditPayment")}>
-              QR and Credit Payment
+            <MenuItem onClick={() => navigate("/transaction")}>
+              Transaction
             </MenuItem>
             <MenuItem onClick={() => navigate("/directDebitPayment")}>
               Direct Debit Payment

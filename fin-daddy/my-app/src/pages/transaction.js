@@ -139,13 +139,13 @@ const Transactions = () => {
           </div>
         )}
 
-        <div style={styles.formGroup}>
+        {/* <div style={styles.formGroup}>
           <label>Payment Method:</label>
           <select value={paymentMethod} onChange={handlePaymentMethodChange} required style={styles.select}>
             <option value="QR payment">QR Payment</option>
             <option value="credit transfer">Credit Transfer</option>
           </select>
-        </div>
+        </div> */}
 
         {paymentMethod === "credit transfer" && (
           <div style={styles.formGroup}>
