@@ -1,17 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function BillPayment() {
-  // Dummy data for accounts and billing organizations
+  // State for API data
+  const [billingOrganizations, setBillingOrganizations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch data from the API
+  const getData = async () => {
+    const url = "https://smuedu-dev.outsystemsenterprise.com/gateway/rest/payments/Beneficiaries?CustomerId=0000002340&AccountGroup=ALL"; // Replace with your endpoint URL
+    const username = "12173e30ec556fe4a951"; // Replace with your username
+    const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0"; // Replace with your password
+
+    const headers = new Headers();
+    headers.set('Authorization', 'Basic ' + btoa(`${username}:${password}`));
+    headers.set('Content-Type', 'application/json');
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: headers,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        // Map data to required format and update state
+        const organizations = result.map((item) => ({
+          id: item.beneficiaryId,
+          name: `${item.customerId} - ${item.description}`,
+        }));
+        setBillingOrganizations(organizations);
+      } else {
+        setError(`Error: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      setError("Network Error: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+
+
+  // Dummy data for user's accounts
   const userAccounts = [
     { id: 1, name: "Account 1 - XXXX1234" },
     { id: 2, name: "Account 2 - XXXX5678" },
     { id: 3, name: "Account 3 - XXXX9101" },
-  ];
-
-  const billingOrganizations = [
-    { id: 1, name: "Electricity Company" },
-    { id: 2, name: "Water Services" },
-    { id: 3, name: "Internet Provider" },
   ];
 
   // State variables for form inputs
@@ -23,7 +62,6 @@ function BillPayment() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Here you can add logic to handle the form submission
     console.log({
       fromAccount: selectedFromAccount,
       toAccount: selectedToAccount,
@@ -113,6 +151,9 @@ function BillPayment() {
           Submit
         </button>
       </form>
+
+      {loading && <p>Loading billing organizations...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
