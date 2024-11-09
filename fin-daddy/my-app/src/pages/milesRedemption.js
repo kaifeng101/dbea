@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "./style.css";
 
 
@@ -21,7 +21,7 @@ const offers = [
 const MilesRedemption = () => {
   const user = useSelector(selectUser);
   const userID = user?.customerId
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [miles, setMiles] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -57,7 +57,7 @@ const MilesRedemption = () => {
     };
 
     fetchMiles();
-  }, []);
+  }, [userID]);
 
   const handleSelectTransaction = (transaction) => {
     setSelectedTransaction(transaction);

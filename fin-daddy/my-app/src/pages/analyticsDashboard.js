@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 // import { useSelector } from "react-redux";
 import axios from 'axios';
 import { selectUser } from "../redux/userSlice";
 import { useSelector } from "react-redux";
 // import { useParams, useNavigate } from "react-router-dom";
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
+// import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 // import CardActions from '@mui/material/CardActions';
 import Grid from '@mui/material/Grid';
@@ -34,7 +34,7 @@ const Analytics = () => {
   const user = useSelector(selectUser);
   const userID = user?.customerId
 
-  const getCarbonData = async () => {
+  const getCarbonData = useCallback(async () => {
     const url = `https://personal-svyrscxo.outsystemscloud.com/CustomerCarbon/rest/CarbonTransaction/GetCarbonTransactions?CustomerId=${userID}`; // Replace with your endpoint URL
     
     try {
@@ -87,7 +87,7 @@ const Analytics = () => {
     } catch (error) {
       console.log("Error")
     } 
-  };
+  }, [userID, apiKey]);
 
   const getCurrentMiles = async () => {
     const url = `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=AAA`; // Replace with your endpoint URL
@@ -109,7 +109,7 @@ const Analytics = () => {
   useEffect(() => {
     getCarbonData();
     getCurrentMiles();
-  }, []);
+  }, [getCarbonData]);
 
   const data = [
     { name: 'Jan', spending: 4000, saving: 2400 },

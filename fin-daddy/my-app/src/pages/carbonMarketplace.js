@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Card,
   CardHeader,
@@ -7,7 +7,7 @@ import {
   CardActions,
   CardMedia,
   Typography,
-  Badge,
+  // Badge,
   Checkbox,
   Dialog,
   DialogTitle,
@@ -55,11 +55,8 @@ export default function CarbonMarketplacePage() {
   let finalTotalCost = 0;
   let finalTotalAmtGet = 0;
 
-  useEffect(() => {
-    fetchCarbonCredits();
-  }, []);
-
-  const fetchCarbonCredits = async () => {
+ 
+  const fetchCarbonCredits = useCallback(async () => {
     try { 
       const response = await fetch(`https://personal-svyrscxo.outsystemscloud.com/CustomerCarbon/rest/CustomerCarbonCredit/GetCustomerCarbonCredit?CustomerId=${userID}`, {
         method: 'GET', // Default method is GET, but you can specify it explicitly
@@ -73,7 +70,12 @@ export default function CarbonMarketplacePage() {
     } catch (error) {
       console.error('Error fetching carbon credits:', error);
     }
-  };
+  }, [userID]);
+
+  useEffect(() => {
+    fetchCarbonCredits();
+  }, [fetchCarbonCredits]);
+
 
   const carbonOffsets = [
     {
