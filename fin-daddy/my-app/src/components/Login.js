@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { login } from "../redux/userSlice";
 import {
   TextField,
@@ -27,7 +27,7 @@ const LoginComponent = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
+  // const user = useSelector((state) => state.user);
   const navigate = useNavigate();
 
   const fetchCustomer = async (certificateNo) => {
