@@ -116,7 +116,7 @@ const MilesRedemption = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container" style={{ marginTop: "96px" }}>
       <h1 className="header">Miles Redemption</h1>
 
       <div className="balanceContainer">
