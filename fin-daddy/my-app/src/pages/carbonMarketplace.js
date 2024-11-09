@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import {
   Card,
@@ -29,6 +30,7 @@ import wildlifeConservationImg from '../assets/wildlifeConservationImg.jpg'
 import urbanGreeningImg from '../assets/urbanGreeningImg.jpg'
 import reforestationImg from '../assets/reforestation.png'
 
+
 // TO DO
 // Need to get customerId from session
 export default function CarbonMarketplacePage() {
@@ -47,26 +49,28 @@ export default function CarbonMarketplacePage() {
   const [isSuccess, setIsSuccess] = useState(false); // For handling success message
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
 
+  let finalTotalCost = 0;
+  let finalTotalAmtGet = 0;
 
   useEffect(() => {
-    const fetchCarbonCredits = async () => {
-      try {
-        const response = await fetch('https://personal-svyrscxo.outsystemscloud.com/CustomerCarbon/rest/CustomerCarbonCredit/GetCustomerCarbonCredit?CustomerId=10', {
-          method: 'GET', // Default method is GET, but you can specify it explicitly
-          headers: {
-            'X-Contacts-Key': 'c48b5803-757e-414d-9106-62ab010a9c8d', // Add the API key here
-            'Content-Type': 'application/json', // Optional, depending on API requirements
-          },
-        });
-        const data = await response.json();
-        setTotalCredits(data[0].Credits); // Assuming the response contains { totalCredits: value }
-      } catch (error) {
-        console.error('Error fetching carbon credits:', error);
-      }
-    };
-
     fetchCarbonCredits();
   }, []);
+
+  const fetchCarbonCredits = async () => {
+    try { 
+      const response = await fetch('https://personal-svyrscxo.outsystemscloud.com/CustomerCarbon/rest/CustomerCarbonCredit/GetCustomerCarbonCredit?CustomerId=0000002443', {
+        method: 'GET', // Default method is GET, but you can specify it explicitly
+        headers: {
+          'X-Contacts-Key': 'c48b5803-757e-414d-9106-62ab010a9c8d', // Add the API key here
+          'Content-Type': 'application/json', // Optional, depending on API requirements
+        },
+      });
+      const data = await response.json();
+      setTotalCredits(data[0].Credits); // Assuming the response contains { totalCredits: value }
+    } catch (error) {
+      console.error('Error fetching carbon credits:', error);
+    }
+  };
 
   const carbonOffsets = [
     {
@@ -181,7 +185,31 @@ export default function CarbonMarketplacePage() {
     }
   };
 
-  const confirmCheckout = () => {
+  const confirmCheckout = async () => {
+      try {
+        const response = await fetch('https://personal-svyrscxo.outsystemscloud.com/CarbonTrading/rest/SellCarbon/SellCarbon?creditNeeded=' + finalTotalCost, {
+            method: 'POST',
+            headers: {
+                'X-Contacts-Key': 'c48b5803-757e-414d-9106-62ab010a9c8d',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                CustomerId: "0000002443",
+                TransactionAmount: finalTotalAmtGet
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Response data:', data);
+        
+      } catch (error) {
+        console.error('Error fetching carbon credits:', error);
+    }
+
     setIsSuccess(true);
     setIsCheckoutDialogOpen(false);
     setSuccessDialogOpen(true); // Open success dialog
@@ -191,11 +219,9 @@ export default function CarbonMarketplacePage() {
     setSuccessDialogOpen(false); // Close the success dialog
     setCart([]);
     setCartDialogOpen(false)
-  };
-  
 
-  let finalTotalCost = 0;
-  let finalTotalAmtGet = 0;
+    window.location.reload();
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
