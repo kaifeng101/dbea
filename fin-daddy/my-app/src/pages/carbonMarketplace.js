@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Card,
   CardHeader,
@@ -7,7 +7,7 @@ import {
   CardActions,
   CardMedia,
   Typography,
-  Badge,
+  // Badge,
   Checkbox,
   Dialog,
   DialogTitle,
@@ -29,7 +29,8 @@ import renewableEnergyImg from '../assets/renewableEnergyImg.jpg'
 import wildlifeConservationImg from '../assets/wildlifeConservationImg.jpg'
 import urbanGreeningImg from '../assets/urbanGreeningImg.jpg'
 import reforestationImg from '../assets/reforestation.png'
-
+import { selectUser } from "../redux/userSlice";
+import { useSelector } from "react-redux";
 
 // TO DO
 // Need to get customerId from session
@@ -48,17 +49,16 @@ export default function CarbonMarketplacePage() {
   const [errorMessage, setErrorMessage] = useState(''); // For error message
   const [isSuccess, setIsSuccess] = useState(false); // For handling success message
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const user = useSelector(selectUser);
+  const userID = user?.customerId
 
   let finalTotalCost = 0;
   let finalTotalAmtGet = 0;
 
-  useEffect(() => {
-    fetchCarbonCredits();
-  }, []);
-
-  const fetchCarbonCredits = async () => {
+ 
+  const fetchCarbonCredits = useCallback(async () => {
     try { 
-      const response = await fetch('https://personal-svyrscxo.outsystemscloud.com/CustomerCarbon/rest/CustomerCarbonCredit/GetCustomerCarbonCredit?CustomerId=0000002443', {
+      const response = await fetch(`https://personal-svyrscxo.outsystemscloud.com/CustomerCarbon/rest/CustomerCarbonCredit/GetCustomerCarbonCredit?CustomerId=${userID}`, {
         method: 'GET', // Default method is GET, but you can specify it explicitly
         headers: {
           'X-Contacts-Key': 'c48b5803-757e-414d-9106-62ab010a9c8d', // Add the API key here
@@ -70,7 +70,12 @@ export default function CarbonMarketplacePage() {
     } catch (error) {
       console.error('Error fetching carbon credits:', error);
     }
-  };
+  }, [userID]);
+
+  useEffect(() => {
+    fetchCarbonCredits();
+  }, [fetchCarbonCredits]);
+
 
   const carbonOffsets = [
     {
@@ -194,7 +199,7 @@ export default function CarbonMarketplacePage() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                CustomerId: "0000002443",
+                CustomerId: userID,
                 TransactionAmount: finalTotalAmtGet
             })
         });

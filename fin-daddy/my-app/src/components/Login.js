@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import OnBoarding from "../pages/onBoarding";
+// import OnBoarding from "../pages/onBoarding";
 
 function SlideTransition(props) {
   return <Slide {...props} direction="down" />;
