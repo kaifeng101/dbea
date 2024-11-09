@@ -121,7 +121,7 @@ const Profile = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="lg" sx={{ mt: 10, mb: 4 }}>
       <Paper style={{borderRadius: 16,
   overflow: 'hidden',
   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'}}>

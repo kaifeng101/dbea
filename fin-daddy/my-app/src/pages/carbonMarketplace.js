@@ -229,7 +229,7 @@ export default function CarbonMarketplacePage() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4, mt: 10 }} >
       <Typography variant="h4" gutterBottom>Carbon Marketplace</Typography>
 
       {/* Display carbon credits at the top right */}
