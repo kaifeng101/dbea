@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import OnBoarding from "../pages/onBoarding";
 
 function SlideTransition(props) {
   return <Slide {...props} direction="down" />;
@@ -137,9 +138,9 @@ const LoginComponent = () => {
               <div className="font-semibold text-xl py-2">Customer Login</div>
               <div>
                 Don't have an account? Register{" "}
-                {/* <Link to="/register" className="text-blue-400 cursor-pointer"> */}
+                <Link to="/onBoarding" className="text-blue-400 cursor-pointer">
                 here
-                {/* </Link> */}
+                </Link>
               </div>
             </div>
             {error && (
@@ -150,7 +151,7 @@ const LoginComponent = () => {
             <form onSubmit={handleLogin}>
               <TextField
                 fullWidth
-                label="Staff ID"
+                label="Certificate No"
                 variant="outlined"
                 value={certificateNo}
                 onChange={(e) => setCertificateNo(e.target.value)}

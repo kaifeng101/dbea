@@ -64,9 +64,6 @@ const NavBar = () => {
           <Link to="/milesRedemption">
             <Button color="inherit">Miles</Button>
           </Link>
-          <Link to="/onBoarding">
-            <Button color="inherit">Onboarding</Button>
-          </Link>
           <Link to="/investments">
             <Button color="inherit">Investments</Button>
           </Link>
