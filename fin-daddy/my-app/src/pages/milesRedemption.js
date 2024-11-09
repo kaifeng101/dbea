@@ -20,6 +20,7 @@ const offers = [
 
 const MilesRedemption = () => {
   const user = useSelector(selectUser);
+  const userID = user?.customerId
   const navigate = useNavigate();
   const [miles, setMiles] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -34,7 +35,7 @@ const MilesRedemption = () => {
     const fetchMiles = async () => {
       try {
         const response = await fetch(
-          `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=ABC`,
+          `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=${userID}`,
           {
             method: "GET",
             headers: {
@@ -86,7 +87,7 @@ const MilesRedemption = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            custId: "ABC",
+            custId: userID,
             milesAmt: offer.cost,
           }),
         }
