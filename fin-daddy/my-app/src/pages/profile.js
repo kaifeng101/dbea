@@ -1,15 +1,81 @@
 import React, { useState, useEffect } from "react";
-import { Container, Avatar, Typography, Grid, Paper, Button } from '@mui/material';
+import {
+  Container,
+  Avatar,
+  Typography,
+  Grid,
+  Paper,
+  Box,
+  Chip,
+  CircularProgress,
+  Alert,
+  Card,
+  CardContent,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
+import { styled } from '@mui/system';
+import { useSelector } from "react-redux";
+import { selectUser } from "../redux/userSlice";
+import {
+  Person,
+  Email,
+  Phone,
+  Cake,
+  Home,
+  Work,
+  BusinessCenter,
+  CalendarToday,
+  LocationOn,
+} from '@mui/icons-material';
+
+
+const BackgroundHeader = styled(Box)(({ theme }) => ({
+  height: 200,
+  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+  display: 'flex',
+  alignItems: 'flex-end',
+  justifyContent: 'center',
+  padding: theme.spacing(2),
+}));
+
+const AvatarWrapper = styled(Box)(({ theme }) => ({
+  marginTop: -theme.spacing(8),
+  marginBottom: theme.spacing(2),
+  display: 'flex',
+  justifyContent: 'center',
+}));
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  width: 150,
+  height: 150,
+  border: `4px solid ${theme.palette.background}`,
+  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+}));
+
+const InfoCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)',
+  },
+}));
 
 const Profile = () => {
+  const user = useSelector(selectUser);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const getData = async () => {
-    const url = "https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer??CustomerID=0000002313&CertificateNo=000002"; // Replace with your endpoint URL
-    const username = "12173e30ec556fe4a951"; // Replace with your username
-    const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0"; // Replace with your password
+    const url = "https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer??CustomerID=0000002313&CertificateNo=000002";
+    const username = "12173e30ec556fe4a951";
+    const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
 
     const headers = new Headers();
     headers.set('Authorization', 'Basic ' + btoa(`${username}:${password}`));
@@ -24,75 +90,121 @@ const Profile = () => {
       if (response.ok) {
         const result = await response.json();
         setData(result);
-        console.log("Response Data:", result);
       } else {
-        setError("Error: ${response.status} ${response.statusText}");
+        setError(`Error: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       setError("Network Error: " + error.message);
     } finally {
-      setLoading(false); // Stop loading regardless of the outcome
+      setLoading(false);
     }
   };
 
-  // Call getData on component mount
   useEffect(() => {
     getData();
-  }, []); // Empty dependency array means this runs once when the component mounts
+  }, []);
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
+  }
 
   return (
-    <div style={{ marginTop: "20px" }}>
-      <Container maxWidth="lg" className="my-10">
-      <Paper elevation={3} className="p-5 rounded-lg bg-white flex flex-col md:flex-row">
-        <div className="md:w-1/3 flex flex-col items-center">
-          <Avatar
-            alt="Taz Ng"
-            src="path/to/your/image.jpg" // Replace with your image path
-            sx={{ width: 120, height: 120 }}
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Paper style={{borderRadius: 16,
+  overflow: 'hidden',
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'}}>
+        <BackgroundHeader style={{marginBottom: "10px"}}>
+          <Typography variant="h4" color="white" fontWeight="bold">
+            Profile
+          </Typography>
+        </BackgroundHeader>
+        <AvatarWrapper>
+          <StyledAvatar
+            alt={`${data?.givenName} ${data?.familyName}`}
+            src="/placeholder.svg"
           />
-          <Typography variant="h5" className="mt-4">Full Name: {data?.givenName}  {data?.familyName}</Typography>
-          <Typography variant="subtitle1" className="text-gray-500">Customer ID: {data?.customer.customerId}</Typography>
-          <Typography variant="subtitle1" className="text-gray-500">Certificate Number: {data?.certificate.certificateNo}</Typography>
-          <Typography variant="body2" className="mt-2">Country: Singapore</Typography>
-          <Typography variant="body2">Number: {data?.cellphone.countryCode} {data?.cellphone.phoneNumber}</Typography>
-          <Typography variant="body2">Email: {data?.profile.email || "Not available"}</Typography>
-          <Typography variant="body2">Date of Birth: {new Date(data?.dateOfBirth).toLocaleDateString()}</Typography>
-          <Typography variant="body2">Gender: {data?.profile.gender}</Typography>
-          <Typography variant="body2">Address: {data?.address.streetAddress1} {data?.address.postalCode}</Typography>
-        </div>
-
-        <div className="md:w-2/3 md:pl-5 mt-5">
-          <Typography variant="h6" className="font-bold">Employment Details</Typography>
-          <Typography variant="h6" className="font-bold mt-6"></Typography>
-          <div>
-              <Typography>Position Title: </Typography>
-              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
-                {data?.employment.positionTitle}
-              </Typography>
-              <Typography>Year Of Service: </Typography>
-              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
-                {data?.employment.yearOfService}
-              </Typography>
-              <Typography>Employer Name: </Typography>
-              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
-              {data?.employment.employerName}
-              </Typography>
-              <Typography>Employer Address: </Typography>
-              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
-              {data?.employment.officeContactNumber}
-              </Typography>
-              <Typography>Registration Date: </Typography>
-              <Typography variant="body2" className="bg-blue-200 rounded-full px-3 py-1 m-1">
-              {data?.maintenanceHistory.registrationDate}
-              </Typography>
-          </div>
-          </div>
+        </AvatarWrapper>
+        <Box sx={{ p: 4 }}>
+          <Typography variant="h4" align="center" gutterBottom>
+            {data?.givenName} {data?.familyName}
+          </Typography>
+          <Box display="flex" justifyContent="center" gap={1} mb={4}>
+            <Chip
+              icon={<Person />}
+              label={`ID: ${data?.customer.customerId}`}
+              color="primary"
+              variant="outlined"
+            />
+            <Chip
+              icon={<BusinessCenter />}
+              label={`Cert: ${data?.certificate.certificateNo}`}
+              color="secondary"
+              variant="outlined"
+            />
+          </Box>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <InfoCard>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Personal Information
+                  </Typography>
+                  <InfoItem icon={<Email />} label="Email" value={data?.profile.email || "Not available"} />
+                  <InfoItem icon={<Phone />} label="Phone" value={`${data?.cellphone.countryCode} ${data?.cellphone.phoneNumber}`} />
+                  <InfoItem icon={<Cake />} label="Date of Birth" value={new Date(data?.dateOfBirth).toLocaleDateString()} />
+                  <InfoItem icon={<Person />} label="Gender" value={data?.profile.gender} />
+                  <InfoItem icon={<Home />} label="Address" value={`${data?.address.streetAddress1}, ${data?.address.postalCode}`} />
+                  <InfoItem icon={<LocationOn />} label="Country" value="Singapore" />
+                </CardContent>
+              </InfoCard>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <InfoCard>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Employment Details
+                  </Typography>
+                  <InfoItem icon={<Work />} label="Position" value={data?.employment.positionTitle} />
+                  <InfoItem icon={<BusinessCenter />} label="Employer" value={data?.employment.employerName} />
+                  <InfoItem icon={<CalendarToday />} label="Years of Service" value={data?.employment.yearOfService} />
+                  <InfoItem icon={<Phone />} label="Office Contact" value={data?.employment.officeContactNumber} />
+                  <InfoItem icon={<CalendarToday />} label="Registration Date" value={data?.maintenanceHistory.registrationDate} />
+                </CardContent>
+              </InfoCard>
+            </Grid>
+          </Grid>
+        </Box>
       </Paper>
     </Container>
-    </div>
-
-    
   );
 };
+
+const InfoItem = ({ icon, label, value }) => (
+  <Box display="flex" alignItems="center" mb={2}>
+    <Box mr={2} color="text.secondary">
+      {icon}
+    </Box>
+    <Box>
+      <Typography variant="body2" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography variant="body1">
+        {value}
+      </Typography>
+    </Box>
+  </Box>
+);
 
 export default Profile;
