@@ -151,7 +151,7 @@ const LoginComponent = () => {
             <form onSubmit={handleLogin}>
               <TextField
                 fullWidth
-                label="Staff ID"
+                label="Certificate No"
                 variant="outlined"
                 value={certificateNo}
                 onChange={(e) => setCertificateNo(e.target.value)}

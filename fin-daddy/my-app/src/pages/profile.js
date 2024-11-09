@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Container, Avatar, Typography, Grid, Paper, Button } from '@mui/material';
+import { Container, Avatar, Typography, Grid, Paper } from '@mui/material';
+import { useSelector } from "react-redux";
+import { selectUser } from "../redux/userSlice";
 
 const Profile = () => {
+  const user = useSelector(selectUser)
+  console.log(user)
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
