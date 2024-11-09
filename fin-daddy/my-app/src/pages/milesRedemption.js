@@ -28,14 +28,14 @@ const MilesRedemption = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState(null);
   const [redeemedOffer, setRedeemedOffer] = useState(null); // New state to track the redeemed offer
-
+console.log(user.customerId)
   useEffect(() => {
     setTransactions(mockTransactions);
 
     const fetchMiles = async () => {
       try {
         const response = await fetch(
-          `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=ABC`,
+          `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=${user.customerId}`,
           {
             method: "GET",
             headers: {
@@ -57,7 +57,7 @@ const MilesRedemption = () => {
     };
 
     fetchMiles();
-  }, []);
+  }, [user.customerId]);
 
   const handleSelectTransaction = (transaction) => {
     setSelectedTransaction(transaction);
@@ -87,7 +87,7 @@ const MilesRedemption = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            custId: "ABC",
+            custId: user.customerId,
             milesAmt: offer.cost,
           }),
         }
