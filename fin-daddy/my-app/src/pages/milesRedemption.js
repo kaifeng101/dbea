@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 // import { useNavigate } from "react-router-dom";
 import "./style.css";
+import "./Redeem.css";
 
 
 const mockTransactions = [
@@ -20,7 +21,6 @@ const offers = [
 
 const MilesRedemption = () => {
   const user = useSelector(selectUser);
-  const userID = user?.customerId
   // const navigate = useNavigate();
   const [miles, setMiles] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -28,14 +28,16 @@ const MilesRedemption = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState(null);
   const [redeemedOffer, setRedeemedOffer] = useState(null); // New state to track the redeemed offer
-
+console.log(user.customerId)
   useEffect(() => {
     setTransactions(mockTransactions);
 
     const fetchMiles = async () => {
       try {
         const response = await fetch(
-          `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=${userID}`,
+
+          `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=${user.customerId}`,
+
           {
             method: "GET",
             headers: {
@@ -57,7 +59,9 @@ const MilesRedemption = () => {
     };
 
     fetchMiles();
-  }, [userID]);
+
+  }, [user.customerId]);
+
 
   const handleSelectTransaction = (transaction) => {
     setSelectedTransaction(transaction);
@@ -87,7 +91,7 @@ const MilesRedemption = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            custId: userID,
+            custId: user.customerId,
             milesAmt: offer.cost,
           }),
         }

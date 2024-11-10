@@ -6,33 +6,24 @@ import { useSelector } from "react-redux";
 function Termination() {
   const user = useSelector(selectUser);
   const userID = user?.customerId;
-  
+
   const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState("");
   const [showTable, setShowTable] = useState(false);
   const [instructions, setInstructions] = useState([]);
-  
-  // Fetch bank accounts
+
   const getAccounts = useCallback(async () => {
-    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
+    const url = `https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountType/GetAccountType?customerId=${userID}`;
     try {
-      const username = "12173e30ec556fe4a951";
-      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-      const basicAuth = "Basic " + btoa(`${username}:${password}`);
-      
       const response = await axios.get(url, {
         headers: {
-          Authorization: basicAuth,
           "Content-Type": "application/json",
+          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
         },
       });
-
       if (response.status === 200) {
         const data = response.data;
-        const filteredAccounts = data
-          .filter(account => account.productId === "101")
-          .map(account => ({ id: account.accountId, name: `Account - ${account.accountId}` }));
-        setBankAccounts(filteredAccounts);
+        setBankAccounts([{ id: data.accountId, name: `Account ${data.accountId}` }]);
       }
     } catch (error) {
       console.log("Error:", error);
@@ -65,10 +56,10 @@ function Termination() {
       if (response.status === 200) {
         const data = response.data;
         const selectedAccountId = bankAccounts.find(account => account.name === selectedAccount)?.id;
-        
+
         // Filter payments based on selected account ID
         const matchedPayments = data.filter(payment => payment.CustomerAccountId === selectedAccountId);
-        
+
         const formattedInstructions = matchedPayments.map(payment => ({
           id: payment.DirectDebitId,
           payee: payment.BillingOrgAccountId,
@@ -85,13 +76,39 @@ function Termination() {
     }
   };
 
-  const handleRemove = (id) => {
+  const handleRemove = async (id, payee) => {
     if (window.confirm("Are you sure you want to terminate this payment?")) {
-      const updatedInstructions = instructions.filter(instruction => instruction.id !== id);
-      setInstructions(updatedInstructions);
-      alert("Payment terminated successfully.");
+      const selectedAccountId = bankAccounts.find(account => account.name === selectedAccount)?.id;
+      const url = `https://personal-g2wuuy52.outsystemscloud.com/TransactionRoundUp/rest/PaymentToMerchant/RemoveDirectDebit`;
+  
+      try {
+        const response = await axios.delete(url, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
+          },
+          data: {
+            accountId: selectedAccountId,
+            billingOrgAccId: payee
+          },
+        });
+  
+        if (response.status === 200 && response.data.Status) {
+          // Remove only the row that was clicked
+          setInstructions(prevInstructions => 
+            prevInstructions.filter(instruction => instruction.id !== id)
+          );
+  
+          // Show the status message
+          alert(response.data.Status);
+        }
+      } catch (error) {
+        console.log("Error:", error);
+        alert("An error occurred while trying to terminate the payment.");
+      }
     }
   };
+  
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
@@ -140,9 +157,6 @@ function Termination() {
             <thead>
               <tr style={{ backgroundColor: "#4a90e2", color: "#fff", textAlign: "left" }}>
                 <th style={{ padding: "10px" }}>Payee/References</th>
-                <th style={{ padding: "10px" }}>Frequency</th>
-                <th style={{ padding: "10px" }}>Next Payment Date</th>
-                <th style={{ padding: "10px" }}>Last Payment</th>
                 <th style={{ padding: "10px" }}>Actions</th>
               </tr>
             </thead>
@@ -150,12 +164,10 @@ function Termination() {
               {instructions.map((instruction) => (
                 <tr key={instruction.id} style={{ backgroundColor: "#f9f9f9" }}>
                   <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{instruction.payee}</td>
-                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{instruction.frequency}</td>
-                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{instruction.nextPaymentDate}</td>
-                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{instruction.lastPayment}</td>
+
                   <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
                     <button
-                      onClick={() => handleRemove(instruction.id)}
+                      onClick={() => handleRemove(instruction.id, instruction.payee)}
                       style={{
                         padding: "5px 10px",
                         color: "#fff",

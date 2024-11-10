@@ -6,34 +6,24 @@ import { useSelector } from "react-redux";
 function DirectDebitPayment() {
   const user = useSelector(selectUser);
   const userID = user?.customerId;
-  const apiKey = 'c48b5803-757e-414d-9106-62ab010a9c8d'; 
 
   const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState("");
   const [showTable, setShowTable] = useState(false);
-  const [paymentData, setPaymentData] = useState(null);
+  const [paymentData, setPaymentData] = useState([]);
 
   const getAccounts = useCallback(async () => {
-    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
+    const url = `https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountType/GetAccountType?customerId=${userID}`;
     try {
-      const username = "12173e30ec556fe4a951";
-      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-      const basicAuth = "Basic " + btoa(`${username}:${password}`);
-      
       const response = await axios.get(url, {
         headers: {
-          Authorization: basicAuth,
           "Content-Type": "application/json",
+          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
         },
       });
-
       if (response.status === 200) {
         const data = response.data;
-        // Filter accounts where productId is "101" and map to accountId for dropdown
-        const filteredAccounts = data
-          .filter(account => account.productId === "101")
-          .map(account => ({ id: account.accountId, name: `Account - ${account.accountId}` }));
-        setBankAccounts(filteredAccounts);
+        setBankAccounts([{ id: data.accountId, name: `Account ${data.accountId}` }]);
       }
     } catch (error) {
       console.log("Error:", error);
@@ -57,7 +47,7 @@ function DirectDebitPayment() {
       const basicAuth = "Basic " + btoa(`${username}:${password}`);
       const response = await axios.get(url, {
         headers: {
-           Authorization: basicAuth,
+          Authorization: basicAuth,
           "Content-Type": "application/json",
         },
       });
@@ -65,16 +55,14 @@ function DirectDebitPayment() {
         const data = response.data;
         const selectedAccountId = bankAccounts.find(account => account.name === selectedAccount)?.id;
         
-        // Find payment data matching the selected account ID
-        const matchedPayment = data.find(payment => payment.CustomerAccountId === selectedAccountId);
-        if (matchedPayment) {
-          setPaymentData({
-            creationDate: matchedPayment.CreationDate,
-            billingOrgAccountId: matchedPayment.BillingOrgAccountId,
-          });
+        // Filter payment data to find all records matching the selected account ID
+        const matchedPayments = data.filter(payment => payment.CustomerAccountId === selectedAccountId);
+        
+        if (matchedPayments.length > 0) {
+          setPaymentData(matchedPayments);
           setShowTable(true);
         } else {
-          setPaymentData(null);
+          setPaymentData([]);
           setShowTable(false);
           alert("No matching payment data found for the selected account.");
         }
@@ -127,7 +115,7 @@ function DirectDebitPayment() {
         </button>
       </form>
 
-      {showTable && paymentData && (
+      {showTable && paymentData.length > 0 && (
         <div style={{ marginTop: "30px" }}>
           <h2 style={{ color: "#4a90e2", marginBottom: "20px" }}>Direct Debit Payment Details</h2>
 
@@ -139,10 +127,12 @@ function DirectDebitPayment() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{paymentData.creationDate}</td>
-                <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{paymentData.billingOrgAccountId}</td>
-              </tr>
+              {paymentData.map((payment, index) => (
+                <tr key={index}>
+                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{payment.CreationDate}</td>
+                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{payment.BillingOrgAccountId}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
