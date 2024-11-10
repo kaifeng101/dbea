@@ -1,37 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import axios from "axios";
+import { selectUser } from "../redux/userSlice";
+import { useSelector } from "react-redux";
 
 function Termination() {
-  // Dummy data for bank accounts
-  const bankAccounts = [
-    { id: 1, name: "Account 1 - XXXX1234" },
-    { id: 2, name: "Account 2 - XXXX5678" },
-    { id: 3, name: "Account 3 - XXXX9101" },
-  ];
-
-  // Dummy data for standing instructions
-  const standingInstructions = [
-    { id: 1, payee: "Electricity Company", frequency: "Monthly", nextPaymentDate: "2024-12-01", lastPayment: "2024-11-01" },
-    { id: 2, payee: "Internet Provider", frequency: "Quarterly", nextPaymentDate: "2024-01-15", lastPayment: "2023-10-15" },
-    { id: 3, payee: "Gym Membership", frequency: "Yearly", nextPaymentDate: "2025-01-01", lastPayment: "2024-01-01" },
-  ];
-
+  const user = useSelector(selectUser);
+  const userID = user?.customerId;
+  
+  const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState("");
   const [showTable, setShowTable] = useState(false);
-  const [instructions, setInstructions] = useState(standingInstructions);
+  const [instructions, setInstructions] = useState([]);
+  
+  // Fetch bank accounts
+  const getAccounts = useCallback(async () => {
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
+    try {
+      const username = "12173e30ec556fe4a951";
+      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+      
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        const filteredAccounts = data
+          .filter(account => account.productId === "101")
+          .map(account => ({ id: account.accountId, name: `Account - ${account.accountId}` }));
+        setBankAccounts(filteredAccounts);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }, [userID]);
+
+  useEffect(() => {
+    getAccounts();
+  }, [getAccounts]);
 
   const handleAccountChange = (event) => {
     setSelectedAccount(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setShowTable(true);
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/payments/DirectdebitAuthorizations?CustomerId=${userID}`;
+    try {
+      const username = "12173e30ec556fe4a951";
+      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        const selectedAccountId = bankAccounts.find(account => account.name === selectedAccount)?.id;
+        
+        // Filter payments based on selected account ID
+        const matchedPayments = data.filter(payment => payment.CustomerAccountId === selectedAccountId);
+        
+        const formattedInstructions = matchedPayments.map(payment => ({
+          id: payment.DirectDebitId,
+          payee: payment.BillingOrgAccountId,
+          frequency: payment.Frequency,
+          nextPaymentDate: payment.NextPaymentDate,
+          lastPayment: payment.LastPaymentDate,
+        }));
+
+        setInstructions(formattedInstructions);
+        setShowTable(true);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
   };
 
   const handleRemove = (id) => {
     if (window.confirm("Are you sure you want to terminate this payment?")) {
-      // In a real app, you would make an API call here to delete the payee
-      // For this example, we update the state to remove the selected item
       const updatedInstructions = instructions.filter(instruction => instruction.id !== id);
       setInstructions(updatedInstructions);
       alert("Payment terminated successfully.");

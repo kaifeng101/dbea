@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { selectUser } from "../redux/userSlice";
+import { useSelector } from "react-redux";
 
 const Transactions = () => {
   const [amount, setAmount] = useState("");
@@ -11,15 +13,39 @@ const Transactions = () => {
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const user = useSelector(selectUser);
+  const userID = user?.customerId
+  const apiKey = 'c48b5803-757e-414d-9106-62ab010a9c8d'; 
+  console.log(userID)
+
+  const getAccountID = useCallback(async()=>{
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
+    try{
+      const username = "12173e30ec556fe4a951";
+      const password =
+        "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+      const response = await axios.get(url,{
+        headers: {
+          Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+    });
+      if (response.status === 200) {
+        const data = response.data;
+        console.log(data)
+      }
+  } catch (error) {
+    console.log("Error")
+  } 
+
+  }, [userID, apiKey]);
 
   // Fetch beneficiaries data (dummy data for now)
   useEffect(() => {
     // Dummy data - replace this with actual API call if needed
-    const dummyData = [
-      { id: 1, name: "John Doe", accountId: "123456" },
-      { id: 2, name: "Jane Smith", accountId: "654321" },
-    ];
-    setBeneficiaries(dummyData);
+    getAccountID()
   }, []);
 
   const handleAmountChange = (e) => setAmount(e.target.value);
@@ -88,7 +114,7 @@ const Transactions = () => {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="mt-24">
       <h1>Transaction Form</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>

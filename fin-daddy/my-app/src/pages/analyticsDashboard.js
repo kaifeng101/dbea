@@ -54,10 +54,15 @@ const Analytics = () => {
           return acc;
         }, {});
 
-        const carbonTypeArray = Object.keys(carbonTypeTotals).map(key => ({
-          name: `${key} (Bad Carbon)`, // Adjust label as needed
-          value: parseFloat(carbonTypeTotals[key].toFixed(1))
-        }));
+        const carbonTypeArray = Object.keys(carbonTypeTotals).map(key => {
+          // Determine the label based on the type
+          const label = key === 'Type 1' ? 'Carbon Emitted' : 'Carbon Credits Earned';
+      
+          return {
+            name: label,
+            value: parseFloat(carbonTypeTotals[key].toFixed(1))
+          };
+        });
   
         setCarbonTypeData(carbonTypeArray);
         
@@ -194,9 +199,9 @@ const Analytics = () => {
   ];
 
   const investmentDistribution = [
-    { name: 'Bundle A', value: 4000 },
-    { name: 'Bundle B', value: 3000 },
-    { name: 'Bundle C', value: 5000 },
+    { name: 'Basic Plan - Green Bonds', value: 4000 },
+    { name: 'Intermediate Plan - Green Investment Bundle', value: 3000 },
+    { name: 'Expert Plan - Leveraged Green Growth Package', value: 5000 },
   ];
 
   const monthlyInvestments = [
@@ -209,9 +214,9 @@ const Analytics = () => {
   ];
 
   const BUNDLE_COLORS = {
-    'Bundle A': '#0088FE',
-    'Bundle B': '#00C49F',
-    'Bundle C': '#FFBB28',
+    'Basic Plan - Green Bonds': '#0088FE',
+    'Intermediate Plan - Green Investment Bundle': '#00C49F',
+    'Expert Plan - Leveraged Green Growth Package': '#FFBB28',
   };
 
   const lowRiskData = [
@@ -239,7 +244,7 @@ const Analytics = () => {
   ];
 
   return (
-    <div className="m-20">
+    <div className="m-20  mt-24">
        <Grid container spacing={3} style={{ marginBottom: '20px' }}>
         {summaryData.map((item, index) => (
           <Grid item xs={12} sm={6} md={2.4} key={index}>
@@ -273,8 +278,8 @@ const Analytics = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="spending" stroke="#8884d8" />
-                  <Line type="monotone" dataKey="saving" stroke="#82ca9d" />
+                  <Line type="monotone" dataKey="spending" strokeWidth={3} stroke="#8884d8" />
+                  <Line type="monotone" dataKey="saving" strokeWidth={3} stroke="#82ca9d" />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -344,8 +349,8 @@ const Analytics = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="type1" stackId="a" fill={COLORS.red} name="Type 1 (Bad Carbon)" />
-                  <Bar dataKey="type2" stackId="a" fill={COLORS.green} name="Type 2 (Good Carbon)" />
+                  <Bar dataKey="type1" stackId="a" fill={COLORS.red} name="Carbon Emitted" />
+                  <Bar dataKey="type2" stackId="a" fill={COLORS.green} name="Carbon Credits Earned" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -393,9 +398,9 @@ const Analytics = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="bundleA" stackId="a" fill={BUNDLE_COLORS['Bundle A']} name="Bundle A" />
-                  <Bar dataKey="bundleB" stackId="a" fill={BUNDLE_COLORS['Bundle B']} name="Bundle B" />
-                  <Bar dataKey="bundleC" stackId="a" fill={BUNDLE_COLORS['Bundle C']} name="Bundle C" />
+                  <Bar dataKey="bundleA" stackId="a" fill={BUNDLE_COLORS['Basic Plan - Green Bonds']} name="Basic Plan - Green Bonds" />
+                  <Bar dataKey="bundleB" stackId="a" fill={BUNDLE_COLORS['Intermediate Plan - Green Investment Bundle']} name="Intermediate Plan - Green Investment Bundle" />
+                  <Bar dataKey="bundleC" stackId="a" fill={BUNDLE_COLORS['Expert Plan - Leveraged Green Growth Package']} name="Expert Plan - Leveraged Green Growth Package" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>

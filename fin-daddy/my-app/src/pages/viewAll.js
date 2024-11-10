@@ -1,32 +1,87 @@
-// src/pages/DirectDebitPayment.js
-
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import axios from "axios";
+import { selectUser } from "../redux/userSlice";
+import { useSelector } from "react-redux";
 
 function DirectDebitPayment() {
-  // Dummy bank account data
-  const bankAccounts = [
-    { id: 1, name: "Account 1 - XXXX1234" },
-    { id: 2, name: "Account 2 - XXXX5678" },
-    { id: 3, name: "Account 3 - XXXX9101" },
-  ];
+  const user = useSelector(selectUser);
+  const userID = user?.customerId;
+  const apiKey = 'c48b5803-757e-414d-9106-62ab010a9c8d'; 
 
-  // Dummy standing instruction data
-  const standingInstructions = [
-    { payee: "Electricity Company", frequency: "Monthly", nextPaymentDate: "2024-12-01", lastPayment: "2024-11-01" },
-    { payee: "Internet Provider", frequency: "Quarterly", nextPaymentDate: "2024-01-15", lastPayment: "2023-10-15" },
-    { payee: "Gym Membership", frequency: "Yearly", nextPaymentDate: "2025-01-01", lastPayment: "2024-01-01" },
-  ];
-
+  const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState("");
   const [showTable, setShowTable] = useState(false);
+  const [paymentData, setPaymentData] = useState(null);
+
+  const getAccounts = useCallback(async () => {
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
+    try {
+      const username = "12173e30ec556fe4a951";
+      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+      
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        // Filter accounts where productId is "101" and map to accountId for dropdown
+        const filteredAccounts = data
+          .filter(account => account.productId === "101")
+          .map(account => ({ id: account.accountId, name: `Account - ${account.accountId}` }));
+        setBankAccounts(filteredAccounts);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }, [userID]);
+
+  useEffect(() => {
+    getAccounts();
+  }, [getAccounts]);
 
   const handleAccountChange = (event) => {
     setSelectedAccount(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setShowTable(true);
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/payments/DirectdebitAuthorizations?CustomerId=${userID}`;
+    try {
+      const username = "12173e30ec556fe4a951";
+      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+      const response = await axios.get(url, {
+        headers: {
+           Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 200) {
+        const data = response.data;
+        const selectedAccountId = bankAccounts.find(account => account.name === selectedAccount)?.id;
+        
+        // Find payment data matching the selected account ID
+        const matchedPayment = data.find(payment => payment.CustomerAccountId === selectedAccountId);
+        if (matchedPayment) {
+          setPaymentData({
+            creationDate: matchedPayment.CreationDate,
+            billingOrgAccountId: matchedPayment.BillingOrgAccountId,
+          });
+          setShowTable(true);
+        } else {
+          setPaymentData(null);
+          setShowTable(false);
+          alert("No matching payment data found for the selected account.");
+        }
+      }
+    } catch (error) {
+      console.log("Error fetching payment data:", error);
+    }
   };
 
   return (
@@ -72,28 +127,22 @@ function DirectDebitPayment() {
         </button>
       </form>
 
-      {showTable && (
+      {showTable && paymentData && (
         <div style={{ marginTop: "30px" }}>
-          <h2 style={{ color: "#4a90e2", marginBottom: "20px" }}>Selected Account: {selectedAccount}</h2>
+          <h2 style={{ color: "#4a90e2", marginBottom: "20px" }}>Direct Debit Payment Details</h2>
 
           <table style={{ width: "100%", borderCollapse: "collapse", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
             <thead>
               <tr style={{ backgroundColor: "#4a90e2", color: "#fff", textAlign: "left" }}>
-                <th style={{ padding: "10px" }}>Payee/References</th>
-                <th style={{ padding: "10px" }}>Frequency</th>
-                <th style={{ padding: "10px" }}>Next Payment Date</th>
-                <th style={{ padding: "10px" }}>Last Payment</th>
+                <th style={{ padding: "10px" }}>Creation Date</th>
+                <th style={{ padding: "10px" }}>Billing Org Account ID</th>
               </tr>
             </thead>
             <tbody>
-              {standingInstructions.map((instruction, index) => (
-                <tr key={index} style={{ backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#fff" }}>
-                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{instruction.payee}</td>
-                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{instruction.frequency}</td>
-                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{instruction.nextPaymentDate}</td>
-                  <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{instruction.lastPayment}</td>
-                </tr>
-              ))}
+              <tr>
+                <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{paymentData.creationDate}</td>
+                <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{paymentData.billingOrgAccountId}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -103,4 +152,3 @@ function DirectDebitPayment() {
 }
 
 export default DirectDebitPayment;
-

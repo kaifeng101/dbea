@@ -1,18 +1,15 @@
-// src/pages/Authorisation.js
-
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import axios from "axios";
+import { selectUser } from "../redux/userSlice";
+import { useSelector } from "react-redux";
 
 function Authorisation() {
-  // Dummy data for bank accounts and vendor categories
-  const bankAccounts = [
-    { id: 1, name: "Account 1 - XXXX1234" },
-    { id: 2, name: "Account 2 - XXXX5678" },
-    { id: 3, name: "Account 3 - XXXX9101" },
-  ];
-
-  const vendorCategories = ["Utilities", "Subscription", "Insurance", "Loan Payment", "Other"];
-
   // State for form fields
+  const user = useSelector(selectUser);
+  const userID = user?.customerId;
+  const apiKey = 'c48b5803-757e-414d-9106-62ab010a9c8d'; 
+
+  const [bankAccounts, setBankAccounts] = useState([]); // Will hold accounts from API
   const [selectedAccount, setSelectedAccount] = useState("");
   const [payeeAccount, setPayeeAccount] = useState("");
   const [payeeName, setPayeeName] = useState("");
@@ -21,9 +18,45 @@ function Authorisation() {
   const [paymentDate, setPaymentDate] = useState("");
   const [vendorCategory, setVendorCategory] = useState("");
 
+  const vendorCategories = ["Utilities", "Subscription", "Insurance", "Loan Payment", "Other"];
+
+ const getAccounts = useCallback(async () => {
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
+    try {
+      const username = "12173e30ec556fe4a951";
+      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+      
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        // Filter accounts where productId is "101" and map to accountId for dropdown
+        const filteredAccounts = data
+          .filter(account => account.productId === "101")
+          .map(account => ({ id: account.accountId, name: `Account - ${account.accountId}` }));
+        setBankAccounts(filteredAccounts);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }, [userID]);
+
+  useEffect(() => {
+    getAccounts();
+  }, [getAccounts]);
+
+  const handleAccountChange = (event) => {
+    setSelectedAccount(event.target.value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Submit form data here
     console.log({
       selectedAccount,
       payeeAccount,
@@ -46,7 +79,7 @@ function Authorisation() {
           <select 
             id="fromAccount"
             value={selectedAccount}
-            onChange={(e) => setSelectedAccount(e.target.value)}
+            onChange={handleAccountChange}
             style={{ marginTop: "5px", padding: "10px", width: "100%", borderRadius: "4px", border: "1px solid #ccc" }}
             required
           >
