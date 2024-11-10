@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Avatar,
@@ -11,8 +11,6 @@ import {
   Alert,
   Card,
   CardContent,
-  // useTheme,
-  // useMediaQuery,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import { useSelector } from "react-redux";
@@ -72,7 +70,7 @@ const Profile = () => {
   const user = useSelector(selectUser);
   const certNo = user?.certificate
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer?CertificateNo=${certNo}`;
     const username = "12173e30ec556fe4a951";
     const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
@@ -98,12 +96,12 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [certNo]); // Adding certNo to the dependency array
 
   useEffect(() => {
     getData();
-  }, []);
-
+  }, [getData]); // Now getData is included in the dependency array
+  
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
