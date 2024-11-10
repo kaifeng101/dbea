@@ -1,36 +1,90 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { selectUser } from "../redux/userSlice";
 
 function BillPayment() {
-  // Dummy data for accounts and billing organizations
-  const userAccounts = [
-    { id: 1, name: "Account 1 - XXXX1234" },
-    { id: 2, name: "Account 2 - XXXX5678" },
-    { id: 3, name: "Account 3 - XXXX9101" },
-  ];
-
-  const billingOrganizations = [
-    { id: 1, name: "Electricity Company" },
-    { id: 2, name: "Water Services" },
-    { id: 3, name: "Internet Provider" },
-  ];
-
-  // State variables for form inputs
+  const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedFromAccount, setSelectedFromAccount] = useState("");
   const [selectedToAccount, setSelectedToAccount] = useState("");
   const [amount, setAmount] = useState("");
   const [transactionReference, setTransactionReference] = useState("");
+  const [error, setError] = useState(null);
+  const [transactionResult, setTransactionResult] = useState(null);
+
+  const user = useSelector(selectUser);
+  const userID = user?.customerId;
   const transactionDate = new Date().toLocaleDateString();
 
-  const handleSubmit = (event) => {
+  // List of predefined billing organizations
+  const billingOrganizations = [
+    { id: "0000004455", name: "Adobe Premiere Pro - 0000004455" },
+    { id: "0000004457", name: "Amazon Prime - 0000004457" },
+    { id: "0000004476", name: "Netflix - 0000004476" },
+    { id: "0000004441", name: "Coffee Bean - 0000004441" },
+    { id: "0000004469", name: "Housing Development Board - 0000004469" },
+  ];
+  const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
+    const username = "12173e30ec556fe4a951";
+    const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+    const basicAuth = "Basic " + btoa(`${username}:${password}`);
+
+  const getAccounts = useCallback(async () => {
+    if (!userID) return;
+    
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        const filteredAccounts = response.data
+          .filter(account => account.productId === "101")
+          .map(account => ({ id: account.accountId, name: `Account - ${account.accountId}` }));
+        setBankAccounts(filteredAccounts);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }, [userID]);
+
+  useEffect(() => {
+    getAccounts();
+  }, [getAccounts]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Here you can add logic to handle the form submission
-    console.log({
-      fromAccount: selectedFromAccount,
-      toAccount: selectedToAccount,
-      amount,
-      transactionReference,
-      transactionDate,
-    });
+
+    const putUrl = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${userID}/WithdrawCash`;
+    const requestData = {
+      consumerId: "api",
+      transactionId: transactionReference,
+      accountId: selectedFromAccount,
+      amount: parseFloat(amount),
+      narrative: "Bill payment",
+    };
+
+    try {
+      const response = await axios.put(putUrl, requestData, {
+        headers: {
+            Authorization: basicAuth,
+            "Content-Type": "application/json",
+          },
+        });
+
+      // Assuming a successful response
+      if (response.status === 200) {
+        console.log(response.data)
+        setTransactionResult(response.data);
+      }
+    } catch (error) {
+      console.log("Error during transaction:", error);
+      setError("Transaction failed. Please try again.");
+    }
   };
 
   return (
@@ -47,8 +101,8 @@ function BillPayment() {
           style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
         >
           <option value="" disabled>Select an account</option>
-          {userAccounts.map((account) => (
-            <option key={account.id} value={account.name}>
+          {bankAccounts.map((account) => (
+            <option key={account.id} value={account.id}>
               {account.name}
             </option>
           ))}
@@ -113,6 +167,17 @@ function BillPayment() {
           Submit
         </button>
       </form>
+
+      {transactionResult && (
+        <div style={{ marginTop: "20px", padding: "15px", border: "1px solid #4a90e2", borderRadius: "4px" }}>
+          <p><strong>Transaction Successful!</strong></p>
+          <p>Balance Before: ${transactionResult.balanceBefore}</p>
+          <p>Balance After: ${transactionResult.balanceAfter}</p>
+          <p>Transaction ID: {transactionResult.transactionId}</p>
+        </div>
+      )}
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
