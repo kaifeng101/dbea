@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Avatar,
@@ -11,12 +11,10 @@ import {
   Alert,
   Card,
   CardContent,
-  // useTheme,
-  // useMediaQuery,
 } from '@mui/material';
 import { styled } from '@mui/system';
-// import { useSelector } from "react-redux";
-// import { selectUser } from "../redux/userSlice";
+import { useSelector } from "react-redux";
+import { selectUser } from "../redux/userSlice";
 import {
   Person,
   Email,
@@ -32,7 +30,7 @@ import {
 
 const BackgroundHeader = styled(Box)(({ theme }) => ({
   height: 200,
-  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+  background: 'linear-gradient(45deg, #16a34a 30%, #4ade80 90%)',
   display: 'flex',
   alignItems: 'flex-end',
   justifyContent: 'center',
@@ -69,11 +67,11 @@ const Profile = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const theme = useTheme();
-  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const user = useSelector(selectUser);
+  const certNo = user?.certificate
 
-  const getData = async () => {
-    const url = "https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer??CustomerID=0000002313&CertificateNo=000002";
+  const getData = useCallback(async () => {
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer?CertificateNo=${certNo}`;
     const username = "12173e30ec556fe4a951";
     const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
 
@@ -98,12 +96,12 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [certNo]); // Adding certNo to the dependency array
 
   useEffect(() => {
     getData();
-  }, []);
-
+  }, [getData]); // Now getData is included in the dependency array
+  
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -121,7 +119,7 @@ const Profile = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="lg" sx={{ mt: 10, mb: 4 }}>
       <Paper style={{borderRadius: 16,
   overflow: 'hidden',
   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'}}>
