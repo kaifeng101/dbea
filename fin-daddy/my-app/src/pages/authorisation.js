@@ -4,43 +4,34 @@ import { selectUser } from "../redux/userSlice";
 import { useSelector } from "react-redux";
 
 function Authorisation() {
-  // State for form fields
   const user = useSelector(selectUser);
   const userID = user?.customerId;
-  const apiKey = 'c48b5803-757e-414d-9106-62ab010a9c8d'; 
 
-  const [bankAccounts, setBankAccounts] = useState([]); // Will hold accounts from API
+  const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState("");
-  const [payeeAccount, setPayeeAccount] = useState("");
   const [payeeName, setPayeeName] = useState("");
-  const [frequency, setFrequency] = useState("");
-  const [amount, setAmount] = useState("");
-  const [paymentDate, setPaymentDate] = useState("");
-  const [vendorCategory, setVendorCategory] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
 
-  const vendorCategories = ["Utilities", "Subscription", "Insurance", "Loan Payment", "Other"];
+  const billingOrganizations = [
+    { id: "0000004455", name: "Adobe Premiere Pro - 0000004455" },
+    { id: "0000004457", name: "Amazon Prime - 0000004457" },
+    { id: "0000004476", name: "Netflix - 0000004476" },
+    { id: "0000004441", name: "Coffee Bean - 0000004441" },
+    { id: "0000004469", name: "Housing Development Board - 0000004469" },
+  ];
 
- const getAccounts = useCallback(async () => {
-    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
+  const getAccounts = useCallback(async () => {
+    const url = `https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountType/GetAccountType?customerId=${userID}`;
     try {
-      const username = "12173e30ec556fe4a951";
-      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-      const basicAuth = "Basic " + btoa(`${username}:${password}`);
-      
       const response = await axios.get(url, {
         headers: {
-          Authorization: basicAuth,
           "Content-Type": "application/json",
+          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
         },
       });
-
       if (response.status === 200) {
         const data = response.data;
-        // Filter accounts where productId is "101" and map to accountId for dropdown
-        const filteredAccounts = data
-          .filter(account => account.productId === "101")
-          .map(account => ({ id: account.accountId, name: `Account - ${account.accountId}` }));
-        setBankAccounts(filteredAccounts);
+        setBankAccounts([{ id: data.accountId, name: `Account ${data.accountId}` }]);
       }
     } catch (error) {
       console.log("Error:", error);
@@ -55,17 +46,39 @@ function Authorisation() {
     setSelectedAccount(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handlePayeeNameChange = (event) => {
+    setPayeeName(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log({
-      selectedAccount,
-      payeeAccount,
-      payeeName,
-      frequency,
-      amount,
-      paymentDate,
-      vendorCategory,
-    });
+    const selectedBillingOrg = billingOrganizations.find(org => org.name === payeeName);
+
+    try {
+      const response = await axios.post(
+        "https://personal-g2wuuy52.outsystemscloud.com/TransactionRoundUp/rest/PaymentToMerchant/AddDirectDebit?consumerId=api",
+        {
+          customerId: userID,
+          accountId: selectedAccount,
+          billingOrgAccId: selectedBillingOrg.id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
+          },
+        }
+      );
+
+      if (response.data.Status === "Direct debit authorisation successful") {
+        setResponseMessage("Direct debit authorisation successful");
+      } else {
+        setResponseMessage("Direct debit authorisation unsuccessful");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+      setResponseMessage("Direct debit authorisation unsuccessful");
+    }
   };
 
   return (
@@ -85,7 +98,7 @@ function Authorisation() {
           >
             <option value="" disabled>Select an account</option>
             {bankAccounts.map((account) => (
-              <option key={account.id} value={account.name}>
+              <option key={account.id} value={account.id}>
                 {account.name}
               </option>
             ))}
@@ -95,64 +108,20 @@ function Authorisation() {
         {/* To Section */}
         <div>
           <label style={{ fontWeight: "bold" }}>To:</label>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "5px" }}>
-            <input 
-              type="text" 
-              placeholder="Payee Account" 
-              value={payeeAccount}
-              onChange={(e) => setPayeeAccount(e.target.value)}
-              style={{ padding: "10px", borderRadius: "4px", border: "1px solid #ccc", width: "100%" }}
-              required
-            />
-            <input 
-              type="text" 
-              placeholder="Payee Name" 
-              value={payeeName}
-              onChange={(e) => setPayeeName(e.target.value)}
-              style={{ padding: "10px", borderRadius: "4px", border: "1px solid #ccc", width: "100%" }}
-              required
-            />
-            <select 
-              value={frequency} 
-              onChange={(e) => setFrequency(e.target.value)}
-              style={{ padding: "10px", borderRadius: "4px", border: "1px solid #ccc", width: "100%" }}
-              required
-            >
-              <option value="" disabled>Select frequency</option>
-              <option value="one-time">One-time</option>
-              <option value="daily">Daily</option>
-              <option value="monthly">Monthly</option>
-              <option value="quarterly">Quarterly</option>
-              <option value="yearly">Yearly</option>
-            </select>
-            <input 
-              type="number" 
-              placeholder="Amount" 
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              style={{ padding: "10px", borderRadius: "4px", border: "1px solid #ccc", width: "100%" }}
-              required
-            />
-            <input 
-              type="date" 
-              placeholder="Payment Date" 
-              value={paymentDate}
-              onChange={(e) => setPaymentDate(e.target.value)}
-              style={{ padding: "10px", borderRadius: "4px", border: "1px solid #ccc", width: "100%" }}
-              required
-            />
-            <select 
-              value={vendorCategory} 
-              onChange={(e) => setVendorCategory(e.target.value)}
-              style={{ padding: "10px", borderRadius: "4px", border: "1px solid #ccc", width: "100%" }}
-              required
-            >
-              <option value="" disabled>Select vendor category</option>
-              {vendorCategories.map((category, index) => (
-                <option key={index} value={category}>{category}</option>
-              ))}
-            </select>
-          </div>
+          <select 
+            id="payeeName" 
+            value={payeeName}
+            onChange={handlePayeeNameChange}
+            style={{ padding: "10px", borderRadius: "4px", border: "1px solid #ccc", width: "100%" }}
+            required
+          >
+            <option value="" disabled>Select a payee</option>
+            {billingOrganizations.map((org) => (
+              <option key={org.id} value={org.name}>
+                {org.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button 
@@ -168,9 +137,16 @@ function Authorisation() {
             fontSize: "16px"
           }}
         >
-          Submit
+          Authorize
         </button>
       </form>
+
+      {/* Display response message */}
+      {responseMessage && (
+        <p style={{ marginTop: "20px", color: responseMessage.includes("successful") ? "green" : "red" }}>
+          {responseMessage}
+        </p>
+      )}
     </div>
   );
 }

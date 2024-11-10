@@ -4,7 +4,7 @@ import "../DirectDebitPayment.css"; // Ensure this CSS file is included
 
 function DirectDebitPayment() {
   return (
-    <div className="direct-debit-page">
+    <div className="direct-debit-page mt-10">
       <h1> Direct Debit Payment</h1>
       <div className="top-menu">
         <ul>
