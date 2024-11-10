@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import React, {useState} from 'react';
 import {
     Box,
@@ -219,6 +219,7 @@ const OnBoarding = () => {
           </Stepper>
     
           <Box sx={{ mt: 3 }}>
+          <Button><Link to="/" >BACK</Link></Button>
             {currentStep === 0 && (
               <>
                 <TextField
