@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { login, logout } from "../redux/userSlice";
+import { useDispatch} from "react-redux";
+import { login } from "../redux/userSlice";
 import {
   TextField,
   Button,
@@ -11,8 +11,8 @@ import {
   Snackbar,
 } from "@mui/material";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import OnBoarding from "../pages/onBoarding";
+import { Link, useNavigate } from "react-router-dom";
+// import OnBoarding from "../pages/onBoarding";
 
 function SlideTransition(props) {
   return <Slide {...props} direction="down" />;
@@ -27,7 +27,8 @@ const LoginComponent = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
+  // const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const fetchCustomer = async (certificateNo) => {
     try {
@@ -84,6 +85,7 @@ const LoginComponent = () => {
           setError("");
           setCertificateNo("");
           setPassword("");
+          navigate("/carbonMarketplace");
         } else {
           setError("Invalid Password. Please try again.");
         }
@@ -93,13 +95,6 @@ const LoginComponent = () => {
     } catch (error) {
       setError("An error occurred. Please try again.");
     }
-  };
-
-  const handleLogout = () => {
-    dispatch(logout());
-    setSnackbarMessage("Successfully Logged Out");
-    setSnackbarSeverity("success");
-    setOpenSnackbar(true);
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -112,7 +107,7 @@ const LoginComponent = () => {
   return (
     <Container
       maxWidth="sm"
-      className="flex justify-center pt-10 items-center align-middle"
+      className="flex justify-center items-center align-middle mt-24"
     >
       <Box
         sx={{
@@ -121,22 +116,13 @@ const LoginComponent = () => {
           alignItems: "center",
         }}
       >
-        {user.isLoggedIn ? (
-          <Box sx={{ textAlign: "center" }}>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
-          </Box>
-        ) : (
+
+        {/* {!user && ( */}
           <Box sx={{ width: "100%" }}>
             <div></div>
             <div>
               <div className="font-semibold text-xl py-2">Customer Login</div>
-              <div>
+              <div className="mb-4">
                 Don't have an account? Register{" "}
                 <Link to="/onBoarding" className="text-blue-400 cursor-pointer">
                 here
@@ -211,7 +197,8 @@ const LoginComponent = () => {
               </Button>
             </form>
           </Box>
-        )}
+        {/* )} */}
+
       </Box>
       <Snackbar
         open={openSnackbar}

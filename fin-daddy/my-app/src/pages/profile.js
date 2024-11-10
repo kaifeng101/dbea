@@ -11,12 +11,12 @@ import {
   Alert,
   Card,
   CardContent,
-  useTheme,
-  useMediaQuery,
+  // useTheme,
+  // useMediaQuery,
 } from '@mui/material';
 import { styled } from '@mui/system';
-import { useSelector } from "react-redux";
-import { selectUser } from "../redux/userSlice";
+// import { useSelector } from "react-redux";
+// import { selectUser } from "../redux/userSlice";
 import {
   Person,
   Email,
@@ -65,12 +65,12 @@ const InfoCard = styled(Card)(({ theme }) => ({
 }));
 
 const Profile = () => {
-  const user = useSelector(selectUser);
+  // const user = useSelector(selectUser);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // const theme = useTheme();
+  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const getData = async () => {
     const url = "https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer??CustomerID=0000002313&CertificateNo=000002";

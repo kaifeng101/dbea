@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "./style.css";
 import "./Redeem.css";
 
@@ -21,7 +21,8 @@ const offers = [
 
 const MilesRedemption = () => {
   const user = useSelector(selectUser);
-  const navigate = useNavigate();
+ 
+  // const navigate = useNavigate();
   const [miles, setMiles] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -35,7 +36,9 @@ console.log(user.customerId)
     const fetchMiles = async () => {
       try {
         const response = await fetch(
+
           `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=${user.customerId}`,
+
           {
             method: "GET",
             headers: {
@@ -57,7 +60,9 @@ console.log(user.customerId)
     };
 
     fetchMiles();
-  }, [user.customerId]);
+
+  }, [userID]);
+
 
   const handleSelectTransaction = (transaction) => {
     setSelectedTransaction(transaction);
@@ -116,7 +121,7 @@ console.log(user.customerId)
   };
 
   return (
-    <div className="container">
+    <div className="container" style={{ marginTop: "96px" }}>
       <h1 className="header">Miles Redemption</h1>
 
       <div className="balanceContainer">
