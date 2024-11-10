@@ -85,7 +85,7 @@ const LoginComponent = () => {
           setError("");
           setCertificateNo("");
           setPassword("");
-          navigate("/carbonMarketplace");
+          navigate("/analyticsDashboard");
         } else {
           setError("Invalid Password. Please try again.");
         }
