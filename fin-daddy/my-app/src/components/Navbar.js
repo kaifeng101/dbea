@@ -83,6 +83,9 @@ const NavBar = () => {
                 <MenuItem onClick={() => navigate("/billPayment")}>
                   Bill Payment
                 </MenuItem>
+                <MenuItem onClick={() => navigate("/transactionHistory")}>
+                  History
+                </MenuItem>
               </Menu>
               <Link to="/analyticsDashboard">
                 <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/analyticsDashboard") ? "lightblue" : "inherit"}}>Analytics</Button>
