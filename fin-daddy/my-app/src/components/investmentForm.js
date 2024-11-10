@@ -271,14 +271,15 @@ const PlanDetail = () => {
   const withdrawInvestment = async (amount) => {
     try {
       const initialAmount = calculateGrowthAmount(
-        previousPlan?.Amount,
-        previousPlan?.DateTime
+        existingPlan?.Amount,
+        existingPlan?.DateTime
       );
       const newAmount = initialAmount - amount;
       if (newAmount < 0) {
         alert(
           "You can only withdraw an amount less than or equal to the current amount."
         );
+        setWithdrawAmount(0)
         return;
       }
       await axios.post(
@@ -319,7 +320,7 @@ const PlanDetail = () => {
         },
       });
       console.log(response);
-      setWithdrawAmount("");
+      setWithdrawAmount(0);
       setSelectedWithdrawAccount("");
       return;
     } catch (error) {
@@ -429,11 +430,13 @@ const PlanDetail = () => {
         maximumLeverageAmount = holdingAmount;
       }
       if (existingPlan) {
-        amtToPay = amount;
-        calculateGrowthAmount(previousPlan?.Amount, previousPlan?.DateTime);
+        amtToPay =
+          amount +
+          calculateGrowthAmount(previousPlan?.Amount, previousPlan?.DateTime);
       }
-    //   console.log("Amount to pay", amtToPay);
-    //   console.log("Existing plan ", existingPlan);
+      
+      //   console.log("Amount to pay", amtToPay);
+      //   console.log("Existing plan ", existingPlan);
 
       await axios.post(
         `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
