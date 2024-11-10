@@ -10,7 +10,7 @@ import {
     Step,
     StepLabel,
     Container,
-    MenuItem,
+    // MenuItem,
     RadioGroup,
     Checkbox,
     FormControlLabel,
@@ -200,9 +200,10 @@ const OnBoarding = () => {
           padding: '40px', 
           borderRadius: '10px', 
           boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', 
-          marginTop: '20px',
           position: 'relative'
-        }}>
+        }} 
+        className=' mt-24'
+        >
           <Typography variant="h4" component="h1" align="center" gutterBottom>
             Registration
           </Typography>

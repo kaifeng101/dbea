@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "./style.css";
 
 
@@ -20,7 +20,8 @@ const offers = [
 
 const MilesRedemption = () => {
   const user = useSelector(selectUser);
-  const navigate = useNavigate();
+  const userID = user?.customerId
+  // const navigate = useNavigate();
   const [miles, setMiles] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -34,7 +35,7 @@ const MilesRedemption = () => {
     const fetchMiles = async () => {
       try {
         const response = await fetch(
-          `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=ABC`,
+          `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=${userID}`,
           {
             method: "GET",
             headers: {
@@ -56,7 +57,7 @@ const MilesRedemption = () => {
     };
 
     fetchMiles();
-  }, []);
+  }, [userID]);
 
   const handleSelectTransaction = (transaction) => {
     setSelectedTransaction(transaction);
@@ -86,7 +87,7 @@ const MilesRedemption = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            custId: "ABC",
+            custId: userID,
             milesAmt: offer.cost,
           }),
         }
@@ -115,7 +116,7 @@ const MilesRedemption = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container" style={{ marginTop: "96px" }}>
       <h1 className="header">Miles Redemption</h1>
 
       <div className="balanceContainer">
