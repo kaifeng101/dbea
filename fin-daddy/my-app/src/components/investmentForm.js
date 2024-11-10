@@ -23,7 +23,6 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import axios from "axios";
-import { init } from "express/lib/application";
 
 const lowRiskData = [
   { year: "2019", risk: 1, return: 8 },
@@ -217,7 +216,9 @@ const PlanDetail = () => {
   const [leverageRate, setLeverageRate] = useState(1);
   const [withdrawAmount, setWithdrawAmount] = useState(0.0);
   const [selectedWithdrawAccount, setSelectedWithdrawAccount] = useState("");
+  const [previousPlan, setPreviousPlan] = useState(null);
 
+  console.log("existing plan:", existingPlan);
   useEffect(() => {
     const title = plan.title;
     if (customerPlans) {
@@ -227,104 +228,10 @@ const PlanDetail = () => {
 
       if (matchingPlans.length > 0) {
         setExistingPlan(matchingPlans[0]);
+        setPreviousPlan(matchingPlans[1]);
       }
     }
-  }, [customerPlans, plan]);
-
-  const withdrawInvestment = async (amount) => {
-    try {
-      const initialAmount = calculateGrowthAmount(
-        existingPlan?.Amount,
-        existingPlan?.DateTime
-      );
-      const newAmount = initialAmount - amount;
-      const newObject = await axios.post(
-        `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
-        {
-          customerId: customerId,
-          type: plan.title,
-          amount: newAmount,
-          maximum_leverage: existingPlan.maximum_leverage,
-        },
-        {
-          headers: {
-            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
-          },
-        }
-      );
-
-      await fetchCustomerPlan();
-      console.log("Successfully added investment: ", newObject.data);
-
-      const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/DepositCash
-`;
-      const content = {
-        consumerId: customerId,
-        transactionId: 1,
-        accountId: selectedWithdrawAccount,
-        amount: withdrawAmount,
-        narrative: "string",
-      };
-
-      const response = await axios.post(url, content, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      console.log(response);
-      return;
-    } catch (error) {
-      console.error("Error Withdrawing Investment: ", error);
-    }
-  };
-
-  const getCustomerCreditScore = async (certificateNo) => {
-    try {
-      const url = `https://personal-svyrscxo.outsystemscloud.com/CreditScore/rest/CreditScore/GetCreditScore?CertificateNo=${certificateNo}
-`;
-      const headers = {
-        "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
-      };
-      const response = await axios.get(url, {
-        headers,
-      });
-      const creditScore = response.data.CreditScore;
-      let leverage = 1;
-      console.log("Credit score: ", creditScore);
-
-      if (creditScore >= 300 && creditScore <= 580) {
-        leverage = 10;
-      } else if (creditScore >= 581 && creditScore <= 670) {
-        leverage = 20;
-      } else if (creditScore >= 671 && creditScore <= 740) {
-        leverage = 35;
-      } else if (creditScore >= 741) {
-        leverage = 50;
-      }
-
-      setMaxLeverageRate(leverage);
-    } catch (error) {
-      setMaxLeverageRate(2);
-    }
-  };
-
-  useEffect(() => {
-    if (plan.title === "Leveraged Green Growth Package") {
-      getCustomerCreditScore(user.certificate);
-    }
-  }, [plan, user]);
-
-  const calculateHoldingAmount = () => {
-    const leverageAmount = maxLeverageRate * parseFloat(investmentAmount);
-    setHoldingAmount(leverageAmount);
-  };
-
-  useEffect(() => {
-    if (investmentAmount && maxLeverageRate >= 0) {
-      calculateHoldingAmount();
-    }
-  }, [investmentAmount, maxLeverageRate]);
+  }, [customerPlans, plan, investmentAmount]);
 
   const calculateGrowthAmount = (amount, datetime) => {
     const principal = parseFloat(amount);
@@ -354,9 +261,106 @@ const PlanDetail = () => {
       const dailyRate = rate / 30;
       growthAmount *= Math.pow(1 + dailyRate, remainingDaysInMonth);
     }
+    if (isNaN(growthAmount)) {
+      return false;
+    }
 
     return growthAmount.toFixed(2);
   };
+
+  const withdrawInvestment = async (amount) => {
+    try {
+      const initialAmount = calculateGrowthAmount(
+        previousPlan?.Amount,
+        previousPlan?.DateTime
+      );
+      const newAmount = initialAmount - amount;
+      if (newAmount < 0) {
+        alert(
+          "You can only withdraw an amount less than or equal to the current amount."
+        );
+        return;
+      }
+      await axios.post(
+        `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
+        {
+          customerId: customerId,
+          type: plan.title,
+          amount: newAmount,
+          maximum_leverage: existingPlan.maximum_leverage,
+        },
+        {
+          headers: {
+            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
+          },
+        }
+      );
+      await fetchCustomerPlan(customerId);
+
+      const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/DepositCash
+`;
+      const content = {
+        consumerId: customerId,
+        transactionId: 1,
+        accountId: selectedWithdrawAccount,
+        amount: withdrawAmount,
+        narrative: "string",
+      };
+
+      const username = "12173e30ec556fe4a951";
+      const password =
+        "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+      const response = await axios.put(url, content, {
+        headers: {
+          Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      setWithdrawAmount("");
+      setSelectedWithdrawAccount("");
+      return;
+    } catch (error) {
+      console.error("Error Withdrawing Investment: ", error);
+    }
+  };
+
+  const getCustomerCreditScore = async (certificateNo) => {
+    try {
+      const url = `https://personal-svyrscxo.outsystemscloud.com/CreditScore/rest/CreditScore/GetCreditScore?CertificateNo=${certificateNo}
+`;
+      const headers = {
+        "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
+      };
+      const response = await axios.get(url, {
+        headers,
+      });
+      const creditScore = response.data.CreditScore;
+      let leverage = 1;
+
+      if (creditScore >= 300 && creditScore <= 580) {
+        leverage = 10;
+      } else if (creditScore >= 581 && creditScore <= 670) {
+        leverage = 20;
+      } else if (creditScore >= 671 && creditScore <= 740) {
+        leverage = 35;
+      } else if (creditScore >= 741) {
+        leverage = 50;
+      }
+
+      setMaxLeverageRate(leverage);
+    } catch (error) {
+      setMaxLeverageRate(2);
+    }
+  };
+
+  useEffect(() => {
+    if (plan.title === "Leveraged Green Growth Package") {
+      getCustomerCreditScore(user.certificate);
+    }
+  }, [plan, user]);
 
   const fetchCustomerPlan = async (customerId) => {
     try {
@@ -379,20 +383,24 @@ const PlanDetail = () => {
   }, [customerId]);
 
   const makePayment = async (amount) => {
-    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/WithdrawCash`;
-    const content = {
-      consumerId: customerId,
-      transactionId: "-",
-      accountId: selectedFromAccount,
-      amount: amount,
-      narrative: "-",
-    };
-
     try {
-      const response = await axios.post(url, content, {
+      const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/WithdrawCash`;
+      const content = {
+        consumerId: customerId,
+        transactionId: "-",
+        accountId: selectedFromAccount,
+        amount: amount,
+        narrative: "-",
+      };
+      const username = "12173e30ec556fe4a951";
+      const password =
+        "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+      const response = await axios.put(url, content, {
         headers: {
+          Authorization: basicAuth,
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
       });
 
@@ -407,40 +415,45 @@ const PlanDetail = () => {
   const handleInvestmentSubmit = async (amount) => {
     try {
       let amtToPay = amount;
+
       if (plan.title === "Leveraged Green Growth Package") {
         amtToPay *= leverageRate;
       }
-
       const pay = await makePayment(amtToPay);
-
       if (!pay) {
         return;
       }
 
       let maximumLeverageAmount = "";
       if (plan.title === "Leveraged Green Growth Package") {
-        maximumLeverageAmount = investmentAmount * leverageRate;
+        maximumLeverageAmount = holdingAmount;
       }
+      if (existingPlan) {
+        amtToPay = amount;
+        calculateGrowthAmount(previousPlan?.Amount, previousPlan?.DateTime);
+      }
+    //   console.log("Amount to pay", amtToPay);
+    //   console.log("Existing plan ", existingPlan);
 
-      const response = await axios.post(
+      await axios.post(
         `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
         {
           customerId: customerId,
           type: plan.title,
-          amount: amount,
+          amount: amtToPay,
           maximum_leverage: maximumLeverageAmount,
         },
         {
           headers: {
             "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
+            "Content-Type": "application/json",
           },
         }
       );
 
-      await fetchCustomerPlan();
-      console.log("Successfully added investment: ", response.data);
-
-      return response.data;
+      setInvestmentAmount("");
+      setSelectedFromAccount("");
+      setSelectedWithdrawAccount("");
     } catch (error) {
       console.error("Error adding investment: ", error);
     }
@@ -527,10 +540,16 @@ const PlanDetail = () => {
                       existingPlan?.Amount,
                       existingPlan?.DateTime
                     ) - existingPlan.Amount
-                  ).toFixed(2)}
+                  ).toFixed(2) || 0}
                 </Typography>
+                {plan.title === "Leveraged Green Growth Package" && (
+                  <Typography variant="body1">
+                    <strong>Current Holding Amount:</strong> $
+                    {existingPlan?.maximum_leverage || 0}
+                  </Typography>
+                )}
                 <TextField
-                  label="Add Funds"
+                  label="Add Investment Amount"
                   variant="outlined"
                   fullWidth
                   sx={{ mt: 2 }}
@@ -575,7 +594,7 @@ const PlanDetail = () => {
                     disabled
                     fullWidth
                     sx={{ mb: 2, mt: 1 }}
-                    value={plan.maximum_leverage}
+                    value={existingPlan.maximum_leverage}
                     //    onChange={(e) => setHoldingAmount(e.target.value)}
                   />
                 )}
@@ -584,7 +603,7 @@ const PlanDetail = () => {
                   color="primary"
                   fullWidth
                   sx={{ mt: 2 }}
-                  onClick={handleInvestmentSubmit(investmentAmount)}
+                  onClick={() => handleInvestmentSubmit(investmentAmount)}
                 >
                   Add Funds
                 </Button>
@@ -597,12 +616,7 @@ const PlanDetail = () => {
                   type="number"
                   value={withdrawAmount}
                   onChange={(e) => {
-                    const maxAmount = calculateGrowthAmount(
-                      existingPlan?.Amount,
-                      existingPlan?.DateTime
-                    );
-                    const value = Math.min(e.target.value, maxAmount); // Restrict to max value
-                    setWithdrawAmount(value);
+                    setWithdrawAmount(e.target.value);
                   }}
                   sx={{ mt: 2 }}
                   inputProps={{
@@ -610,7 +624,6 @@ const PlanDetail = () => {
                       existingPlan?.Amount,
                       existingPlan?.DateTime
                     ),
-                    min: 0, // Optional: Set a minimum value, e.g., zero
                   }}
                 />
                 <TextField
@@ -643,14 +656,13 @@ const PlanDetail = () => {
                   color="secondary"
                   fullWidth
                   sx={{ mt: 2 }}
-                  onClick={withdrawInvestment}
+                  onClick={() => withdrawInvestment(withdrawAmount)}
                 >
                   Withdraw Funds
                 </Button>
               </CardContent>
             </Card>
           ) : (
-            // Display new investment form if the user does not have an existing plan
             <Card sx={{ padding: "3px" }} variant="outlined">
               <CardContent>
                 <Typography variant="h6" sx={{}}>
@@ -686,54 +698,92 @@ const PlanDetail = () => {
                     </Typography>
                   </>
                 )}
-                <TextField
-                  select
-                  label="Account"
-                  value={selectedFromAccount}
-                  onChange={(e) => setSelectedFromAccount(e.target.value)}
-                  required
-                  fullWidth
-                  disabled={
-                    !investmentAmount || isNaN(parseFloat(investmentAmount))
-                  }
-                  sx={{ mb: 2 }}
-                  SelectProps={{
-                    native: true,
-                  }}
-                >
-                  <option value="" disabled></option>
-                  {accounts.length > 0 &&
-                    accounts
-                      .filter(
-                        (account) =>
-                          account.balance >= parseFloat(investmentAmount)
-                      )
-                      .map((account) => (
-                        <option
-                          key={account.accountId}
-                          value={account.accountId}
-                        >
-                          {account.accountId} (balance: ${account.balance})
-                        </option>
-                      ))}
-                </TextField>
-                {plan.title === "Leveraged Green Growth Package" && (
+                {plan.title !== "Leveraged Green Growth Package" && (
                   <TextField
-                    label="Holding Amount"
-                    variant="outlined"
-                    disabled
+                    select
+                    label="Account"
+                    value={selectedFromAccount}
+                    onChange={(e) => setSelectedFromAccount(e.target.value)}
+                    required
                     fullWidth
-                    sx={{ mb: 2, mt: 1 }}
-                    value={investmentAmount * leverageRate}
-                    onChange={(e) => setHoldingAmount(e.target.value)}
-                  />
+                    disabled={
+                      !investmentAmount || isNaN(parseFloat(investmentAmount))
+                    }
+                    sx={{ mb: 2 }}
+                    SelectProps={{
+                      native: true,
+                    }}
+                  >
+                    <option value="" disabled></option>
+                    {accounts.length > 0 &&
+                      accounts
+                        .filter(
+                          (account) =>
+                            account.balance >= parseFloat(investmentAmount)
+                        )
+                        .map((account) => (
+                          <option
+                            key={account.accountId}
+                            value={account.accountId}
+                          >
+                            {account.accountId} (balance: ${account.balance})
+                          </option>
+                        ))}
+                  </TextField>
                 )}
+
+                {plan.title === "Leveraged Green Growth Package" && (
+                  <>
+                    <TextField
+                      select
+                      label="Account"
+                      value={selectedFromAccount}
+                      onChange={(e) => setSelectedFromAccount(e.target.value)}
+                      required
+                      fullWidth
+                      disabled={
+                        !investmentAmount || isNaN(parseFloat(investmentAmount))
+                      }
+                      sx={{ mb: 2 }}
+                      SelectProps={{
+                        native: true,
+                      }}
+                    >
+                      <option value="" disabled></option>
+                      {accounts.length > 0 &&
+                        accounts
+                          .filter(
+                            (account) =>
+                              account.balance >=
+                              parseFloat(investmentAmount) * leverageRate
+                          )
+                          .map((account) => (
+                            <option
+                              key={account.accountId}
+                              value={account.accountId}
+                            >
+                              {account.accountId} (balance: ${account.balance})
+                            </option>
+                          ))}
+                    </TextField>
+                    <TextField
+                      label="Holding Amount"
+                      variant="outlined"
+                      disabled
+                      fullWidth
+                      sx={{ mb: 2, mt: 1 }}
+                      value={investmentAmount * leverageRate}
+                      onChange={(e) => setHoldingAmount(e.target.value)}
+                    />
+                  </>
+                )}
+
                 <Button
                   variant="contained"
                   color="primary"
                   fullWidth
                   sx={{ mt: 2 }}
-                  onClick={handleInvestmentSubmit}
+                  onClick={() => handleInvestmentSubmit(investmentAmount)}
                 >
                   Start Investment
                 </Button>
