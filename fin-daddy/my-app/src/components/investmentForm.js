@@ -9,10 +9,45 @@ import {
   Slider,
   InputAdornment,
 } from "@mui/material";
-import { useParams, Link } from "react-router-dom";
+import {
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import axios from "axios";
+import { init } from "express/lib/application";
+
+const lowRiskData = [
+  { year: "2019", risk: 1, return: 8 },
+  { year: "2020", risk: 1.5, return: 10 },
+  { year: "2021", risk: 2, return: 11 },
+  { year: "2022", risk: 2.2, return: 9 },
+  { year: "2023", risk: 2.5, return: 6 },
+];
+
+const mediumRiskData = [
+  { year: "2019", risk: 5, return: 13 },
+  { year: "2020", risk: 5.5, return: 12 },
+  { year: "2021", risk: 6, return: 11 },
+  { year: "2022", risk: 6.5, return: 16 },
+  { year: "2023", risk: 7, return: 9 },
+];
+
+const highRiskData = [
+  { year: "2019", risk: 10, return: 20 },
+  { year: "2020", risk: 11, return: 26 },
+  { year: "2021", risk: 12, return: 17 },
+  { year: "2022", risk: 13, return: 20 },
+  { year: "2023", risk: 15, return: 21 },
+];
 
 const planDetails = {
   1: {
@@ -41,6 +76,131 @@ const planDetails = {
   },
 };
 
+const getLowRiskChart = () => {
+  return (
+    <div style={{ flex: "1 1 48%" }}>
+      <Card variant="outlined">
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="div"
+          style={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}
+        >
+          Basic Plan - Green Bonds
+        </Typography>
+        <CardContent className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={lowRiskData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="risk"
+                stroke="#2c7a7b"
+                strokeWidth={3}
+                name="Risk (%)"
+              />
+              <Line
+                type="monotone"
+                dataKey="return"
+                stroke="#2b6cb0"
+                strokeWidth={3}
+                name="Return (%)"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+const getMediumRiskChart = () => {
+  return (
+    <div style={{ flex: "1 1 48%" }}>
+      <Card variant="outlined">
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="div"
+          style={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}
+        >
+          Intermediate Plan - Green Investment Bundle
+        </Typography>
+        <CardContent className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={mediumRiskData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="risk"
+                stroke="#2c7a7b"
+                strokeWidth={3}
+                name="Risk (%)"
+              />
+              <Line
+                type="monotone"
+                dataKey="return"
+                stroke="#2b6cb0"
+                strokeWidth={3}
+                name="Return (%)"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+const getHighRiskChart = () => {
+  return (
+    <div style={{ flex: "1 1 48%" }}>
+      <Card variant="outlined" sx={{ padding: "3px" }}>
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="div"
+          style={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}
+        >
+          Expert Plan - Leveraged Green Growth Package
+        </Typography>
+        <CardContent className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={highRiskData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="risk"
+                stroke="#2c7a7b"
+                strokeWidth={3}
+                name="Risk (%)"
+              />
+              <Line
+                type="monotone"
+                dataKey="return"
+                stroke="#2b6cb0"
+                strokeWidth={3}
+                name="Return (%)"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 const PlanDetail = () => {
   const { id } = useParams();
   const plan = planDetails[id];
@@ -49,42 +209,75 @@ const PlanDetail = () => {
 
   const [customerPlans, setCurrentPlans] = useState(null);
   const [investmentAmount, setInvestmentAmount] = useState("");
-  const [expectedDuration, setExpectedDuration] = useState("");
-  const [expectedReturn, setExpectedReturn] = useState("");
   const [selectedFromAccount, setSelectedFromAccount] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [existingPlan, setExistingPlan] = useState(null);
-  const [maxLeverageRate, setMaxLeverageRate] = useState(0);
+  const [maxLeverageRate, setMaxLeverageRate] = useState(1);
   const [holdingAmount, setHoldingAmount] = useState("");
-  const [leverageRate, setLeverageRate] = useState(0.0);
+  const [leverageRate, setLeverageRate] = useState(1);
+  const [withdrawAmount, setWithdrawAmount] = useState(0.0);
+  const [selectedWithdrawAccount, setSelectedWithdrawAccount] = useState("");
 
   useEffect(() => {
     const title = plan.title;
     if (customerPlans) {
-      const matchingPlans = customerPlans.filter((plan) => plan.Type === title);
+      const matchingPlans = customerPlans
+        .filter((plan) => plan.Type === title)
+        .sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime)); // Sort by DateTime in descending order;
 
       if (matchingPlans.length > 0) {
         setExistingPlan(matchingPlans[0]);
       }
     }
-  }, [customerPlans]);
+  }, [customerPlans, plan]);
 
-  const calculateExpectedReturn = () => {
-    const principal = parseFloat(investmentAmount);
-    if (!principal || !expectedDuration || isNaN(principal)) return;
+  const withdrawInvestment = async (amount) => {
+    try {
+      const initialAmount = calculateGrowthAmount(
+        existingPlan?.Amount,
+        existingPlan?.DateTime
+      );
+      const newAmount = initialAmount - amount;
+      const newObject = await axios.post(
+        `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
+        {
+          customerId: customerId,
+          type: plan.title,
+          amount: newAmount,
+          maximum_leverage: existingPlan.maximum_leverage,
+        },
+        {
+          headers: {
+            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
+          },
+        }
+      );
 
-    const monthlyRate = plan.rate;
-    const expectedAmount =
-      principal * Math.pow(1 + monthlyRate, expectedDuration);
+      await fetchCustomerPlan();
+      console.log("Successfully added investment: ", newObject.data);
 
-    setExpectedReturn(expectedAmount.toFixed(2));
-  };
+      const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/DepositCash
+`;
+      const content = {
+        consumerId: customerId,
+        transactionId: 1,
+        accountId: selectedWithdrawAccount,
+        amount: withdrawAmount,
+        narrative: "string",
+      };
 
-  useEffect(() => {
-    if (investmentAmount && expectedDuration) {
-      calculateExpectedReturn();
+      const response = await axios.post(url, content, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      console.log(response);
+      return;
+    } catch (error) {
+      console.error("Error Withdrawing Investment: ", error);
     }
-  }, [investmentAmount, expectedDuration]);
+  };
 
   const getCustomerCreditScore = async (certificateNo) => {
     try {
@@ -96,38 +289,28 @@ const PlanDetail = () => {
       const response = await axios.get(url, {
         headers,
       });
-      const creditScore = response.data.creditScore;
-      let leverage = 1; // Default leverage rate for a good credit score
+      const creditScore = response.data.CreditScore;
+      let leverage = 1;
+      console.log("Credit score: ", creditScore);
 
       if (creditScore >= 300 && creditScore <= 580) {
-        leverage = 1.5; // Low Credit Score -> higher leverage rate (riskier)
+        leverage = 10;
       } else if (creditScore >= 581 && creditScore <= 670) {
-        leverage = 1.25; // Fair Credit Score -> moderate leverage rate
+        leverage = 20;
       } else if (creditScore >= 671 && creditScore <= 740) {
-        leverage = 1; // Good Credit Score -> baseline leverage rate
+        leverage = 35;
       } else if (creditScore >= 741) {
-        leverage = 0.75; // Excellent Credit Score -> lower leverage rate (less risky)
+        leverage = 50;
       }
 
-      if (expectedDuration <= 6) {
-        leverage *= 1.1; // Shorter duration: higher leverage rate
-      } else if (expectedDuration > 6 && expectedDuration <= 12) {
-        leverage *= 1; // Medium duration: baseline leverage rate
-      } else {
-        leverage *= 0.9; // Longer duration: lower leverage rate
-      }
-
-      if (!isNaN(leverage)) {
-        setMaxLeverageRate(leverage);
-      }
       setMaxLeverageRate(leverage);
     } catch (error) {
-      setCurrentPlans(null);
+      setMaxLeverageRate(2);
     }
   };
 
   useEffect(() => {
-    if (plan.id === 3) {
+    if (plan.title === "Leveraged Green Growth Package") {
       getCustomerCreditScore(user.certificate);
     }
   }, [plan, user]);
@@ -156,7 +339,6 @@ const PlanDetail = () => {
       currentDate.getMonth() -
       startDate.getMonth();
 
-    // const daysDifference = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
     const daysInMonth = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + 1,
@@ -186,7 +368,6 @@ const PlanDetail = () => {
         headers,
       });
 
-      //   console.log("Customer Plans: ", response.data);
       setCurrentPlans(response.data);
     } catch (error) {
       setCurrentPlans(null);
@@ -197,15 +378,57 @@ const PlanDetail = () => {
     fetchCustomerPlan(customerId);
   }, [customerId]);
 
-  const handleInvestmentSubmit = async () => {
+  const makePayment = async (amount) => {
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/WithdrawCash`;
+    const content = {
+      consumerId: customerId,
+      transactionId: "-",
+      accountId: selectedFromAccount,
+      amount: amount,
+      narrative: "-",
+    };
+
     try {
+      const response = await axios.post(url, content, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      console.log("Payment successful:", response.data);
+      return true;
+    } catch (error) {
+      console.error("Error making payment:", error.response || error.message);
+      return false;
+    }
+  };
+
+  const handleInvestmentSubmit = async (amount) => {
+    try {
+      let amtToPay = amount;
+      if (plan.title === "Leveraged Green Growth Package") {
+        amtToPay *= leverageRate;
+      }
+
+      const pay = await makePayment(amtToPay);
+
+      if (!pay) {
+        return;
+      }
+
+      let maximumLeverageAmount = "";
+      if (plan.title === "Leveraged Green Growth Package") {
+        maximumLeverageAmount = investmentAmount * leverageRate;
+      }
+
       const response = await axios.post(
         `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
         {
           customerId: customerId,
           type: plan.title,
-          amount: parseFloat(investmentAmount),
-          maximum_leverage: "",
+          amount: amount,
+          maximum_leverage: maximumLeverageAmount,
         },
         {
           headers: {
@@ -220,40 +443,6 @@ const PlanDetail = () => {
       return response.data;
     } catch (error) {
       console.error("Error adding investment: ", error);
-    }
-  };
-
-  const makePayment = async ({
-    ConsumerId,
-    TransactionId,
-    CustomerId,
-    accountFrom,
-    accountTo,
-    transactionAmount,
-    // transactionReferenceNumber,
-    // narrative,
-  }) => {
-    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/payments/BillPayment?ConsumerId=${ConsumerId}&TransactionId=${TransactionId}&CustomerId=${CustomerId}`;
-    const data = {
-      accountFrom: accountFrom,
-      accountTo: accountTo,
-      transactionAmount: transactionAmount,
-      transactionReferenceNumber: 0,
-      narrative : "",
-    };
-
-    try {
-      const response = await axios.post(url, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-
-      console.log("Payment successful:", response.data);
-      return response.data;
-    } catch (error) {
-      console.error("Error making payment:", error.response || error.message);
     }
   };
 
@@ -289,11 +478,12 @@ const PlanDetail = () => {
   if (!plan) return <Typography variant="h5">Plan not found</Typography>;
 
   return (
-    <Container maxWidth="md" sx={{ marginTop: "40px" }}>
-      <Button component={Link} to="/investments" sx={{ mb: 2 }}>
-        Back to Investment Plans
-      </Button>
-      <Card variant="outlined" sx={{ padding: "3px" }}>
+    <Container sx={{ marginTop: "100px" }} className="flex flex-col  gap-3 ">
+      {/* Investment Plan Card */}
+      <Card
+        variant="outlined"
+        sx={{ padding: "3px", flexBasis: { xs: "100%" } }}
+      >
         <CardContent>
           <Typography variant="h4" gutterBottom>
             {plan.title}
@@ -307,182 +497,251 @@ const PlanDetail = () => {
           <Typography variant="subtitle1">
             <strong>Expected Return:</strong> {plan.expectedReturn}
           </Typography>
+        </CardContent>
+      </Card>
+      <div className="flex gap-3 md:flex-row flex-col w-full">
+        <div className="md:w-3/5">
+          {plan.title === "Green Bonds" && getLowRiskChart()}
+          {plan.title === "Green Investment Bundle" && getMediumRiskChart()}
+          {plan.title === "Leveraged Green Growth Package" &&
+            getHighRiskChart()}
+        </div>
 
+        {/* Investment Form Section */}
+        <div className="md:w-2/5">
           {existingPlan !== null ? (
-            <div>
-              <Typography variant="h6" sx={{ mt: 3 }}>
-                Current Investment Details
-              </Typography>
-              {plan.id === 3 && (
+            <Card sx={{}} variant="outlined">
+              <CardContent>
+                <Typography variant="h6">Current Investment Details</Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  <strong>Current Amount:</strong> $
+                  {calculateGrowthAmount(
+                    existingPlan?.Amount,
+                    existingPlan?.DateTime
+                  )}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Earnings:</strong> $
+                  {(
+                    calculateGrowthAmount(
+                      existingPlan?.Amount,
+                      existingPlan?.DateTime
+                    ) - existingPlan.Amount
+                  ).toFixed(2)}
+                </Typography>
                 <TextField
-                  label="Holding Amount"
+                  label="Add Funds"
                   variant="outlined"
                   fullWidth
                   sx={{ mt: 2 }}
-                  value={holdingAmount}
-                  onChange={(e) => setHoldingAmount(e.target.value)}
+                  value={investmentAmount}
+                  onChange={(e) => setInvestmentAmount(e.target.value)}
                 />
-              )}
-              <Typography variant="body1" sx={{ mt: 1 }}>
-                <strong>Current Amount:</strong> $
-                {calculateGrowthAmount(
-                  existingPlan?.Amount,
-                  existingPlan?.DateTime
-                )}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Earnings:</strong> ${(calculateGrowthAmount(
-                  existingPlan?.Amount,
-                  existingPlan?.DateTime
-                ) - existingPlan.Amount).toFixed(2)}
-              </Typography>
-              <TextField
-                label="Add Funds"
-                variant="outlined"
-                fullWidth
-                sx={{ mt: 2 }}
-                value={investmentAmount}
-                onChange={(e) => setInvestmentAmount(e.target.value)}
-              />
-              <TextField
-                select
-                label="Account"
-                value={selectedFromAccount}
-                onChange={(e) => setSelectedFromAccount(e.target.value)}
-                required
-                fullWidth
-                disabled={
-                  !investmentAmount || isNaN(parseFloat(investmentAmount))
-                }
-                sx={{ mt: 2 }}
-                SelectProps={{
-                  native: true, // Use native select for compatibility
-                }}
-              >
-                <option value="" disabled></option>
-                {accounts.length > 0 &&
-                  accounts
-                    .filter(
-                      (account) =>
-                        account.balance >= parseFloat(investmentAmount)
-                    )
-                    .map((account) => (
-                      <option key={account.accountId} value={account.accountId}>
-                        {account.accountId} (balance: ${account.balance})
-                      </option>
-                    ))}
-              </TextField>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2 }}
-                onClick={handleInvestmentSubmit}
-              >
-                Add Funds
-              </Button>
-            </div>
-          ) : (
-            <form>
-              <Typography variant="h6" sx={{ mt: 3 }}>
-                Start Investing in This Plan
-              </Typography>
-              {plan.title === "Leveraged Green Growth Package" && (
                 <TextField
-                  label="Holding Amount"
-                  variant="outlined"
+                  select
+                  label="Account"
+                  value={selectedFromAccount}
+                  onChange={(e) => setSelectedFromAccount(e.target.value)}
                   required
                   fullWidth
-                  sx={{ mb: 2, mt: 1 }}
-                  value={holdingAmount}
-                  onChange={(e) => setHoldingAmount(e.target.value)}
-                />
-              )}
-              <TextField
-                label="Investment Amount"
-                variant="outlined"
-                fullWidth
-                sx={{ mb: 2, mt: 1 }}
-                onChange={(e) => setInvestmentAmount(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
-                  ), // Adds a $ sign to the start
-                }}
-                value={investmentAmount}
-                required
-              />
-              <TextField
-                label="Expected Duration (months)"
-                variant="outlined"
-                fullWidth
-                onChange={(e) => setExpectedDuration(e.target.value)}
-                value={expectedDuration}
-                sx={{ mb: 2 }}
-                required
-              />
-              {plan.title === "Leveraged Green Growth Package" && (
-                <>
-                  <Slider
-                    value={leverageRate}
-                    step={0.01}
-                    min={0.01} // or some sensible minimum value
-                    max={maxLeverageRate || 2} // maxLeverageRate should be set properly
-                    onChange={(e, newValue) => setLeverageRate(newValue)}
-                    valueLabelDisplay="auto"
-                    valueLabelFormat={(value) => `${value.toFixed(2)}`}
+                  disabled={
+                    !investmentAmount || isNaN(parseFloat(investmentAmount))
+                  }
+                  sx={{ mt: 2 }}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  <option value="" disabled></option>
+                  {accounts.length > 0 &&
+                    accounts
+                      .filter(
+                        (account) =>
+                          account.balance >= parseFloat(investmentAmount)
+                      )
+                      .map((account) => (
+                        <option
+                          key={account.accountId}
+                          value={account.accountId}
+                        >
+                          {account.accountId} (balance: ${account.balance})
+                        </option>
+                      ))}
+                </TextField>
+                {plan.title === "Leveraged Green Growth Package" && (
+                  <TextField
+                    label="Holding Amount"
+                    variant="outlined"
+                    disabled
+                    fullWidth
+                    sx={{ mb: 2, mt: 1 }}
+                    value={plan.maximum_leverage}
+                    //    onChange={(e) => setHoldingAmount(e.target.value)}
                   />
+                )}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onClick={handleInvestmentSubmit(investmentAmount)}
+                >
+                  Add Funds
+                </Button>
 
-                  <Typography variant="body1" sx={{ mb: 2 }}>
-                    <strong>Leverage Rate:</strong> {leverageRate}%
-                  </Typography>
-                </>
-              )}
-              <TextField
-                select
-                label="Account"
-                value={selectedFromAccount}
-                onChange={(e) => setSelectedFromAccount(e.target.value)}
-                required
-                fullWidth
-                disabled={
-                  !investmentAmount || isNaN(parseFloat(investmentAmount))
-                }
-                sx={{ mb: 2 }}
-                SelectProps={{
-                  native: true, // Use native select for compatibility
-                }}
-              >
-                <option value="" disabled></option>
-                {accounts.length > 0 &&
-                  accounts
-                    .filter(
-                      (account) =>
-                        account.balance >= parseFloat(investmentAmount)
-                    )
-                    .map((account) => (
+                <hr className="bg-black border-1 border my-4" />
+                <TextField
+                  label="Withdraw Amount"
+                  variant="outlined"
+                  fullWidth
+                  type="number"
+                  value={withdrawAmount}
+                  onChange={(e) => {
+                    const maxAmount = calculateGrowthAmount(
+                      existingPlan?.Amount,
+                      existingPlan?.DateTime
+                    );
+                    const value = Math.min(e.target.value, maxAmount); // Restrict to max value
+                    setWithdrawAmount(value);
+                  }}
+                  sx={{ mt: 2 }}
+                  inputProps={{
+                    max: calculateGrowthAmount(
+                      existingPlan?.Amount,
+                      existingPlan?.DateTime
+                    ),
+                    min: 0, // Optional: Set a minimum value, e.g., zero
+                  }}
+                />
+                <TextField
+                  select
+                  label="Account To"
+                  value={selectedWithdrawAccount}
+                  onChange={(e) => setSelectedWithdrawAccount(e.target.value)}
+                  required
+                  fullWidth
+                  disabled={
+                    !withdrawAmount || isNaN(parseFloat(withdrawAmount))
+                  }
+                  sx={{ mt: 2 }}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  <option value="" disabled></option>
+                  {accounts.length > 0 &&
+                    accounts.map((account) => (
                       <option key={account.accountId} value={account.accountId}>
                         {account.accountId} (balance: ${account.balance})
                       </option>
                     ))}
-              </TextField>
+                </TextField>
 
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Expected Return Amount: ${expectedReturn || "0.00"}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2 }}
-                onClick={handleInvestmentSubmit}
-              >
-                Start Investment
-              </Button>
-            </form>
+                {/* Withdraw Button */}
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onClick={withdrawInvestment}
+                >
+                  Withdraw Funds
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            // Display new investment form if the user does not have an existing plan
+            <Card sx={{ padding: "3px" }} variant="outlined">
+              <CardContent>
+                <Typography variant="h6" sx={{}}>
+                  Start Investing in This Plan
+                </Typography>
+
+                <TextField
+                  label="Investment Amount"
+                  variant="outlined"
+                  fullWidth
+                  sx={{ mb: 2, mt: 1 }}
+                  onChange={(e) => setInvestmentAmount(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                  value={investmentAmount}
+                  required
+                />
+                {plan.title === "Leveraged Green Growth Package" && (
+                  <>
+                    <Slider
+                      value={leverageRate}
+                      step={1}
+                      min={1}
+                      max={maxLeverageRate || 50}
+                      onChange={(e, newValue) => setLeverageRate(newValue)}
+                      valueLabelDisplay="auto"
+                    />
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>Leverage Rate:</strong> {leverageRate}x
+                    </Typography>
+                  </>
+                )}
+                <TextField
+                  select
+                  label="Account"
+                  value={selectedFromAccount}
+                  onChange={(e) => setSelectedFromAccount(e.target.value)}
+                  required
+                  fullWidth
+                  disabled={
+                    !investmentAmount || isNaN(parseFloat(investmentAmount))
+                  }
+                  sx={{ mb: 2 }}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  <option value="" disabled></option>
+                  {accounts.length > 0 &&
+                    accounts
+                      .filter(
+                        (account) =>
+                          account.balance >= parseFloat(investmentAmount)
+                      )
+                      .map((account) => (
+                        <option
+                          key={account.accountId}
+                          value={account.accountId}
+                        >
+                          {account.accountId} (balance: ${account.balance})
+                        </option>
+                      ))}
+                </TextField>
+                {plan.title === "Leveraged Green Growth Package" && (
+                  <TextField
+                    label="Holding Amount"
+                    variant="outlined"
+                    disabled
+                    fullWidth
+                    sx={{ mb: 2, mt: 1 }}
+                    value={investmentAmount * leverageRate}
+                    onChange={(e) => setHoldingAmount(e.target.value)}
+                  />
+                )}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onClick={handleInvestmentSubmit}
+                >
+                  Start Investment
+                </Button>
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </Container>
   );
 };

@@ -220,27 +220,27 @@ const Analytics = () => {
   };
 
   const lowRiskData = [
-    { year: '2019', risk: 1, return: 1.5 },
-    { year: '2020', risk: 1.5, return: 2 },
-    { year: '2021', risk: 2, return: 2.2 },
-    { year: '2022', risk: 2.2, return: 2.5 },
-    { year: '2023', risk: 2.5, return: 2.9 }
+    { year: '2019', risk: 1, return: 8 },
+    { year: '2020', risk: 1.5, return: 10 },
+    { year: '2021', risk: 2, return: 11 },
+    { year: '2022', risk: 2.2, return: 9 },
+    { year: '2023', risk: 2.5, return: 6 }
   ];
   
   const mediumRiskData = [
-    { year: '2019', risk: 5, return: 6 },
-    { year: '2020', risk: 5.5, return: 7 },
-    { year: '2021', risk: 6, return: 8 },
-    { year: '2022', risk: 6.5, return: 9 },
-    { year: '2023', risk: 7, return: 10 }
+    { year: '2019', risk: 5, return: 13 },
+    { year: '2020', risk: 5.5, return: 12 },
+    { year: '2021', risk: 6, return: 11 },
+    { year: '2022', risk: 6.5, return: 16 },
+    { year: '2023', risk: 7, return: 9 }
   ];
   
   const highRiskData = [
-    { year: '2019', risk: 10, return: 12 },
-    { year: '2020', risk: 11, return: 15 },
-    { year: '2021', risk: 12, return: 18 },
+    { year: '2019', risk: 10, return: 20 },
+    { year: '2020', risk: 11, return: 26 },
+    { year: '2021', risk: 12, return: 17 },
     { year: '2022', risk: 13, return: 20 },
-    { year: '2023', risk: 15, return: 25 }
+    { year: '2023', risk: 15, return: 21 }
   ];
 
   return (

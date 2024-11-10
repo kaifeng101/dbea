@@ -36,10 +36,11 @@ const investments = [
   },
 ];
 
+
 const InvestmentComponent = () => {
   
   return (
-    <Container maxWidth="md" sx={{ marginTop: "40px" }} >
+    <Container maxWidth="md" sx={{ marginTop: "100px" }} >
       <Typography variant="h4" align="center" gutterBottom>
         Investment Plans
       </Typography>
