@@ -56,7 +56,7 @@ const NavBar = () => {
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Scrum Daddy
+            Fin Daddy
           </Typography>
           {user ? ( 
             <>

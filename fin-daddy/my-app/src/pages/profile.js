@@ -15,8 +15,8 @@ import {
   // useMediaQuery,
 } from '@mui/material';
 import { styled } from '@mui/system';
-// import { useSelector } from "react-redux";
-// import { selectUser } from "../redux/userSlice";
+import { useSelector } from "react-redux";
+import { selectUser } from "../redux/userSlice";
 import {
   Person,
   Email,
@@ -69,11 +69,11 @@ const Profile = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const theme = useTheme();
-  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const user = useSelector(selectUser);
+  const certNo = user?.certificate
 
   const getData = async () => {
-    const url = "https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer??CustomerID=0000002313&CertificateNo=000002";
+    const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer?CertificateNo=${certNo}`;
     const username = "12173e30ec556fe4a951";
     const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
 
