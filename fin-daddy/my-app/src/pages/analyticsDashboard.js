@@ -54,10 +54,15 @@ const Analytics = () => {
           return acc;
         }, {});
 
-        const carbonTypeArray = Object.keys(carbonTypeTotals).map(key => ({
-          name: `${key} (Bad Carbon)`, // Adjust label as needed
-          value: parseFloat(carbonTypeTotals[key].toFixed(1))
-        }));
+        const carbonTypeArray = Object.keys(carbonTypeTotals).map(key => {
+          // Determine the label based on the type
+          const label = key === 'Type 1' ? 'Carbon Emitted' : 'Carbon Credits Earned';
+      
+          return {
+            name: label,
+            value: parseFloat(carbonTypeTotals[key].toFixed(1))
+          };
+        });
   
         setCarbonTypeData(carbonTypeArray);
         
@@ -89,8 +94,30 @@ const Analytics = () => {
     } 
   }, [userID, apiKey]);
 
-  const getCurrentMiles = async () => {
-    const url = `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=AAA`; // Replace with your endpoint URL
+
+  const getMilesTransactions = useCallback(async () => {
+    const url = `https://personal-g2wuuy52.outsystemscloud.com/TransactionRoundUp/rest/PaymentToMerchant/GetPayments?CustomerId=${userID}`; // Replace with your endpoint URL
+    
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          'X-Contacts-Key': apiKey,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.status === 200) {
+        const data = response.data;
+        console.log(data)
+
+      }
+    } catch (error) {
+      console.log("Error")
+    } 
+  }, [userID, apiKey]);
+
+  const getCurrentMiles = useCallback(async () => {
+    const url = `https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/GetMiles?CustomerId=${userID}`; // Replace with your endpoint URL
     
     try {
       const response = await axios.get(url, {
@@ -104,12 +131,13 @@ const Analytics = () => {
     catch (error) {
       console.log("Error")
     } 
-  }
+  }, [userID, apiKey]);
   
   useEffect(() => {
     getCarbonData();
     getCurrentMiles();
-  }, [getCarbonData]);
+    getMilesTransactions()
+  }, [getCarbonData, getCurrentMiles, getMilesTransactions]);
 
   const data = [
     { name: 'Jan', spending: 4000, saving: 2400 },
@@ -171,9 +199,9 @@ const Analytics = () => {
   ];
 
   const investmentDistribution = [
-    { name: 'Bundle A', value: 4000 },
-    { name: 'Bundle B', value: 3000 },
-    { name: 'Bundle C', value: 5000 },
+    { name: 'Basic Plan - Green Bonds', value: 4000 },
+    { name: 'Intermediate Plan - Green Investment Bundle', value: 3000 },
+    { name: 'Expert Plan - Leveraged Green Growth Package', value: 5000 },
   ];
 
   const monthlyInvestments = [
@@ -186,13 +214,37 @@ const Analytics = () => {
   ];
 
   const BUNDLE_COLORS = {
-    'Bundle A': '#0088FE',
-    'Bundle B': '#00C49F',
-    'Bundle C': '#FFBB28',
+    'Basic Plan - Green Bonds': '#0088FE',
+    'Intermediate Plan - Green Investment Bundle': '#00C49F',
+    'Expert Plan - Leveraged Green Growth Package': '#FFBB28',
   };
 
+  const lowRiskData = [
+    { year: '2019', risk: 1, return: 1.5 },
+    { year: '2020', risk: 1.5, return: 2 },
+    { year: '2021', risk: 2, return: 2.2 },
+    { year: '2022', risk: 2.2, return: 2.5 },
+    { year: '2023', risk: 2.5, return: 2.9 }
+  ];
+  
+  const mediumRiskData = [
+    { year: '2019', risk: 5, return: 6 },
+    { year: '2020', risk: 5.5, return: 7 },
+    { year: '2021', risk: 6, return: 8 },
+    { year: '2022', risk: 6.5, return: 9 },
+    { year: '2023', risk: 7, return: 10 }
+  ];
+  
+  const highRiskData = [
+    { year: '2019', risk: 10, return: 12 },
+    { year: '2020', risk: 11, return: 15 },
+    { year: '2021', risk: 12, return: 18 },
+    { year: '2022', risk: 13, return: 20 },
+    { year: '2023', risk: 15, return: 25 }
+  ];
+
   return (
-    <div className="m-20">
+    <div className="m-20  mt-24">
        <Grid container spacing={3} style={{ marginBottom: '20px' }}>
         {summaryData.map((item, index) => (
           <Grid item xs={12} sm={6} md={2.4} key={index}>
@@ -226,8 +278,8 @@ const Analytics = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="spending" stroke="#8884d8" />
-                  <Line type="monotone" dataKey="saving" stroke="#82ca9d" />
+                  <Line type="monotone" dataKey="spending" strokeWidth={3} stroke="#8884d8" />
+                  <Line type="monotone" dataKey="saving" strokeWidth={3} stroke="#82ca9d" />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -297,8 +349,8 @@ const Analytics = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="type1" stackId="a" fill={COLORS.red} name="Type 1 (Bad Carbon)" />
-                  <Bar dataKey="type2" stackId="a" fill={COLORS.green} name="Type 2 (Good Carbon)" />
+                  <Bar dataKey="type1" stackId="a" fill={COLORS.red} name="Carbon Emitted" />
+                  <Bar dataKey="type2" stackId="a" fill={COLORS.green} name="Carbon Credits Earned" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -346,10 +398,73 @@ const Analytics = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="bundleA" stackId="a" fill={BUNDLE_COLORS['Bundle A']} name="Bundle A" />
-                  <Bar dataKey="bundleB" stackId="a" fill={BUNDLE_COLORS['Bundle B']} name="Bundle B" />
-                  <Bar dataKey="bundleC" stackId="a" fill={BUNDLE_COLORS['Bundle C']} name="Bundle C" />
+                  <Bar dataKey="bundleA" stackId="a" fill={BUNDLE_COLORS['Basic Plan - Green Bonds']} name="Basic Plan - Green Bonds" />
+                  <Bar dataKey="bundleB" stackId="a" fill={BUNDLE_COLORS['Intermediate Plan - Green Investment Bundle']} name="Intermediate Plan - Green Investment Bundle" />
+                  <Bar dataKey="bundleC" stackId="a" fill={BUNDLE_COLORS['Expert Plan - Leveraged Green Growth Package']} name="Expert Plan - Leveraged Green Growth Package" />
                 </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+        <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
+          {/* Chart 6 */}
+          <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px' }}>
+              Basic Plan - Green Bonds
+            </Typography>
+            <CardContent className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={lowRiskData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="year" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="risk" stroke="#2c7a7b" strokeWidth={3} name="Risk (%)" />
+                <Line type="monotone" dataKey="return" stroke="#2b6cb0" strokeWidth={3} name="Return (%)" />
+              </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+        <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
+          {/* Chart 6 */}
+          <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px' }}>
+              Intermediate Plan - Green Investment Bundle
+            </Typography>
+            <CardContent className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={mediumRiskData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="year" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="risk" stroke="#2c7a7b" strokeWidth={3} name="Risk (%)" />
+                <Line type="monotone" dataKey="return" stroke="#2b6cb0" strokeWidth={3} name="Return (%)" />
+              </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+        <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
+          {/* Chart 6 */}
+          <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px' }}>
+              Expert Plan - Leveraged Green Growth Package
+            </Typography>
+            <CardContent className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={highRiskData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="year" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="risk" stroke="#2c7a7b" strokeWidth={3} name="Risk (%)" />
+                <Line type="monotone" dataKey="return" stroke="#2b6cb0" strokeWidth={3} name="Return (%)" />
+              </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>

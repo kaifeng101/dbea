@@ -114,7 +114,7 @@ const Transactions = () => {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="mt-24">
       <h1>Transaction Form</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
