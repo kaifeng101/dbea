@@ -54,17 +54,20 @@ const NavBar = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" style={{backgroundColor: "green"}}>
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Fin Daddy
+      <Toolbar className="flex justify-between items-center">
+        {/* Logo Section */}
+        <div className="flex items-center space-x-2">
+          <Typography variant="h6" className="font-semibold">
+            Fin-Daddy
           </Typography>
+        </div>
           {user ? ( 
             <>
               <Button color="inherit" onClick={handleClick} sx={{
                   color: isActiveLink("/transaction") ||
                     isActiveLink("/directDebitPayment") ||
                     isActiveLink("/billPayment")
-                    ? "lightblue"
+                    ? "black"
                     : "inherit",
                 }}>
                 Transactions
@@ -74,33 +77,33 @@ const NavBar = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={() => navigate("/transaction")}>
+                <MenuItem className="flex space-x-6" onClick={() => navigate("/transaction")}>
                   Transaction
                 </MenuItem>
-                <MenuItem onClick={() => navigate("/directDebitPayment")}>
+                <MenuItem className="flex space-x-6" onClick={() => navigate("/directDebitPayment")}>
                   Direct Debit Payment
                 </MenuItem>
-                <MenuItem onClick={() => navigate("/billPayment")}>
+                <MenuItem  className="flex space-x-6" onClick={() => navigate("/billPayment")}>
                   Bill Payment
                 </MenuItem>
-                <MenuItem onClick={() => navigate("/transactionHistory")}>
+                <MenuItem  className="flex space-x-6" onClick={() => navigate("/transactionHistory")}>
                   History
                 </MenuItem>
               </Menu>
-              <Link to="/analyticsDashboard">
-                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/analyticsDashboard") ? "lightblue" : "inherit"}}>Analytics</Button>
+              <Link className="flex space-x-6" to="/analyticsDashboard">
+                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/analyticsDashboard") ? "black" : "inherit"}}>Analytics</Button>
               </Link>
-              <Link to="/carbonMarketplace">
-                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/carbonMarketplace") ? "lightblue" : "inherit" }}>Carbon Marketplace</Button>
+              <Link className="flex space-x-6" to="/carbonMarketplace">
+                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/carbonMarketplace") ? "black" : "inherit" }}>Carbon Marketplace</Button>
               </Link>
-              <Link to="/milesRedemption">
-                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/milesRedemption") ? "lightblue" : "inherit" }}>Miles</Button>
+              <Link className="flex space-x-6" to="/milesRedemption">
+                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/milesRedemption") ? "black" : "inherit" }}>Miles</Button>
               </Link>
-              <Link to="/investments">
-                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/investments") ? "lightblue" : "inherit" }}>Investments</Button>
+              <Link className="flex space-x-6" to="/investments">
+                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/investments") ? "black" : "inherit" }}>Investments</Button>
               </Link>
-              <Link to="/profile">
-                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/profile") ? "lightblue" : "inherit" }}>Profile</Button>
+              <Link className="flex space-x-6" to="/profile">
+                <Button color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/profile") ? "black" : "inherit" }}>Profile</Button>
               </Link>
               <Button
                 color="inherit"
