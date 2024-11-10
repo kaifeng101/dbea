@@ -21,7 +21,6 @@ const offers = [
 
 const MilesRedemption = () => {
   const user = useSelector(selectUser);
- 
   // const navigate = useNavigate();
   const [miles, setMiles] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -61,7 +60,7 @@ console.log(user.customerId)
 
     fetchMiles();
 
-  }, [userID]);
+  }, [user.customerId]);
 
 
   const handleSelectTransaction = (transaction) => {
