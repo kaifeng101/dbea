@@ -24,31 +24,28 @@ function BillPayment() {
     { id: "0000004441", name: "Coffee Bean - 0000004441" },
     { id: "0000004469", name: "Housing Development Board - 0000004469" },
   ];
-  const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${userID}/accounts`;
-    const username = "12173e30ec556fe4a951";
-    const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-    const basicAuth = "Basic " + btoa(`${username}:${password}`);
 
   const getAccounts = useCallback(async () => {
     if (!userID) return;
-    
 
+    const url = `https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountType/GetAccountType?customerId=${userID}`;
+    
     try {
       const response = await axios.get(url, {
         headers: {
-          Authorization: basicAuth,
           "Content-Type": "application/json",
+          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Use the required header
         },
       });
 
       if (response.status === 200) {
-        const filteredAccounts = response.data
-          .filter(account => account.productId === "101")
-          .map(account => ({ id: account.accountId, name: `Account - ${account.accountId}` }));
-        setBankAccounts(filteredAccounts);
+        const data = response.data;
+        console.log(data)
+        setBankAccounts([{ id: data.accountId, name: `Account ${data.accountId}` }]);
       }
     } catch (error) {
       console.log("Error:", error);
+      setError("Failed to load accounts. Please try again.");
     }
   }, [userID]);
 
@@ -69,16 +66,18 @@ function BillPayment() {
     };
 
     try {
+        const username = "12173e30ec556fe4a951";
+        const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+        const basicAuth = "Basic " + btoa(`${username}:${password}`);
       const response = await axios.put(putUrl, requestData, {
         headers: {
-            Authorization: basicAuth,
-            "Content-Type": "application/json",
-          },
-        });
+          "Authorization": basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
 
-      // Assuming a successful response
       if (response.status === 200) {
-        console.log(response.data)
+        console.log(response.data);
         setTransactionResult(response.data);
       }
     } catch (error) {
