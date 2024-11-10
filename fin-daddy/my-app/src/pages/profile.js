@@ -32,7 +32,7 @@ import {
 
 const BackgroundHeader = styled(Box)(({ theme }) => ({
   height: 200,
-  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+  background: 'linear-gradient(45deg, #16a34a 30%, #4ade80 90%)',
   display: 'flex',
   alignItems: 'flex-end',
   justifyContent: 'center',
