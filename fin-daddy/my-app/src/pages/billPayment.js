@@ -34,7 +34,7 @@ function BillPayment() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto", fontFamily: "Arial, sans-serif", marginTop: "96px" }}>
       <h1 style={{ textAlign: "center", color: "#4a90e2" }}>Bill Payment Details</h1>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
