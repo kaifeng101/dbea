@@ -16,6 +16,7 @@ import Authorisation from "./pages/authorisation";
 import Termination from "./pages/termination";
 import BillPayment from "./pages/billPayment"
 import InvestmentForm from "./components/investmentForm";
+import TransactionHistory from "./pages/transactionHistory"
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                 <Route path="authorisation" element={<Authorisation />} />
                 <Route path="termination" element={<Termination />} />
               </Route>
+              <Route path="/transactionHistory" element={<TransactionHistory />} />
               <Route path="/investments" element={<Investments />} />
               <Route path="/investmentForm/:id" element={<InvestmentForm />} />
               <Route

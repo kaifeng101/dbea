@@ -53,10 +53,10 @@ const NavBar = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed">
+      <AppBar position="fixed" style={{backgroundColor: "green"}}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Scrum Daddy
+            Fin Daddy
           </Typography>
           {user ? ( 
             <>
@@ -82,6 +82,9 @@ const NavBar = () => {
                 </MenuItem>
                 <MenuItem onClick={() => navigate("/billPayment")}>
                   Bill Payment
+                </MenuItem>
+                <MenuItem onClick={() => navigate("/transactionHistory")}>
+                  History
                 </MenuItem>
               </Menu>
               <Link to="/analyticsDashboard">
