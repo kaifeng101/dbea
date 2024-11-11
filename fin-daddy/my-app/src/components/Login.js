@@ -121,8 +121,8 @@ const LoginComponent = () => {
           <Box sx={{ width: "100%" }}>
             <div></div>
             <div>
-              <div className="font-semibold text-xl py-2">Customer Login</div>
-              <div className="mb-4">
+              <div className="font-semibold text-xl py-2" style={{ fontFamily: 'Montserrat, sans-serif'}} >Customer Login</div>
+              <div className="mb-4" style={{ fontFamily: 'Montserrat, sans-serif'}} >
                 Don't have an account? Register{" "}
                 <Link to="/onBoarding" className="text-blue-400 cursor-pointer">
                 here

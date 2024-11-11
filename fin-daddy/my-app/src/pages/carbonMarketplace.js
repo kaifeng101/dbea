@@ -229,20 +229,20 @@ export default function CarbonMarketplacePage() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }} className='mt-24'>
-      <Typography variant="h4" gutterBottom>Carbon Marketplace</Typography>
+    <Container maxWidth="lg" sx={{ py: 4 }} className='mt-16'>
+      <Typography variant="h4" gutterBottom sx={{fontFamily: 'Montserrat, sans-serif', fontSize: "40px", fontWeight: "bold"}}>Carbon Marketplace</Typography>
 
       {/* Display carbon credits at the top right */}
       <Box 
         position="fixed" 
         top={70} 
-        left={16} 
+        right={16} 
         bgcolor="rgba(0, 0, 0, 0.5)" 
         color="white" 
-        p={2} 
+        p={1} 
         borderRadius={2}
       >
-        <Typography variant="h6">Carbon Credits: {totalCredits}</Typography>
+        <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Carbon Credits: {totalCredits}</Typography>
       </Box>
 
       <Box display="flex" flexDirection={{ xs: 'column', md: 'row', alignItems: 'center' }} gap={2} mb={4}>
@@ -252,56 +252,61 @@ export default function CarbonMarketplacePage() {
           fullWidth
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{
+            '& .MuiFormLabel-root': {
+              fontFamily: "'Montserrat', sans-serif",
+            },
+            '& .MuiInputBase-root': {
+              fontFamily: "'Montserrat', sans-serif",
+            },
+          }}
         />
-        <Box>
-          <Typography>Minimum CO2e: {minCost}</Typography>
+      </Box>
+      <Box>
+          <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Minimum CO2e: {minCost}</Typography>
           <Slider
             min={0}
             max={20}
             value={minCost}
             onChange={(e, value) => setMinCost(value)}
             aria-labelledby="min-price-slider"
+            sx={{
+              '& .MuiSlider-track': {
+                backgroundColor: 'black', // Change track color
+              },
+              '& .MuiSlider-thumb': {
+                backgroundColor: 'black', // Change thumb color
+              },
+              '& .MuiSlider-rail': {
+                backgroundColor: 'lightgray', // Change rail color
+              }
+            }}
           />
-          <Typography>Maximum CO2e: {maxCost}</Typography>
+          <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Maximum CO2e: {maxCost}</Typography>
           <Slider
             min={0}
             max={20}
             value={maxCost}
             onChange={(e, value) => setMaxCost(value)}
             aria-labelledby="max-price-slider"
+            sx={{
+              '& .MuiSlider-track': {
+                backgroundColor: 'black', // Change track color
+              },
+              '& .MuiSlider-thumb': {
+                backgroundColor: 'black', // Change thumb color
+              },
+              '& .MuiSlider-rail': {
+                backgroundColor: 'lightgray', // Change rail color
+              }
+            }}
           />
         </Box>
-      </Box>
-
-      {compareList.length > 0 && (
-        <Box mb={4}>
-          <Typography variant="h5">Compare Projects</Typography>
-          <Grid container spacing={2} mt={1}>
-            {compareList.map(offset => (
-              <Grid item xs={12} md={4} key={offset.id}>
-                <Card>
-                  <CardHeader title={offset.name} subheader={offset.location} />
-                  <CardContent>
-                    <Typography>You will get: ${offset.receiveAmt}</Typography>
-                    <Typography>Cost: {offset.credits} CO2e</Typography>
-                    <Typography>Impact: {offset.impact}</Typography>
-                    <Typography>Verification: {offset.verification}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-          {/* Add a horizontal line */}
-          <hr style={{ marginTop: '20px', border: '1px solid #ccc' }} />
-        </Box>
-        
-      )}
-
 
       <Grid container spacing={3}>
         {filteredOffsets.map((offset) => (
           <Grid item xs={12} md={4} key={offset.id}>
-            <Card>
+            <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
               <CardMedia
                 component="img"
                 height="200"
@@ -309,16 +314,28 @@ export default function CarbonMarketplacePage() {
                 alt={offset.name}
                 style={{ height: "200px" }}
               />
-              <CardHeader title={offset.name} subheader={offset.location} />
+              <CardHeader sx={{
+          '& .MuiCardHeader-subheader': {
+            fontFamily: 'Montserrat, sans-serif', 
+          }}
+        }
+        title={
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="h6" style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold'}}>{offset.name}</Typography>
+            <IconButton onClick={() => handleDialogOpen(offset)} color="#71717a" sx={{ ml: 1 }}>
+              <Info />
+            </IconButton>
+          </Box>
+        } subheader={offset.location} />
               <CardContent>
-                <Typography>{offset.description}</Typography>
-                <div className="flex flex-wrap gap-2 mb-4 mt-2">
+                <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>{offset.description}</Typography>
+                <div className="flex flex-wrap gap-2 mb-4 mt-2" style={{fontFamily: 'Montserrat, sans-serif'}}>
                 {offset.tags.map((tag, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 rounded-full text-white"
                     style={{
-                      backgroundColor: '#6B7280', // Change to desired color or set dynamically
+                      backgroundColor: '#14532d', // Change to desired color or set dynamically
                     }}
                   >
                     {tag}
@@ -326,66 +343,96 @@ export default function CarbonMarketplacePage() {
                 ))}
               </div>
 
-                <Typography>You will get: ${offset.receiveAmt}</Typography>
-                <Typography>Cost: {offset.credits} CO2e</Typography>
+                <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>You will get: ${offset.receiveAmt}</Typography>
+                <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Cost: {offset.credits} CO2e</Typography>
               </CardContent>
               <CardActions>
                 <Checkbox
                   checked={compareList.some(item => item.id === offset.id)}
-                  onChange={() => handleCompare(offset)}
-                />
-                <Typography variant="body2">Compare</Typography>
-                {/* Info Icon Button */}
-                <IconButton onClick={() => handleDialogOpen(offset)} color="primary">
-                  <Info />
-                </IconButton>
-                <Button onClick={() => addToCart(offset)}>Add to Cart</Button>  {/* Remove dialog-related code */}
-              </CardActions>
+                  onChange={() => handleCompare(offset)} label="Compare"
+                ></Checkbox>
+                <Typography style={{fontFamily: 'Montserrat, sans-serif'}} variant="body2">Compare</Typography>
+                <Button style={{marginLeft: "10px", marginBottom: '10px', fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color:'white'}} onClick={() => addToCart(offset)}>Add to Cart</Button>
+              </CardActions>  
+              
             </Card>
           </Grid>
         ))}
       </Grid>
 
+      {compareList.length > 0 && (
+        <Box mb={4}>
+          <hr style={{ marginTop: '20px',marginBottom: '20px', border: '1px solid #ccc' }} />
+          <Typography variant="h5" style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold'}}>Compare Projects</Typography>
+          <Grid container spacing={2} mt={1}>
+            {compareList.map(offset => (
+              <Grid item xs={12} md={4} key={offset.id}>
+                <Card>
+                  <CardHeader 
+                  sx={{
+                    '& .MuiCardHeader-subheader': {
+                      fontFamily: 'Montserrat, sans-serif', 
+                    },
+                    '& .MuiCardHeader-title': {
+                      fontFamily: 'Montserrat, sans-serif',
+                      fontWeight: 'bold' 
+                    }}
+                  }
+                  title={offset.name} subheader={offset.location} />
+                  <CardContent>
+                    <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>You will get: ${offset.receiveAmt}</Typography>
+                    <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Cost: {offset.credits} CO2e</Typography>
+                    <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Impact: {offset.impact}</Typography>
+                    <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Verification: {offset.verification}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+        
+      )}
+
       {filteredOffsets.length === 0 && (
-        <Typography variant="h6" align="center" mt={4}>No carbon offset projects match your criteria.</Typography>
+        <Typography style={{fontFamily: 'Montserrat, sans-serif'}} variant="h6" align="center" mt={4}>No carbon offset projects match your criteria.</Typography>
       )}
 
       {/* Dialog for detailed information about the selected offset */}
       <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)} maxWidth="md" fullWidth>
         <img src={selectedOffset?.image} alt={selectedOffset?.name} className="w-full h-64 object-cover rounded-lg" />
-        <DialogTitle>{selectedOffset?.name}</DialogTitle>
+        <DialogTitle style={{fontFamily: 'Montserrat, sans-serif'}}>{selectedOffset?.name}</DialogTitle>
         <DialogContent dividers>
-          <Typography>{selectedOffset?.longDescription}</Typography>
+          <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>{selectedOffset?.longDescription}</Typography>
           <Box mt={2}>
-            <Typography>Impact: {selectedOffset?.impact}</Typography>
-            <Typography>Verification: {selectedOffset?.verification}</Typography>
-            <Typography>You will get: ${selectedOffset?.receiveAmt} per credit</Typography>
-            <Typography>Cost: {selectedOffset?.credits} tons CO2e</Typography>
+            <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Impact: {selectedOffset?.impact}</Typography>
+            <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Verification: {selectedOffset?.verification}</Typography>
+            <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>You will get: ${selectedOffset?.receiveAmt} per credit</Typography>
+            <Typography style={{fontFamily: 'Montserrat, sans-serif'}}>Cost: {selectedOffset?.credits} tons CO2e</Typography>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Close</Button>
+          <Button onClick={() => setDialogOpen(false)} style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color:'white'}}>Close</Button>
         </DialogActions>
       </Dialog>
 
       {/* Cart Dialog */}
       <Dialog open={isCartDialogOpen} onClose={() => setCartDialogOpen(false)}>
-        <DialogTitle>Your Cart</DialogTitle>
+        <DialogTitle style={{fontFamily: 'Montserrat, sans-serif'}}>Your Cart</DialogTitle>
         <DialogContent dividers>
           {cart.length === 0 ? (
-            <Typography variant="body1">Your cart is empty.</Typography>
+            <Typography variant="body1" style={{fontFamily: 'Montserrat, sans-serif'}}>Your cart is empty.</Typography>
           ) : (
             <>
               <Box mt={2}>
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell align="center"><strong>Item</strong></TableCell>
-                      <TableCell align="center"><strong>Quantity</strong></TableCell>
-                      <TableCell align="center"><strong>Amt Earned</strong></TableCell>
-                      <TableCell align="center"><strong>Cost (CO2e)</strong></TableCell>
-                      <TableCell align="center"><strong>Total Cost</strong></TableCell>
-                      <TableCell align="center"><strong>Total You Will Get</strong></TableCell>
+                      <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}><strong>Item</strong></TableCell>
+                      <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}><strong>Quantity</strong></TableCell>
+                      <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}><strong>Amt Earned</strong></TableCell>
+                      <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}><strong>Cost (CO2e)</strong></TableCell>
+                      <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}><strong>Total Cost</strong></TableCell>
+                      <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}><strong>Total You Will Get</strong></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -406,12 +453,12 @@ export default function CarbonMarketplacePage() {
 
                       return (
                         <TableRow key={index}>
-                          <TableCell>{name}</TableCell>
-                          <TableCell align="center">{quantity}</TableCell>
-                          <TableCell align="center">${item.receiveAmt}</TableCell>
-                          <TableCell align="center">{item.credits} CO2e</TableCell>
-                          <TableCell align="center">{totalCost.toFixed(2)}</TableCell> {/* Total cost */}
-                          <TableCell align="center">${totalAmtGet.toFixed(2)}</TableCell> {/* Total you will get */}
+                          <TableCell style={{fontFamily: 'Montserrat, sans-serif'}}>{name}</TableCell>
+                          <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}>{quantity}</TableCell>
+                          <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}>${item.receiveAmt}</TableCell>
+                          <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}>{item.credits} CO2e</TableCell>
+                          <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}>{totalCost.toFixed(2)}</TableCell> {/* Total cost */}
+                          <TableCell align="center" style={{fontFamily: 'Montserrat, sans-serif'}}>${totalAmtGet.toFixed(2)}</TableCell> {/* Total you will get */}
                           {/* Add a button to decrease quantity, with the icon centered */}
                           <TableCell>
                             <IconButton onClick={() => removeItem(item.name)} color="primary" style={{ display: 'flex', justifyContent: 'center' }}>
@@ -423,9 +470,9 @@ export default function CarbonMarketplacePage() {
                     })}
                     {/* Add total row for costs and prices */}
                     <TableRow>
-                      <TableCell colSpan={4} align="right"><strong>Total:</strong></TableCell>
-                      <TableCell align="center">{finalTotalCost.toFixed(2)}</TableCell>
-                      <TableCell align="center">${finalTotalAmtGet.toFixed(2)}</TableCell>
+                      <TableCell colSpan={4} align="right" style={{fontFamily: 'Montserrat, sans-serif'}}><strong>Total:</strong></TableCell>
+                      <TableCell style={{fontFamily: 'Montserrat, sans-serif'}} align="center">{finalTotalCost.toFixed(2)}</TableCell>
+                      <TableCell style={{fontFamily: 'Montserrat, sans-serif'}} align="center">${finalTotalAmtGet.toFixed(2)}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -436,9 +483,9 @@ export default function CarbonMarketplacePage() {
         </DialogContent>
         <DialogActions>
         {cart.length > 0 ? (
-          <Button style={{ color: "red" }} onClick={handleCheckout}>Checkout</Button>
+          <Button style={{ color: "red", fontFamily: 'Montserrat, sans-serif' }} onClick={handleCheckout}>Checkout</Button>
           ) : null }
-          <Button onClick={() => setCartDialogOpen(false)}>Close</Button>
+          <Button style={{fontFamily: 'Montserrat, sans-serif'}} onClick={() => setCartDialogOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
 
@@ -481,7 +528,7 @@ export default function CarbonMarketplacePage() {
 
 
       <Box position="fixed" bottom={16} right={16}>
-        <Button variant="contained" color="primary" startIcon={<ShoppingCart />} onClick={handleCartDialogOpen}>
+        <Button style={{fontFamily: 'Montserrat, sans-serif', backgroundColor: "#44403c"}} variant="contained" color="primary" startIcon={<ShoppingCart />} onClick={handleCartDialogOpen}>
           Cart ({cart.length})
         </Button>
       </Box>

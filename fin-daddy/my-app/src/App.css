@@ -38,3 +38,15 @@
     transform: rotate(360deg);
   }
 }
+
+.dashboard--content {
+  background: rgb(241 245 249);
+  border-radius: 20px;
+  width: 100%; /* Fixed width */
+  height: 100vh;
+  /* margin-left: 70px; */
+  overflow: auto;
+  display: flex;
+  flex-direction: column; /* Use column layout */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for visual separation */
+}
