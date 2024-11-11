@@ -129,6 +129,7 @@ const Transactions = () => {
   
 
   return (
+    // <Card>
     <div style={styles.container} className="mt-24">
       <h1>Transaction Form</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
@@ -217,15 +218,77 @@ const Transactions = () => {
 
 // Styles for the page elements
 const styles = {
-  container: { display: "flex", flexDirection: "column", alignItems: "center", padding: "2rem" },
-  form: { width: "400px", display: "flex", flexDirection: "column", gap: "1rem" },
-  formGroup: { display: "flex", flexDirection: "column", textAlign: "left" },
-  input: { padding: "0.5rem", border: "1px solid #ddd", borderRadius: "4px" },
-  select: { padding: "0.5rem", border: "1px solid #ddd", borderRadius: "4px" },
-  finalAmountSection: { marginTop: "1rem", padding: "1rem", backgroundColor: "#e9ecef", borderRadius: "8px", textAlign: "center" },
-  successMessage: { marginTop: "1rem", padding: "1rem", backgroundColor: "#d4edda", borderRadius: "8px", textAlign: "center", color: "#155724" },
-  errorMessage: { color: "red" },
-  button: { padding: "0.75rem", backgroundColor: "#007bff", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "2rem",
+    fontFamily: "Montserrat, sans-serif",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  },
+  form: {
+    width: "400px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+  },
+  formGroup: {
+    display: "flex",
+    flexDirection: "column",
+    textAlign: "left",
+    fontFamily: "Montserrat, sans-serif",
+  },
+  label: {
+    marginBottom: "0.5rem",
+    fontWeight: "600",
+  },
+  input: {
+    padding: "0.75rem",
+    border: "1px solid #ddd",
+    borderRadius: "4px",
+    fontFamily: "Montserrat, sans-serif",
+  },
+  select: {
+    padding: "0.75rem",
+    border: "1px solid #ddd",
+    borderRadius: "4px",
+    fontFamily: "Montserrat, sans-serif",
+  },
+  finalAmountSection: {
+    marginTop: "1rem",
+    padding: "1rem",
+    backgroundColor: "#e9ecef",
+    borderRadius: "8px",
+    textAlign: "center",
+    fontSize: "1rem",
+    fontWeight: "bold",
+  },
+  successMessage: {
+    marginTop: "1rem",
+    padding: "1rem",
+    backgroundColor: "#d4edda",
+    borderRadius: "8px",
+    textAlign: "center",
+    color: "#155724",
+    fontFamily: "Montserrat, sans-serif",
+  },
+  errorMessage: {
+    color: "red",
+    fontFamily: "Montserrat, sans-serif",
+  },
+  button: {
+    padding: "0.75rem",
+    backgroundColor: "#44403c",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontWeight: "600",
+    fontFamily: "Montserrat, sans-serif",
+  },
 };
+
 
 export default Transactions;
