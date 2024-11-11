@@ -107,8 +107,8 @@ function BillPayment() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto", fontFamily: "Arial, sans-serif", marginTop: "96px" }}>
-      <h1 style={{ textAlign: "center", color: "#4a90e2" }}>Bill Payment Details</h1>
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto", fontFamily: "Montserrat, sans-serif", marginTop: "96px" }}>
+      <h1 style={{ textAlign: "center", color: "#44403c",fontSize: "30px", marginBottom:"10px" }}>Bill Payment Details</h1>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         
@@ -156,7 +156,7 @@ function BillPayment() {
   flexDirection={{ xs: 'column', md: 'row' }}
   alignItems="center"
   gap={2}
-  mb={4}
+  mb={1}
   position="relative"  // Ensures the dropdown is positioned relative to this container
 >
   <TextField
@@ -166,7 +166,6 @@ function BillPayment() {
     onChange={handleToAccountChange}
     fullWidth
     required
-    placeholder="Enter billing organization"
     sx={{
       '& .MuiFormLabel-root': {
         fontFamily: "'Montserrat', sans-serif",
@@ -212,11 +211,11 @@ function BillPayment() {
 
         <label style={{ fontWeight: "bold" }}>Amount ($)</label>
         <input
+          placeholder="Enter amount"
           type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           required
-          placeholder="Enter amount"
           style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
         />
 
@@ -231,25 +230,25 @@ function BillPayment() {
 
         <label style={{ fontWeight: "bold" }}>Transaction Reference</label>
         <input
-          type="text"
-          value={transactionReference}
-          onChange={(e) => setTransactionReference(e.target.value)}
-          required
           placeholder="Enter transaction reference"
+          type="text"
+          //value={transactionReference}
+          //onChange={(e) => setTransactionReference(e.target.value)}
+          required
           style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
         />
 
         <button
           type="submit"
           style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            color: "#fff",
-            backgroundColor: "#4a90e2",
+            padding: "0.75rem",
+            backgroundColor: "#44403c",
+            color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
-            marginTop: "15px",
+            fontWeight: "600",
+            fontFamily: "Montserrat, sans-serif",
           }}
         >
           Submit
@@ -257,7 +256,7 @@ function BillPayment() {
       </form>
 
       {transactionResult && (
-        <div style={{ marginTop: "20px", padding: "15px", border: "1px solid #4a90e2", borderRadius: "4px" }}>
+        <div style={{ marginTop: "20px", padding: "15px", border: "1px solid #328511", borderRadius: "4px" }}>
           <p><strong>Transaction Successful!</strong></p>
           <p>Balance Before: ${transactionResult.balanceBefore}</p>
           <p>Balance After: ${transactionResult.balanceAfter}</p>

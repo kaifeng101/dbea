@@ -74,8 +74,8 @@ function TransactionHistory() {
   };
 
   return (
-    <div className="transaction-history">
-      <h1>Transaction History</h1>
+    <div style={{fontFamily: "Montserrat, sans-serif", margin:"100px"}}>
+      <h1 style={{color: "#44403c",fontSize: "30px"}}>Transaction History</h1>
 
       <form onSubmit={handleSubmit} className="transaction-form">
         <div className="form-group">

@@ -1,18 +1,18 @@
 .direct-debit-page {
     display: flex;
     flex-direction: column;
+
   }
+
   
   .top-menu {
-    background-color: #f4f4f4;
-    border-bottom: 1px solid #ddd;
-    padding: 10px 20px;
+    padding-left: 30px;
   }
   
   .top-menu ul {
     list-style-type: none;
     display: flex;
-    gap: 20px;
+    gap: 30px;
     padding: 0;
     margin: 0;
   }
@@ -22,9 +22,8 @@
   }
   
   .top-menu a {
-    color: #333;
+    color: #797171;
     text-decoration: none;
-    font-weight: bold;
   }
   
   .top-menu a:hover {
@@ -36,9 +35,10 @@
     margin-top: 20px; /* Adds space between the menu and content */
   }
 
-  .title{
-    font-size: 2rem; /* Adjust size as needed */
-    font-weight: bold;
+  /* .title{
+    font-size: 30px; /* Adjust size as needed */
+    /* font-weight: bold;
     color: #333; /* Optional: Set color for better visibility */
-    margin-bottom: 20px; /* Adds space below the title */
-  }
+    /* margin-bottom: 10px; /* Adds space below the title */
+    /* font-family: "Montserrat, sans-serif"
+  } */ 
