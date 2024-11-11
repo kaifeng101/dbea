@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { login } from "../redux/userSlice";
 import {
   TextField,
@@ -116,89 +116,92 @@ const LoginComponent = () => {
           alignItems: "center",
         }}
       >
-
         {/* {!user && ( */}
-          <Box sx={{ width: "100%" }}>
-            <div></div>
-            <div>
-              <div className="font-semibold text-xl py-2" style={{ fontFamily: 'Montserrat, sans-serif'}} >Customer Login</div>
-              <div className="mb-4" style={{ fontFamily: 'Montserrat, sans-serif'}} >
-                Don't have an account? Register{" "}
-                <Link to="/onBoarding" className="text-blue-400 cursor-pointer">
-                here
-                </Link>
-              </div>
+        <Box sx={{ width: "100%" }}>
+          <div></div>
+          <div>
+            <div
+              className="font-semibold text-xl py-2"
+              style={{ fontFamily: "Montserrat, sans-serif" }}
+            >
+              Customer Login
             </div>
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
-              </Alert>
-            )}
-            <form onSubmit={handleLogin}>
-              <TextField
-                fullWidth
-                label="Certificate No"
-                variant="outlined"
-                value={certificateNo}
-                onChange={(e) => setCertificateNo(e.target.value)}
-                placeholder="Enter your Certificate Number"
-                sx={{
-                  mb: 2,
-                  "& .MuiFormLabel-root": {
-                    fontFamily: "'Montserrat', sans-serif",
-                  },
-                  "& .MuiInputBase-root": {
-                    fontFamily: "'Montserrat', sans-serif",
-                  },
-                }}
-                type="number"
-              />
-              <TextField
-                fullWidth
-                type="password"
-                label="Password"
-                variant="outlined"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your Password"
-                sx={{
-                  mb: 2,
-                  "& .MuiFormLabel-root": {
-                    fontFamily: "'Montserrat', sans-serif",
-                  },
-                  "& .MuiInputBase-root": {
-                    fontFamily: "'Montserrat', sans-serif",
-                  },
-                }}
-              />
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={handleLogin}
-                type="submit"
-                sx={{
-                  borderRadius: "12px",
-                  color: "#fff", // Text color
-                  borderColor: "#6fb3e5", // Border color (outline color)
-                  backgroundColor: "#6fb3e5", // Hover background color
-                  "&:hover": {
-                    backgroundColor: "#d1d5db", // Hover background color
-                    borderColor: "#d1d5db",
-                  },
-                  "& .MuiFormLabel-root": {
-                    fontFamily: "'Montserrat', sans-serif",
-                  },
-                  "& .MuiInputBase-root": {
-                    fontFamily: "'Montserrat', sans-serif",
-                  },
-                }}
-              >
-                Login
-              </Button>
-            </form>
-          </Box>
-        {/* )} */}
+            <div
+              className="mb-4"
+              style={{ fontFamily: "Montserrat, sans-serif" }}
+            >
+              Don't have an account? Register{" "}
+              <Link to="/onBoarding" className="text-blue-400 cursor-pointer">
+                here
+              </Link>
+            </div>
+          </div>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          <form onSubmit={handleLogin}>
+            <TextField
+              fullWidth
+              label="Certificate No"
+              variant="outlined"
+              value={certificateNo}
+              onChange={(e) => setCertificateNo(e.target.value)}
+              placeholder="Enter your Certificate Number"
+              sx={{
+                mb: 2,
+                "& .MuiFormLabel-root": {
+                  fontFamily: "'Montserrat', sans-serif",
+                },
+                "& .MuiInputBase-root": {
+                  fontFamily: "'Montserrat', sans-serif",
+                },
+              }}
+              type="number"
+            />
+            <TextField
+              fullWidth
+              type="password"
+              label="Password"
+              variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your Password"
+              sx={{
+                mb: 2,
+                "& .MuiFormLabel-root": {
+                  fontFamily: "'Montserrat', sans-serif",
+                },
+                "& .MuiInputBase-root": {
+                  fontFamily: "'Montserrat', sans-serif",
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleLogin}
+              type="submit"
+              sx={{
+                borderRadius: "12px",
+                color: "#fff", // Text color
+                borderColor: "#6fb3e5", // Border color (outline color)
+                backgroundColor: "#44403c", // Hover background color
 
+                "& .MuiFormLabel-root": {
+                  fontFamily: "'Montserrat', sans-serif",
+                },
+                "& .MuiInputBase-root": {
+                  fontFamily: "'Montserrat', sans-serif",
+                },
+              }}
+            >
+              Login
+            </Button>
+          </form>
+        </Box>
+        {/* )} */}
       </Box>
       <Snackbar
         open={openSnackbar}

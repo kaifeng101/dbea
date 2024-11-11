@@ -15,6 +15,7 @@ import ViewAll from "./pages/viewAll";
 import Authorisation from "./pages/authorisation";
 import Termination from "./pages/termination";
 import BillPayment from "./pages/billPayment"
+import InvestmentForm from "./components/investmentForm";
 import TransactionHistory from "./pages/transactionHistory"
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
               </Route>
               <Route path="/transactionHistory" element={<TransactionHistory />} />
               <Route path="/investments" element={<Investments />} />
+              <Route path="/investmentForm/:id" element={<InvestmentForm />} />
               <Route
                 path="/carbonMarketplace"
                 element={<CarbonMarketplace />}
