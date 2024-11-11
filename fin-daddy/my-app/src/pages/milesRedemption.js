@@ -3,9 +3,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import "./style.css";
 import "./Redeem.css";
-import { Card, Typography, CardContent, Grid, Button } from "@mui/material"
-//import { FlightTakeoff, Hotel, DirectionsCar } from "@mui/icons-material";
-
+import { Card, Typography, CardContent, Grid, Button, Checkbox, FormControlLabel } from "@mui/material";
 
 const offers = [
   { id: 1, name: "Hotel Stay", cost: 300 },
@@ -17,13 +15,14 @@ const MilesRedemption = () => {
   const user = useSelector(selectUser);
   const [miles, setMiles] = useState(0);
   const [transactions, setTransactions] = useState([]);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [selectedTransactions, setSelectedTransactions] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState(null);
   const [redeemedOffer, setRedeemedOffer] = useState(null);
   const [convertedTransactionIds, setConvertedTransactionIds] = useState(
     JSON.parse(localStorage.getItem("convertedTransactionIds")) || []
   );
+  const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
     const fetchMiles = async () => {
@@ -39,10 +38,8 @@ const MilesRedemption = () => {
           }
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch miles");
-        }
-
+        if (!response.ok) throw new Error("Failed to fetch miles");
+        
         const data = await response.json();
         setMiles(data[0].MilesAmount);
       } catch (error) {
@@ -63,10 +60,8 @@ const MilesRedemption = () => {
           }
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch transactions");
-        }
-
+        if (!response.ok) throw new Error("Failed to fetch transactions");
+        
         const data = await response.json();
         setTransactions(data);
       } catch (error) {
@@ -78,39 +73,68 @@ const MilesRedemption = () => {
     fetchTransactions();
   }, [user.customerId]);
 
-  const handleSelectTransaction = (transaction) => {
-    setSelectedTransaction(transaction);
+  const handleSelectTransaction = (transactionId) => {
+    if (selectedTransactions.includes(transactionId)) {
+      setSelectedTransactions(selectedTransactions.filter((id) => id !== transactionId));
+    } else {
+      setSelectedTransactions([...selectedTransactions, transactionId]);
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedTransactions([]);
+    } else {
+      const selectableTransactions = transactions
+        .filter((transaction) => !convertedTransactionIds.includes(transaction.Transaction_ID))
+        .map((transaction) => transaction.Transaction_ID);
+      setSelectedTransactions(selectableTransactions);
+    }
+    setSelectAll(!selectAll);
   };
 
   const handleConvertToMiles = async () => {
-    if (selectedTransaction) {
-      try {
-        const response = await fetch(
-          `https://personal-lykkncb1.outsystemscloud.com/MilesComposite/rest/MilesTransfer/MilesUpdate?Transaction_id=${selectedTransaction.Transaction_ID}`,
-          {
-            method: "POST",
-            headers: {
-              "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
-              "Content-Type": "application/json",
-            },
-          }
-        );
+    const selectedTransactionsData = transactions.filter((transaction) =>
+      selectedTransactions.includes(transaction.Transaction_ID)
+    );
 
-        if (!response.ok) {
-          throw new Error("Failed to convert transaction to miles");
+    const totalAmount = selectedTransactionsData.reduce(
+      (sum, transaction) => sum + transaction.Transaction_Amount,
+      0
+    );
+
+    try {
+      const response = await fetch(
+        "https://personal-lykkncb1.outsystemscloud.com/MilesCRUD/rest/CustMiles/UpdateMiles",
+        {
+          method: "PUT",
+          headers: {
+            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            custId: user.customerId,
+            milesAmt: totalAmount/0.015,
+          }),
         }
-        const data = await response.json();
-        setMiles(data.milesAmt);
+      );
 
-        // Update local storage with the new converted transaction
-        const updatedConvertedTransactionIds = [...convertedTransactionIds, selectedTransaction.Transaction_ID];
-        setConvertedTransactionIds(updatedConvertedTransactionIds);
-        localStorage.setItem("convertedTransactionIds", JSON.stringify(updatedConvertedTransactionIds));
+      if (!response.ok) throw new Error("Failed to convert transaction to miles");
 
-        setSelectedTransaction(null); // Deselect transaction after conversion
-      } catch (error) {
-        console.error("Error converting to miles:", error);
-      }
+      const data = await response.json();
+      setMiles(data.milesAmt);
+
+      const updatedConvertedTransactionIds = [
+        ...convertedTransactionIds,
+        ...selectedTransactions,
+      ];
+      setConvertedTransactionIds(updatedConvertedTransactionIds);
+      localStorage.setItem("convertedTransactionIds", JSON.stringify(updatedConvertedTransactionIds));
+
+      setSelectedTransactions([]);
+      setSelectAll(false);
+    } catch (error) {
+      console.error("Error converting to miles:", error);
     }
   };
 
@@ -160,82 +184,71 @@ const MilesRedemption = () => {
   };
 
   return (
-
     <>
-    <Grid container spacing={2} style={{ marginTop: '70px', display: 'flex', justifyContent: 'space-between' }}>
-  {/* Transaction History Card */}
-  <Grid item xs={12} sm={6} md={6}>
-    <Card style={{marginLeft: "10px", height: '100%'}}>
-      <Typography
-        style={{
-          fontFamily: "'Montserrat', sans-serif",
-          fontSize: "30px",
-          fontWeight: "bold",
-          textAlign: "center",
-          marginTop: "10px",
-          marginBottom: "16px"
-        }}
-      >
-        Miles Redemption
-      </Typography>
-
-
-      <Card variant="outlined" style={{marginLeft:"15px", marginRight: "15px", padding: "10px", backgroundColor: "#dcfce7"}}>
-        <h3 className="balanceText" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-          Your Miles Balance
-        </h3>
-        <p className="miles" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-          {Number(miles).toFixed(2)} miles
-        </p>
-      </Card>
-      <CardContent>
-      <div className="transactionsContainer">
-        <h3 className="sectionHeader" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-          Transaction History
-        </h3>
-        <ul className="transactionList" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-          {transactions.map((transaction) => (
-            <li
-              key={transaction.Transaction_ID}
-              onClick={() => handleSelectTransaction(transaction)}
-              className="transactionItem"
+      <Grid container spacing={2} style={{ marginTop: '70px', display: 'flex', justifyContent: 'space-between' }}>
+        <Grid item xs={12} sm={6} md={6}>
+          <Card style={{ marginLeft: "10px", height: '100%' }}>
+            <Typography
               style={{
-                backgroundColor: convertedTransactionIds.includes(transaction.Transaction_ID) 
-                  ? "#d8d8d8" 
-                  : selectedTransaction?.Transaction_ID === transaction.Transaction_ID 
-                  ? "#d8eaf2" 
-                  : "#fff",
-                pointerEvents: convertedTransactionIds.includes(transaction.Transaction_ID) 
-                  ? "none" 
-                  : "auto",
+                fontFamily: "'Montserrat', sans-serif",
+                fontSize: "30px",
+                fontWeight: "bold",
+                textAlign: "center",
+                marginTop: "10px",
+                marginBottom: "16px"
               }}
             >
-
-              <div>ID: {transaction.Transaction_ID}</div>
-              <div>Amount: $ {transaction.Transaction_Amount}</div>
-              <div className="transactionDate">{transaction.Created_At}</div>
-
-            </li>
-          ))}
-        </ul>
-      </div>
-
-        <Button
-          onClick={handleConvertToMiles}
-          style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color:'white' }}
-          disabled={!selectedTransaction}
-          fullWidth
-        >
-          Convert to Miles
-
-        </Button>
-      </CardContent>
-    </Card>
-  </Grid>
-
-
-  {/* Redeem Offers Card */}
-  <Grid item xs={12} sm={6} md={6}>
+              Miles Redemption
+            </Typography>
+            <Card variant="outlined" style={{ marginLeft: "15px", marginRight: "15px", padding: "10px", backgroundColor: "#dcfce7" }}>
+              <h3 className="balanceText" style={{ fontFamily: "'Montserrat', sans-serif" }}>Your Miles Balance</h3>
+              <p className="miles" style={{ fontFamily: "'Montserrat', sans-serif" }}>{Number(miles).toFixed(2)} miles</p>
+            </Card>
+            <CardContent>
+              <div className="transactionsContainer">
+                <h3 className="sectionHeader" style={{ fontFamily: "'Montserrat', sans-serif" }}>Transaction History</h3>
+                <FormControlLabel
+                  control={<Checkbox checked={selectAll} onChange={handleSelectAll} />}
+                  label="Select All"
+                />
+                <ul className="transactionList" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                  {transactions.map((transaction) => (
+                    <li
+                      key={transaction.Transaction_ID}
+                      className="transactionItem"
+                      style={{
+                        backgroundColor: convertedTransactionIds.includes(transaction.Transaction_ID)
+                          ? "#d8d8d8"
+                          : selectedTransactions.includes(transaction.Transaction_ID)
+                          ? "#d8eaf2"
+                          : "#fff",
+                        pointerEvents: convertedTransactionIds.includes(transaction.Transaction_ID) ? "none" : "auto",
+                      }}
+                    >
+                      <Checkbox
+                        checked={selectedTransactions.includes(transaction.Transaction_ID)}
+                        onChange={() => handleSelectTransaction(transaction.Transaction_ID)}
+                        disabled={convertedTransactionIds.includes(transaction.Transaction_ID)}
+                      />
+                      <div>ID: {transaction.Transaction_ID}</div>
+                      <div>Amount: $ {transaction.Transaction_Amount}</div>
+                      <div className="transactionDate">{transaction.Created_At}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Button
+                onClick={handleConvertToMiles}
+                style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color: 'white' }}
+                disabled={selectedTransactions.length === 0}
+                fullWidth
+              >
+                Convert to Miles
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={6}>
     <Card style={{ height: '100%', marginRight: "10px" }}>
       <div>
         <Typography  style={{
@@ -254,7 +267,7 @@ const MilesRedemption = () => {
             <CardContent  style={{display: 'flex',
             justifyContent: 'space-between'}}>
             <Grid item>{offer.name}</Grid>
-            <h3 style={{fontWeight: 'bold'}}>{offer.name}</h3>
+            
             <p>Cost: {offer.cost} miles</p>
             <Button size="small" onClick={() => handleRedeemMiles(offer)} style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color:'white' }}>
               Redeem Miles
@@ -266,20 +279,14 @@ const MilesRedemption = () => {
     </Card>
   </Grid>
 </Grid>
-      
+     
       {showPopup && (
         <div className="popup">
-          <p>
-            {error
-              ? error
-              : `You have successfully redeemed ${redeemedOffer?.name}. Remaining miles: ${miles}.`}
-          </p>
-          <button onClick={closePopup} className="closeButton">
-            Close
-          </button>
+          <p>{error ? error : `You have successfully redeemed ${redeemedOffer?.name}. Remaining miles: ${miles}.`}</p>
+          <button onClick={closePopup} className="closeButton">Close</button>
         </div>
       )}
-  </>
+    </>
   );
 };
 
