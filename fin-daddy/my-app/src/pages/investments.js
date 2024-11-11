@@ -3,11 +3,13 @@
 // import { selectUser } from "../redux/userSlice";
 // import { useParams, useNavigate } from "react-router-dom";
 
+import InvestmentComponent from "../components/Investments";
 
 const Investments = () => {
   return (
-    <div>
-        <h1>Investments PAGE</h1>
+    <div className="">
+      <InvestmentComponent />
+      <hr className="bg-black mt-5" />
     </div>
   );
 };
