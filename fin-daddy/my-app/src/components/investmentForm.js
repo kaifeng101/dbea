@@ -19,6 +19,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import InfoIcon from "@mui/icons-material/Info";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
@@ -599,6 +600,21 @@ const PlanDetail = () => {
           >
             <strong>Expected Return:</strong> {plan.expectedReturn}
           </Typography>
+          <Typography
+            variant="body2"
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              display: "flex",
+              marginTop: "5px",
+              alignItems: "center",
+              fontSize: "0.75rem", // makes the text smaller
+              color: "brown",
+            }}
+          >
+            <InfoIcon fontSize="small" style={{ marginRight: "8px" }} />
+            For more information or assistance regarding our investment plans, feel free to contact us for personalized investment
+            coaching (fees apply).
+          </Typography>
         </CardContent>
       </Card>
       <div className="flex gap-3 md:flex-row flex-col w-full">
@@ -707,7 +723,6 @@ const PlanDetail = () => {
                 </TextField>
                 {plan.title === "Leveraged Green Growth Package" && (
                   <>
-
                     <Slider
                       value={leverageRate}
                       step={1}
