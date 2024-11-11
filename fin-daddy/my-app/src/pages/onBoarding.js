@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import React, {useState} from 'react';
 import {
     Box,
@@ -10,7 +10,6 @@ import {
     Step,
     StepLabel,
     Container,
-    // MenuItem,
     RadioGroup,
     Checkbox,
     FormControlLabel,
@@ -18,7 +17,36 @@ import {
     Grid
   } from '@mui/material';
 
+  import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+
 const steps = ['User Details', 'Personal Details', 'Employee Details', 'Other Details'];
+
+const positionTitleOptions = [
+  'Cx0', 'Executive Vice President (EVP)', 'Senior Vice President (SVP)', 'Vice President Head (VPH)',
+  'Vice President (VP)', 'Assistant Vice President Head (AVPH)', 'Assistant Vice President (AVP)', 
+  'Manager, Management Associate (MA)', 'Assistant Manager (AM)', 'Clerk'
+];
+
+const occupationOptions = [
+  'Accountant', 'Actor/Actress', 'Architect', 'Artist', 'Chef', 'Civil Engineer',
+  'Data Scientist', 'Doctor', 'Electrician', 'Engineer (Various fields)', 'Financial Analyst',
+  'Graphic Designer', 'Lawyer', 'Nurse', 'Pharmacist', 'Photographer', 'Project Manager',
+  'Real Estate Agent', 'Software Developer', 'Teacher/Professor', 'Waiter/Waitress', 'Researcher',
+  'Sales Manager', 'Marketing Specialist', 'Human Resources Specialist', 'Public Relations Specialist',
+  'Social Worker', 'Construction Worker', 'Retail Worker', 'Scientist', 'Security Guard',
+  'Customer Service Representative', 'IT Specialist', 'Veterinarian', 'Transport Driver',
+  'Entrepreneur', 'Journalist', 'Administrative Assistant', 'Marketing Manager', 'Event Planner',
+  'Research Scientist', 'Cleaner', 'Mechanic', 'Construction Manager', 'Financial Planner',
+  'Retail Manager', 'Travel Agent', 'Copywriter', 'Librarian'
+];
+
+const currentJobStatusOptions = [
+  'Employed', 'Unemployed', 'Part Time'
+];
+
+const housingStatusOptions = [
+  'Renting', 'Owning'
+];
 
 const OnBoarding = () => {
     const navigate = useNavigate();
@@ -57,10 +85,43 @@ const OnBoarding = () => {
         createDepositAccount: '',
         password: '',
         passwordConfirmation: '',
+        currentJobStatus: '',
+        currentHousingStatus: '',
+        noOfSocialAccounts: '',
+        onlinePresence:'',
     });
+    
     const [isWorkingInSingapore, setIsWorkingInSingapore] = useState(false);
     const [wantsDepositAccount, setWantsDepositAccount] = useState(false);
 
+    const handleCurrentJobStatusChange = (e) => {
+      setFormData({
+        ...formData,
+        currentJobStatus: e.target.value,
+      });
+    };
+    
+    const handleOccupationChange = (e) => {
+      setFormData({
+        ...formData,
+        occupation: e.target.value,
+      });
+    };
+
+    const handlePositionTitleChange = (e) => {
+      setFormData({
+        ...formData,
+        positionTitle: e.target.value,
+      });
+    };
+
+    const handleHousingStatusChange = (e) => {
+      setFormData({
+        ...formData,
+        currentHousingStatus: e.target.value,
+      });
+    };
+    
     const handleDepositCheckboxChange = (event) => {
         setWantsDepositAccount(event.target.checked);
     };
@@ -155,38 +216,42 @@ const OnBoarding = () => {
             navigate('localhost:3000');
             setFormData({
               Id: 0,
-              certificateNo: 0,
-              userNo: '',
-              emailAddress: '',
-              customerType: '',
-              familyName: '',
-              givenName: '',
-              dateOfBirth: '',
-              gender: '',
-              occupation: '',
-              streetAddress1: '',
-              city: '',
-              state: '',
-              country: '',
-              postalCode: '',
-              phoneCountryCode:'',
-              phoneAreaCode: '',
-              phoneLocalNumber: '',
-              mobileNumber: '',
-              positionTitle: '',
-              yearOfService: '',
-              employerName: '',
-              salaryRange: '',
-              officeAddress1: '',
-              officeAddress2: '',
-              officeAddress3: '',
-              officeContactNumber: '',
-              officeContactNumberExt: '',
-              currency: '',
-              workingInSingapore: '',
-              createDepositAccount: '',
-              password: '',
-              passwordConfirmation: '',
+        certificateNo: 0,
+        userNo: '',
+        emailAddress: '',
+        customerType: '',
+        familyName: '',
+        givenName: '',
+        dateOfBirth: '',
+        gender: '',
+        occupation: '',
+        streetAddress1: '',
+        city: '',
+        state: '',
+        country: '',
+        postalCode: '',
+        phoneCountryCode:'',
+        phoneAreaCode: '',
+        phoneLocalNumber: '',
+        mobileNumber: '',
+        positionTitle: '',
+        yearOfService: '',
+        employerName: '',
+        salaryRange: '',
+        officeAddress1: '',
+        officeAddress2: '',
+        officeAddress3: '',
+        officeContactNumber: '',
+        officeContactNumberExt: '',
+        currency: '',
+        workingInSingapore: '',
+        createDepositAccount: '',
+        password: '',
+        passwordConfirmation: '',
+        currentJobStatus: '',
+        currentHousingStatus: '',
+        noOfSocialAccounts: '',
+        onlinePresence:'',
             });
         } catch (error) {
             // Log the full error response for debugging
@@ -204,7 +269,7 @@ const OnBoarding = () => {
         }} 
         className=' mt-24'
         >
-          <Typography variant="h4" component="h1" align="center" gutterBottom>
+          <Typography variant="h4" component="h1" align="center" gutterBottom style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: "bold"}} >
             Registration
           </Typography>
     
@@ -212,13 +277,14 @@ const OnBoarding = () => {
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{label}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }} style={{ fontFamily: 'Montserrat, sans-serif'}} >{label}</Typography>
                 </StepLabel>
               </Step>
             ))}
           </Stepper>
     
           <Box sx={{ mt: 3 }}>
+            
             {currentStep === 0 && (
               <>
                 <TextField
@@ -229,23 +295,27 @@ const OnBoarding = () => {
                       margin="normal"
                       name="Id"
                       onChange={handleChange}
-                      InputLabelProps={{
-                          sx: { color: '#666666' },
-                      }}
-                      sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                      sx={{
+                        '& .MuiInputLabel-root': {
+                          fontFamily: "'Montserrat', sans-serif",
+                        },
+                        '& .MuiInputBase-root': {
+                          fontFamily: "'Montserrat', sans-serif",
+                      }}}
                 />
-                <TextField
-                    required
-                    label="Customer Type"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
+                <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                  <InputLabel id="customer-type-label" sx={{ color: '#666666' }}>Customer Type</InputLabel>
+                  <Select
+                    labelId="customer-type-label"
+                    id="customerType"
+                    value={formData.customerType}
+                    onChange={handleChange}
                     name="customerType"
-                    InputLabelProps={{
-                        sx: { color: '#666666' },
-                    }}
-                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
+                    label="Customer Type"
+                  >
+                    <MenuItem value="Retail">Retail</MenuItem>
+                  </Select>
+                </FormControl>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
@@ -255,10 +325,13 @@ const OnBoarding = () => {
                           fullWidth
                           margin="normal"
                           name="userNo"
-                          InputLabelProps={{
-                              sx: { color: '#666666' },
-                          }}
-                          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                          sx={{
+                            '& .MuiInputLabel-root': {
+                              fontFamily: "'Montserrat', sans-serif",
+                            },
+                            '& .MuiInputBase-root': {
+                              fontFamily: "'Montserrat', sans-serif",
+                          }}}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -270,10 +343,13 @@ const OnBoarding = () => {
                         margin="normal"
                         name="emailAddress"
                         onChange={handleChange}
-                        InputLabelProps={{
-                          sx: { color: '#666666' },
-                        }}
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
                       />
                     </Grid>
                 </Grid>
@@ -287,10 +363,13 @@ const OnBoarding = () => {
                         margin="normal"
                         name="password"
                         onChange={handleChange}
-                        InputLabelProps={{
-                          sx: { color: '#666666' },
-                        }}
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -302,10 +381,13 @@ const OnBoarding = () => {
                         margin="normal"
                         name="passwordConfirmation"
                         onChange={handleChange}
-                        InputLabelProps={{
-                          sx: { color: '#666666' },
-                        }}
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
                       />
                     </Grid>
                 </Grid>
@@ -323,10 +405,13 @@ const OnBoarding = () => {
                         margin="normal"
                         name="certificateNo"
                         onChange={handleChange}
-                        InputLabelProps={{
-                          sx: { color: '#666666' },
-                        }}
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -338,10 +423,13 @@ const OnBoarding = () => {
                         margin="normal"
                         name="dateOfBirth"
                         onChange={handleChange}
-                        InputLabelProps={{
-                          sx: { color: '#666666' },
-                        }}
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
                       />
                     </Grid>
                 </Grid>
@@ -355,10 +443,13 @@ const OnBoarding = () => {
                         margin="normal"
                         name="familyName"
                         onChange={handleChange}
-                        InputLabelProps={{
-                          sx: { color: '#666666' },
-                        }}
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -370,11 +461,52 @@ const OnBoarding = () => {
                         margin="normal"
                         name="givenName"
                         onChange={handleChange}
-                        InputLabelProps={{
-                          sx: { color: '#666666' },
-                        }}
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
                       />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        label="Number of Social Accounts"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        name="noOfSocialAccounts"
+                        onChange={handleChange}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <Box sx={{ marginBottom: '20px' }}>
+                      <Typography variant="body1" sx={{ fontWeight: 600 }}>Online Presence</Typography>
+                      <input
+                        type="range"
+                        name="onlinePresence"
+                        value={formData.onlinePresence}
+                        onChange={handleChange}
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        style={{ width: '100%', marginTop: '10px' }}
+                      />
+                      <Typography variant="body2" sx={{ marginTop: '10px' }}>
+                        Value: {formData.onlinePresence}
+                      </Typography>
+                    </Box>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2}>
@@ -387,10 +519,13 @@ const OnBoarding = () => {
                         margin="normal"
                         name="country"
                         onChange={handleChange}
-                        InputLabelProps={{
-                          sx: { color: '#666666' },
-                        }}
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                        sx={{
+                          '& .MuiInputLabel-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          '& .MuiInputBase-root': {
+                            fontFamily: "'Montserrat', sans-serif",
+                        }}}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -416,10 +551,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="state"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -431,12 +569,34 @@ const OnBoarding = () => {
                   margin="normal"
                   name="city"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  {/* Housing Status Dropdown */}
+                  <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                    <InputLabel id="current-housing-status-label" sx={{ color: '#666666' }}>Current Housing Status</InputLabel>
+                    <Select
+                      labelId="current-housing-status-label"
+                      id="currentHousingStatus"
+                      value={formData.currentHousingStatus}
+                      onChange={handleHousingStatusChange}
+                      label="Current Housing Status"
+                    >
+                      {housingStatusOptions.map((status) => (
+                        <MenuItem key={status} value={status}>
+                          {status}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -448,10 +608,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="streetAddress1"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -463,10 +626,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="postalCode"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                 </Grid>
@@ -480,10 +646,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="phoneCountryCode"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -495,10 +664,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="phoneAreaCode"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                 </Grid>
@@ -512,10 +684,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="mobileNumber"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -527,10 +702,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="phoneLocalNumber"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                 </Grid>
@@ -540,34 +718,40 @@ const OnBoarding = () => {
               <>
               <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                    <TextField
-                  required
-                  label="Occupation"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name="occupation"
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
+                    <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="occupation-label" sx={{ color: '#666666' }}>Occupation</InputLabel>
+                      <Select
+                        labelId="occupation-label"
+                        id="occupation"
+                        value={formData.occupation}
+                        onChange={handleOccupationChange}
+                        label="Occupation"
+                      >
+                        {occupationOptions.map((occupation) => (
+                          <MenuItem key={occupation} value={occupation}>
+                            {occupation}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                    <TextField
-                  required
-                  label="Title of Position"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name="positionTitle"
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
-                />
+                    <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="position-title-label" sx={{ color: '#666666' }}>Position Title</InputLabel>
+                      <Select
+                        labelId="position-title-label"
+                        id="positionTitle"
+                        value={formData.positionTitle}
+                        onChange={handlePositionTitleChange}
+                        label="Position Title"
+                      >
+                        {positionTitleOptions.map((positionTitle) => (
+                          <MenuItem key={positionTitle} value={positionTitle}>
+                            {positionTitle}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2}>
@@ -580,10 +764,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="employerName"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -595,10 +782,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="salaryRange"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                 </Grid>
@@ -612,10 +802,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="yearOfService"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -627,10 +820,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="officeAddress1"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                 </Grid>
@@ -644,10 +840,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="officeAddress2"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -659,10 +858,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="officeAddress3"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                 </Grid>
@@ -676,10 +878,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="officeContactNumberExt"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -691,12 +896,33 @@ const OnBoarding = () => {
                   margin="normal"
                   name="officeContactNumber"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
                     </Grid>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                    <InputLabel id="current-job-status-label" sx={{ color: '#666666' }}>Current Job Status</InputLabel>
+                    <Select
+                      labelId="current-job-status-label"
+                      id="currentJobStatus"
+                      value={formData.currentJobStatus}
+                      onChange={handleCurrentJobStatusChange}
+                      label="Current Job Status"
+                    >
+                      {currentJobStatusOptions.map((status) => (
+                        <MenuItem key={status} value={status} sx={{'& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}}}>
+                          {status}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
               </>
             )}
@@ -709,10 +935,13 @@ const OnBoarding = () => {
                   margin="normal"
                   name="currency"
                   onChange={handleChange}
-                  InputLabelProps={{
-                    sx: { color: '#666666' },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' }}}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                    },
+                    '& .MuiInputBase-root': {
+                      fontFamily: "'Montserrat', sans-serif",
+                  }}}
                 />
               <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -724,9 +953,9 @@ const OnBoarding = () => {
                                 color="primary"
                             />
                         }
+                        sx={{'& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}}}
                         label="Are you working in Singapore?"
                         name="workingInSingapore"
-                        sx={{ color: '#666666' }} // Optional styling for the label
                     />
             
                     </Grid>
@@ -741,7 +970,7 @@ const OnBoarding = () => {
                             }
                             label="Do you wish to create a Deposit Account?"
                             name="createDepositAccount"
-                            sx={{ color: '#666666' }} // Optional styling for the label
+                            sx={{'& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}}}
                         />
                     </Grid>
                 </Grid>
@@ -749,21 +978,28 @@ const OnBoarding = () => {
             )}
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+              {currentStep !== 0 &&(
               <Button 
                 variant="outlined" 
                 color="primary" 
                 onClick={handleBack} 
                 sx={{ borderRadius: '5px' }} 
-                disabled={currentStep === 0} // Disable if on the first step
+                style= {{fontFamily: 'Montserrat, sans-serif'}}
               >
                 Previous
+              </Button>)}
+              {currentStep === 0 && (
+              <Button>
+                <Link to="/" style= {{fontFamily: 'Montserrat, sans-serif'}}>BACK</Link>
               </Button>
+            )}
               {currentStep === steps.length - 1 ? (
                 <Button 
                   variant="contained" 
                   color="primary" 
                   onClick={handleSubmit} 
                   sx={{ borderRadius: '5px' }}
+                  style= {{fontFamily: 'Montserrat, sans-serif'}}
                 >
                   Submit
                 </Button>
@@ -773,6 +1009,7 @@ const OnBoarding = () => {
                   color="primary" 
                   onClick={handleNext} 
                   sx={{ borderRadius: '5px' }}
+                  style= {{fontFamily: 'Montserrat, sans-serif'}}
                 >
                   Next
                 </Button>

@@ -3,6 +3,9 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import "./style.css";
 import "./Redeem.css";
+import { Card, Typography, CardContent, Grid, Button, Icon } from "@mui/material"
+import { FlightTakeoff, Hotel, DirectionsCar } from "@mui/icons-material";
+
 
 const offers = [
   { id: 1, name: "Hotel Stay", cost: 300 },
@@ -157,17 +160,40 @@ const MilesRedemption = () => {
   };
 
   return (
-    <div className="container" style={{ marginTop: "96px" }}>
-      <h1 className="header">Miles Redemption</h1>
 
-      <div className="balanceContainer">
-        <h3 className="balanceText">Your Miles Balance</h3>
-        <p className="miles">{Number(miles).toFixed(2)} miles</p>
-      </div>
+    <>
+    <Grid container spacing={2} style={{ marginTop: '70px', display: 'flex', justifyContent: 'space-between' }}>
+  {/* Transaction History Card */}
+  <Grid item xs={12} sm={6} md={6}>
+    <Card style={{marginLeft: "10px", height: '100%'}}>
+      <Typography
+        style={{
+          fontFamily: "'Montserrat', sans-serif",
+          fontSize: "30px",
+          fontWeight: "bold",
+          textAlign: "center",
+          marginTop: "10px",
+          marginBottom: "16px"
+        }}
+      >
+        Miles Redemption
+      </Typography>
 
+
+      <Card variant="outlined" style={{marginLeft:"15px", marginRight: "15px", padding: "10px", backgroundColor: "#dcfce7"}}>
+        <h3 className="balanceText" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          Your Miles Balance
+        </h3>
+        <p className="miles" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          {miles} miles
+        </p>
+      </Card>
+      <CardContent>
       <div className="transactionsContainer">
-        <h3 className="sectionHeader">Transaction History</h3>
-        <ul className="transactionList">
+        <h3 className="sectionHeader" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          Transaction History
+        </h3>
+        <ul className="transactionList" style={{ fontFamily: "'Montserrat', sans-serif" }}>
           {transactions.map((transaction) => (
             <li
               key={transaction.Transaction_ID}
@@ -184,32 +210,63 @@ const MilesRedemption = () => {
                   : "auto",
               }}
             >
+
               <div>ID: {transaction.Transaction_ID}</div>
               <div>Amount: $ {transaction.Transaction_Amount}</div>
               <div className="transactionDate">{transaction.Created_At}</div>
+
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="buttonContainer">
-        <button onClick={handleConvertToMiles} className="button" disabled={!selectedTransaction}>
+        <Button
+          onClick={handleConvertToMiles}
+          style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color:'white' }}
+          disabled={!selectedTransaction}
+          fullWidth
+        >
           Convert to Miles
-        </button>
-      </div>
-      <div><h3 className="sectionHeader">Redeem Offers Here</h3></div>
-      <div className="offersContainer">
-        {offers.map((offer) => (
-          <div key={offer.id} className="offerCard">
-            <h3>{offer.name}</h3>
-            <p>Cost: {offer.cost} miles</p>
-            <button onClick={() => handleRedeemMiles(offer)} className="button">
-              Redeem Miles
-            </button>
-          </div>
-        ))}
-      </div>
 
+        </Button>
+      </CardContent>
+    </Card>
+  </Grid>
+
+
+  {/* Redeem Offers Card */}
+  <Grid item xs={12} sm={6} md={6}>
+    <Card style={{ height: '100%', marginRight: "10px" }}>
+      <div>
+        <Typography  style={{
+          fontFamily: "'Montserrat', sans-serif",
+          fontSize: "30px",
+          fontWeight: "bold",
+          textAlign: "center",
+          marginTop: "10px",
+        }}>
+          Redeem Offers Here
+        </Typography>
+      </div>
+      <CardContent style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        {offers.map((offer) => (
+          <Card variant="outlined" key={offer.id} style={{marginBottom: "10px", backgroundColor: "#dcfce7"}}>
+            <CardContent  style={{display: 'flex',
+            justifyContent: 'space-between'}}>
+            <Grid item>{getOfferIcon(offer.name)}</Grid>
+            <h3 style={{fontWeight: 'bold'}}>{offer.name}</h3>
+            <p>Cost: {offer.cost} miles</p>
+            <Button size="small" onClick={() => handleRedeemMiles(offer)} style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color:'white' }}>
+              Redeem Miles
+            </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </CardContent>
+    </Card>
+  </Grid>
+</Grid>
+      
       {showPopup && (
         <div className="popup">
           <p>
@@ -222,7 +279,7 @@ const MilesRedemption = () => {
           </button>
         </div>
       )}
-    </div>
+  </>
   );
 };
 

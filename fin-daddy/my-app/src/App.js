@@ -15,6 +15,8 @@ import ViewAll from "./pages/viewAll";
 import Authorisation from "./pages/authorisation";
 import Termination from "./pages/termination";
 import BillPayment from "./pages/billPayment"
+import InvestmentForm from "./components/investmentForm";
+import TransactionHistory from "./pages/transactionHistory"
 
 function App() {
   return (
@@ -25,7 +27,7 @@ function App() {
           <div className="app-navbar">
             <NavBar />
           </div>
-          <div>
+          <div className="dashboard--content">
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/transaction" element={<Transaction />} />
@@ -35,7 +37,9 @@ function App() {
                 <Route path="authorisation" element={<Authorisation />} />
                 <Route path="termination" element={<Termination />} />
               </Route>
+              <Route path="/transactionHistory" element={<TransactionHistory />} />
               <Route path="/investments" element={<Investments />} />
+              <Route path="/investmentForm/:id" element={<InvestmentForm />} />
               <Route
                 path="/carbonMarketplace"
                 element={<CarbonMarketplace />}
