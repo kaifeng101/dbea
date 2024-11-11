@@ -236,33 +236,38 @@ const PlanDetail = () => {
     if (!plan?.title || !customerPlans) return; // Early return if plan title or customerPlans is not available
 
     const title = plan.title;
-    const matchingPlans = customerPlans
-      .filter((customerPlan) => customerPlan.Type === title)
-      .sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime)); // Sort by DateTime in descending order
+    if (customerPlans) {
+      const matchingPlans = customerPlans
+        .filter((plan) => plan.Type === title)
+        .sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime)); // Sort by DateTime in descending order
 
-    if (matchingPlans.length > 0) {
-      let totalAmount = 0;
-      let maxLeverage = 0;
+      if (matchingPlans.length > 0) {
+        let totalAmount = 0;
+        let maxLeverage = 0;
 
-      matchingPlans.forEach((matchingPlan) => {
-        const growthAmount = calculateGrowthAmount(
-          matchingPlan.Amount,
-          matchingPlan.DateTime
-        );
-        if (growthAmount) totalAmount += parseFloat(growthAmount); // Add growth amount
-        if (matchingPlan.maximum_leverage)
-          maxLeverage += parseFloat(matchingPlan.maximum_leverage);
-      });
+        matchingPlans.forEach((plan) => {
+          const growthAmount = calculateGrowthAmount(
+            plan.Amount,
+            plan.DateTime
+          );
+          if (growthAmount) {
+            totalAmount += parseFloat(growthAmount); // Add growth amount
+          }
+          if (plan.maximum_leverage) {
+            maxLeverage += parseFloat(plan.maximum_leverage);
+          }
+        });
 
-      const latestPlan = matchingPlans[matchingPlans.length - 1];
-      const accountObject = {
-        Amount: totalAmount.toFixed(2), // Total amount with 2 decimals
-        Type: title,
-        DateTime: latestPlan.DateTime,
-        maximum_leverage: maxLeverage.toFixed(2), // Sum of all leverage values
-      };
+        const latestPlan = matchingPlans[matchingPlans.length - 1];
+        const accountObject = {
+          Amount: totalAmount.toFixed(2), // Ensure this reflects the accurate total amount
+          Type: title,
+          DateTime: latestPlan.DateTime,
+          maximum_leverage: maxLeverage, // Assuming 'maximum_leverage' should be updated with the last plan
+        };
 
-      setExistingPlan(accountObject); // Update the state with the account details
+        setExistingPlan(accountObject); // Update the state with the new account details
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerPlans, plan?.title, investmentAmount]);
@@ -270,41 +275,38 @@ const PlanDetail = () => {
   const calculateGrowthAmount = (amount, datetime) => {
     const principal = parseFloat(amount);
     const rate = plan.rate;
-
-    if (isNaN(principal) || !datetime || !rate) return;
+    if (!principal || isNaN(principal) || !datetime) return;
 
     const startDate = new Date(datetime);
     const currentDate = new Date();
 
-    // Calculate full months difference
     const monthsDifference =
       (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
       currentDate.getMonth() -
       startDate.getMonth();
 
-    if (monthsDifference <= 0) return; // Return early if the date is invalid
+    const daysInMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    ).getDate();
+    const remainingDaysInMonth = daysInMonth - startDate.getDate();
 
-    // Calculate remaining days in the current month, if applicable
-    const remainingDaysInMonth = Math.max(
-      0,
-      new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + 1,
-        0
-      ).getDate() - startDate.getDate()
-    );
+    if (monthsDifference <= 0 && remainingDaysInMonth <= 0) return;
 
-    // Calculate growth amount for full months
     let growthAmount = principal * Math.pow(1 + rate, monthsDifference);
 
-    // Adjust for remaining days using a daily rate
     if (remainingDaysInMonth > 0) {
-      const dailyRate = rate / 30; // Assume 30 days in a month for daily rate calculation
+      const dailyRate = rate / 30;
       growthAmount *= Math.pow(1 + dailyRate, remainingDaysInMonth);
     }
+    if (isNaN(growthAmount)) {
+      return false;
+    }
 
-    return isNaN(growthAmount) ? null : growthAmount.toFixed(2);
+    return growthAmount.toFixed(2);
   };
+
   const withdrawInvestment = async (amount) => {
     try {
       const initialAmount = existingPlan.Amount;
