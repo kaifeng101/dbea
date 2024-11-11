@@ -162,7 +162,7 @@ const MilesRedemption = () => {
 
       <div className="balanceContainer">
         <h3 className="balanceText">Your Miles Balance</h3>
-        <p className="miles">{miles} miles</p>
+        <p className="miles">{Number(miles).toFixed(2)} miles</p>
       </div>
 
       <div className="transactionsContainer">
