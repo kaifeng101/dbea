@@ -50,6 +50,7 @@ const LoginComponent = () => {
         certificate: response.data.certificate.certificateNo,
         customerId: response.data.customer.customerId,
         bankId: response.data.profile.BankId,
+        email: response.data.profile.email
       };
       return customerInfo;
     } catch (error) {
