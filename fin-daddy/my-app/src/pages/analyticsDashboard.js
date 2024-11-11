@@ -325,7 +325,7 @@ const Analytics = () => {
       <Grid container spacing={4} style={{ marginBottom: '20px' }}>
         {summaryData.map((item, index) => (
           <Grid item xs={12} sm={6} md={2.4} key={index}>
-            <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', fontFamily: "Montserrat, sans-serif"}}>
+            <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', fontFamily: "Montserrat, sans-serif", minHeight: "100%", minwidth: "100%"}}>
               <CardContent>
                 <Typography variant="subtitle1" component="div" style={{ color: '#555', marginBottom: '5px', fontFamily: "Montserrat, sans-serif" }}>
                   {item.title}

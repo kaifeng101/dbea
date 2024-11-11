@@ -284,11 +284,6 @@ const OnBoarding = () => {
           </Stepper>
     
           <Box sx={{ mt: 3 }}>
-          {currentStep === 0 && (
-              <Button>
-                <Link to="/">BACK</Link>
-              </Button>
-            )}
             
             {currentStep === 0 && (
               <>
@@ -922,7 +917,7 @@ const OnBoarding = () => {
                       label="Current Job Status"
                     >
                       {currentJobStatusOptions.map((status) => (
-                        <MenuItem key={status} value={status}>
+                        <MenuItem key={status} value={status} sx={{'& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}}}>
                           {status}
                         </MenuItem>
                       ))}
@@ -958,9 +953,9 @@ const OnBoarding = () => {
                                 color="primary"
                             />
                         }
+                        sx={{'& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}}}
                         label="Are you working in Singapore?"
                         name="workingInSingapore"
-                        sx={{ color: '#666666' }} // Optional styling for the label
                     />
             
                     </Grid>
@@ -975,7 +970,7 @@ const OnBoarding = () => {
                             }
                             label="Do you wish to create a Deposit Account?"
                             name="createDepositAccount"
-                            sx={{ color: '#666666' }} // Optional styling for the label
+                            sx={{'& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}}}
                         />
                     </Grid>
                 </Grid>
@@ -983,21 +978,28 @@ const OnBoarding = () => {
             )}
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+              {currentStep !== 0 &&(
               <Button 
                 variant="outlined" 
                 color="primary" 
                 onClick={handleBack} 
                 sx={{ borderRadius: '5px' }} 
-                disabled={currentStep === 0} // Disable if on the first step
+                style= {{fontFamily: 'Montserrat, sans-serif'}}
               >
                 Previous
+              </Button>)}
+              {currentStep === 0 && (
+              <Button>
+                <Link to="/" style= {{fontFamily: 'Montserrat, sans-serif'}}>BACK</Link>
               </Button>
+            )}
               {currentStep === steps.length - 1 ? (
                 <Button 
                   variant="contained" 
                   color="primary" 
                   onClick={handleSubmit} 
                   sx={{ borderRadius: '5px' }}
+                  style= {{fontFamily: 'Montserrat, sans-serif'}}
                 >
                   Submit
                 </Button>
@@ -1007,6 +1009,7 @@ const OnBoarding = () => {
                   color="primary" 
                   onClick={handleNext} 
                   sx={{ borderRadius: '5px' }}
+                  style= {{fontFamily: 'Montserrat, sans-serif'}}
                 >
                   Next
                 </Button>
