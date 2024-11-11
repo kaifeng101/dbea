@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import "./style.css";
 import "./Redeem.css";
-import { Card, Typography, CardContent, Grid, Button, Icon } from "@mui/material"
-import { FlightTakeoff, Hotel, DirectionsCar } from "@mui/icons-material";
+import { Card, Typography, CardContent, Grid, Button } from "@mui/material"
+//import { FlightTakeoff, Hotel, DirectionsCar } from "@mui/icons-material";
 
 
 const offers = [
@@ -185,7 +185,7 @@ const MilesRedemption = () => {
           Your Miles Balance
         </h3>
         <p className="miles" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-          {miles} miles
+          {Number(miles).toFixed(2)} miles
         </p>
       </Card>
       <CardContent>
@@ -253,7 +253,7 @@ const MilesRedemption = () => {
           <Card variant="outlined" key={offer.id} style={{marginBottom: "10px", backgroundColor: "#dcfce7"}}>
             <CardContent  style={{display: 'flex',
             justifyContent: 'space-between'}}>
-            <Grid item>{getOfferIcon(offer.name)}</Grid>
+            <Grid item>{offer.name}</Grid>
             <h3 style={{fontWeight: 'bold'}}>{offer.name}</h3>
             <p>Cost: {offer.cost} miles</p>
             <Button size="small" onClick={() => handleRedeemMiles(offer)} style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color:'white' }}>
