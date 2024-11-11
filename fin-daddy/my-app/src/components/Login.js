@@ -51,6 +51,7 @@ const LoginComponent = () => {
         customerId: response.data.customer.customerId,
         bankId: response.data.profile.BankId,
         email: response.data.profile.email,
+        custName: response.data.givenName.trim() + " " + response.data.familyName.trim(),
         number: response.data.cellphone.phoneNumber
       };
       return customerInfo;
