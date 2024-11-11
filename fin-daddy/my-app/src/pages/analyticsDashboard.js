@@ -342,7 +342,7 @@ const Analytics = () => {
                   {item.value}
                 </Typography>
                 {(item.title === 'Carbon Footprint' || item.title === 'Carbon Credits') && (
-                  <Typography variant="body2" component="div" style={{ color: '#777', marginTop: '5px' }}>
+                  <Typography variant="body2" component="div" style={{ color: '#777', marginTop: '5px', fontFamily: "Montserrat, sans-serif" }}>
                     {item.title === 'Carbon Footprint'
                       ? 'kg CO2e emitted'
                       : 'earned from sustainable transactions'}
@@ -363,7 +363,7 @@ const Analytics = () => {
                   {item.value}
                 </Typography>
                 {(item.title === 'Carbon Footprint' || item.title === 'Carbon Credits') && (
-                  <Typography variant="body2" component="div" style={{ color: '#777', marginTop: '5px' }}>
+                  <Typography variant="body2" component="div" style={{ color: '#777', marginTop: '5px', fontFamily: "Montserrat, sans-serif" }}>
                     {item.title === 'Carbon Footprint'
                       ? 'kg CO2e emitted'
                       : 'earned from sustainable transactions'}
@@ -403,7 +403,18 @@ const Analytics = () => {
                     <LineChart data={transactionsData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
-                      <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <YAxis 
+                        orientation="left"
+                        stroke="#8884d8"
+                        label={{ value: 'Spending ($)', angle: -90, position: 'insideLeft' }}
+                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
+                      />
+                      <YAxis 
+                        orientation="right"
+                        stroke="#82ca9d"
+                        label={{ value: 'Savings ($)', angle: 90, position: 'insideRight' }}
+                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
+                      />
                       <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
                       <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
                       <Line type="monotone" dataKey="spending" strokeWidth={3} stroke="#8884d8" />

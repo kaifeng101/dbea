@@ -96,10 +96,10 @@ const getLowRiskChart = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={lowRiskData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
+              <XAxis dataKey="year" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+              <YAxis  tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+              <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+              <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
               <Line
                 type="monotone"
                 dataKey="risk"
@@ -143,10 +143,10 @@ const getMediumRiskChart = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={mediumRiskData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
+              <XAxis dataKey="year" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+              <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+              <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+              <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
               <Line
                 type="monotone"
                 dataKey="risk"
@@ -189,10 +189,10 @@ const getHighRiskChart = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={highRiskData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
+              <XAxis dataKey="year" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+              <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+              <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+              <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
               <Line
                 type="monotone"
                 dataKey="risk"
