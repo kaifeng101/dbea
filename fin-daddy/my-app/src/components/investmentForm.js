@@ -390,6 +390,7 @@ const PlanDetail = () => {
       setMaxLeverageRate(leverage);
     } catch (error) {
       setMaxLeverageRate(2);
+      // console.log(error)
     }
   };
 
@@ -612,8 +613,15 @@ const PlanDetail = () => {
             }}
           >
             <InfoIcon fontSize="small" style={{ marginRight: "8px" }} />
-            For more information or assistance regarding our investment plans, feel free to contact us for personalized investment
-            coaching (fees apply).
+            For more information or assistance regarding our investment plans,
+            feel free to contact us at
+            <span
+              className="cursor-pointer italic"
+              style={{ marginLeft: "5px", marginRight: "5px" }}
+            >
+              findaddy@gmail.com
+            </span>
+            for personalized investment coaching (fees apply).
           </Typography>
         </CardContent>
       </Card>
