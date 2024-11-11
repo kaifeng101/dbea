@@ -312,9 +312,8 @@ const OnBoarding = () => {
                     onChange={handleChange}
                     name="customerType"
                     label="Customer Type"
-                    sx={{'& .MuiMenuItem-root': {fontFamily: "Montserrat, sans-serif" }}}
                   >
-                    <MenuItem value="Retail">Retail</MenuItem>
+                    <MenuItem style={{fontFamily: "Montserrat, sans-serif"}}value="Retail">Retail</MenuItem>
                   </Select>
                 </FormControl>
                 <Grid container spacing={2}>
@@ -416,22 +415,27 @@ const OnBoarding = () => {
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextField
-                        required
-                        type="date"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                        name="dateOfBirth"
+                      
+                    <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="date-of-birth-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Age Range</InputLabel>
+                      <Select
+                        labelId="date-of-birth-label"
+                        id="dateOfBirth"
+                        value={formData.dateOfBirth}
                         onChange={handleChange}
-                        sx={{
-                          '& .MuiInputLabel-root': {
-                            fontFamily: "'Montserrat', sans-serif",
-                          },
-                          '& .MuiInputBase-root': {
-                            fontFamily: "'Montserrat', sans-serif",
-                        }}}
-                      />
+                        name="dateOfBirth"
+                        label="Age Range"
+                      >
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="Less than 18 years">Less than 18 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="18 - 24 years">18 - 24 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="25 - 34 years">25 - 34 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="35 - 44 years">35 - 44 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="45 - 54 years">45 - 54 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="55 - 64 years">55 - 64 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="65 - 74 years">65 - 74 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="75 years and older">75 years and older</MenuItem>
+                      </Select>
+                    </FormControl>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2}>
@@ -493,7 +497,7 @@ const OnBoarding = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <Box sx={{ marginBottom: '20px' }}>
-                      <Typography variant="body1" sx={{ fontWeight: 600 }}>Online Presence</Typography>
+                      <Typography variant="body1" style={{fontFamily: "Montserrat, sans-serif"}}>Online Presence</Typography>
                       <input
                         type="range"
                         name="onlinePresence"
@@ -501,10 +505,10 @@ const OnBoarding = () => {
                         onChange={handleChange}
                         min={0}
                         max={1}
-                        step={0.01}
+                        step={0.1}
                         style={{ width: '100%', marginTop: '10px' }}
                       />
-                      <Typography variant="body2" sx={{ marginTop: '10px' }}>
+                      <Typography variant="body2" sx={{ marginTop: '10px' }} style={{fontFamily: "Montserrat, sans-serif"}}>
                         Value: {formData.onlinePresence}
                       </Typography>
                     </Box>
@@ -530,6 +534,7 @@ const OnBoarding = () => {
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
+                    <InputLabel id="gender-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}> Gender</InputLabel>
                       <RadioGroup
                         row
                         name="gender"
@@ -537,8 +542,12 @@ const OnBoarding = () => {
                         onChange={handleGenderChange}
                         sx={{ mt: 2 }}
                       >
-                        <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                        <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                        <FormControlLabel value="Male" control={<Radio />} label="Male" sx={{
+                  '& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}
+                }}/>
+                        <FormControlLabel value="Female" control={<Radio />} label="Female" sx={{
+                  '& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}
+                }}/>
                       </RadioGroup>
                     </Grid>
                 </Grid>
@@ -583,7 +592,7 @@ const OnBoarding = () => {
                 <Grid item xs={12} sm={6}>
                   {/* Housing Status Dropdown */}
                   <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                    <InputLabel id="current-housing-status-label" sx={{ color: '#666666' }}>Current Housing Status</InputLabel>
+                    <InputLabel id="current-housing-status-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Current Housing Status</InputLabel>
                     <Select
                       labelId="current-housing-status-label"
                       id="currentHousingStatus"
@@ -592,7 +601,7 @@ const OnBoarding = () => {
                       label="Current Housing Status"
                     >
                       {housingStatusOptions.map((status) => (
-                        <MenuItem key={status} value={status}>
+                        <MenuItem style={{fontFamily: "Montserrat, sans-serif"}} key={status} value={status}>
                           {status}
                         </MenuItem>
                       ))}
@@ -720,7 +729,7 @@ const OnBoarding = () => {
               <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                     <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                      <InputLabel id="occupation-label" sx={{ color: '#666666' }}>Occupation</InputLabel>
+                      <InputLabel id="occupation-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Occupation</InputLabel>
                       <Select
                         labelId="occupation-label"
                         id="occupation"
@@ -729,7 +738,7 @@ const OnBoarding = () => {
                         label="Occupation"
                       >
                         {occupationOptions.map((occupation) => (
-                          <MenuItem key={occupation} value={occupation}>
+                          <MenuItem key={occupation} value={occupation} sx={{ fontFamily: "Montserrat, sans-serif" }}>
                             {occupation}
                           </MenuItem>
                         ))}
@@ -738,7 +747,7 @@ const OnBoarding = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                      <InputLabel id="position-title-label" sx={{ color: '#666666' }}>Position Title</InputLabel>
+                      <InputLabel id="position-title-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Position Title</InputLabel>
                       <Select
                         labelId="position-title-label"
                         id="positionTitle"
@@ -747,7 +756,7 @@ const OnBoarding = () => {
                         label="Position Title"
                       >
                         {positionTitleOptions.map((positionTitle) => (
-                          <MenuItem key={positionTitle} value={positionTitle}>
+                          <MenuItem key={positionTitle} value={positionTitle} sx={{ fontFamily: "Montserrat, sans-serif" }}>
                             {positionTitle}
                           </MenuItem>
                         ))}
@@ -775,42 +784,63 @@ const OnBoarding = () => {
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                    <TextField
-                  required
-                  label="Annual Salary"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name="salaryRange"
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    '& .MuiInputBase-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                  }}}
-                />
+                    <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="annual-salary-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Annual Salary</InputLabel>
+                      <Select
+                        labelId="annual-salary-label"
+                        id="annualSalary"
+                        value={formData.salaryRange}
+                        onChange={handleChange}
+                        name="salaryRange"
+                        label="Annual Salary"
+                        sx={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="Less than $20,000">Less than $20,000</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$20,000 - $29,999">$20,000 - $29,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$30,000 - $39,999">$30,000 - $39,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$40,000 - $49,999">$40,000 - $49,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$50,000 - $59,999">$50,000 - $59,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$60,000 - $69,999">$60,000 - $69,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$70,000 - $79,999">$70,000 - $79,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$80,000 - $89,999">$80,000 - $89,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$90,000 - $99,999">$90,000 - $99,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$100,000 - $109,999">$100,000 - $109,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="Above $100,000">Above $100,000</MenuItem>
+                      </Select>
+                    </FormControl>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                    <TextField
-                  required
-                  label="Year Started Service"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name="yearOfService"
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    '& .MuiInputBase-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                  }}}
-                />
+                    <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="year-of-service-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Year of Service</InputLabel>
+                      <Select
+                        labelId="year-of-service-label"
+                        id="yearOfService"
+                        value={formData.yearOfService}
+                        onChange={handleChange}
+                        name="yearOfService"
+                        label="Year of Service"
+                      >
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="Less than 1 year">Less than 1 year</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="1 - 2 years">1 - 2 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="3 - 4 years">3 - 4 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="5 - 6 years">5 - 6 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="7 - 8 years">7 - 8 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="9 - 10 years">9 - 10 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="11 - 12 years">11 - 12 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="13 - 14 years">13 - 14 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="15 - 16 years">15 - 16 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="17 - 18 years">17 - 18 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="19 - 20 years">19 - 20 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="21 - 22 years">21 - 22 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="23 - 24 years">23 - 24 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="25 - 26 years">25 - 26 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="27 - 28 years">27 - 28 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="29 - 30 years">29 - 30 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="More than 30 years">More than 30 years</MenuItem>
+                      </Select>
+                    </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <TextField
@@ -909,7 +939,7 @@ const OnBoarding = () => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                    <InputLabel id="current-job-status-label" sx={{ color: '#666666' }}>Current Job Status</InputLabel>
+                    <InputLabel id="current-job-status-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Current Job Status</InputLabel>
                     <Select
                       labelId="current-job-status-label"
                       id="currentJobStatus"
@@ -918,7 +948,7 @@ const OnBoarding = () => {
                       label="Current Job Status"
                     >
                       {currentJobStatusOptions.map((status) => (
-                        <MenuItem key={status} value={status} sx={{'& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}}}>
+                        <MenuItem key={status} value={status} sx={{ fontFamily: "Montserrat, sans-serif" }}>
                           {status}
                         </MenuItem>
                       ))}

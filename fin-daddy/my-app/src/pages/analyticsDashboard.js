@@ -404,21 +404,23 @@ const Analytics = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
                       <YAxis 
+                        yAxisId="left"
                         orientation="left"
                         stroke="#8884d8"
-                        label={{ value: 'Spending ($)', angle: -90, position: 'insideLeft' }}
+                        label={{ value: 'Spending ($)', angle: -90, position: 'insideLeft', fontFamily: "'Montserrat', sans-serif" }}
                         tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
                       />
                       <YAxis 
+                        yAxisId="right"
                         orientation="right"
                         stroke="#82ca9d"
-                        label={{ value: 'Savings ($)', angle: 90, position: 'insideRight' }}
+                        label={{ value: 'Savings ($)', angle: 90, position: 'insideRight', fontFamily: "'Montserrat', sans-serif" }}
                         tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
                       />
                       <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
                       <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <Line type="monotone" dataKey="spending" strokeWidth={3} stroke="#8884d8" />
-                      <Line type="monotone" dataKey="saving" strokeWidth={3} stroke="#82ca9d" />
+                      <Line yAxisId="left" type="monotone" dataKey="spending" strokeWidth={3} stroke="#8884d8" />
+                      <Line yAxisId="right" type="monotone" dataKey="saving" strokeWidth={3} stroke="#82ca9d" />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>
