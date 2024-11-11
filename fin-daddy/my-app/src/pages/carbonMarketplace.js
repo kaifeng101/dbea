@@ -80,7 +80,7 @@ export default function CarbonMarketplacePage() {
   const carbonOffsets = [
     {
       "id": 1,
-      "name": "Clean Ocean Initiative",
+      "name": "Clean Ocean Initiative, by GoGreen Company",
       "description": "Help remove plastic waste from oceans to protect marine life and reduce pollution.",
       "longDescription": "Join the fight against ocean pollution by supporting our initiative to remove plastic waste from the world's oceans. Your contribution will help fund clean-up operations in key oceanic areas, preserving marine biodiversity and promoting healthier, more sustainable ecosystems. Together, we can stop plastic waste from harming marine life and our planet.",
       "location": "Global, Oceans Worldwide",
@@ -93,7 +93,7 @@ export default function CarbonMarketplacePage() {
     },
     {
       "id": 2,
-      "name": "Reforestation Project",
+      "name": "Reforestation Project, by NetZeroGreen Company",
       "description": "Help restore forests and combat climate change by planting trees.",
       "longDescription": "Support our reforestation efforts to restore ecosystems and fight climate change. By planting native trees in areas affected by deforestation, we help reduce CO2 levels, enhance biodiversity, and provide livelihoods for local communities. Each contribution directly supports the planting of trees that will grow into long-term carbon sinks.",
       "location": "Amazon Rainforest, Brazil",
@@ -106,8 +106,8 @@ export default function CarbonMarketplacePage() {
     },
     {
       "id": 3,
-      "name": "Renewable Energy Fund",
-      "description": "Invest in renewable energy projects to reduce carbon footprints.",
+      "name": "Renewable Energy Fund, by GreenGreen Company",
+      "description": "Renewable energy projects to reduce carbon footprints.",
       "longDescription": "By contributing to our Renewable Energy Fund, you help accelerate the transition to clean energy. Your support will fund the construction of wind and solar farms that produce sustainable power, helping reduce global dependence on fossil fuels. Each contribution reduces greenhouse gas emissions and supports a cleaner, greener future for all.",
       "location": "Global",
       "receiveAmt": 50,
@@ -119,7 +119,7 @@ export default function CarbonMarketplacePage() {
     },
     {
       "id": 4,
-      "name": "Wildlife Habitat Protection",
+      "name": "Wildlife Habitat Protection, by GreenForever Company",
       "description": "Protect endangered species and their habitats through conservation efforts.",
       "longDescription": "Your support helps protect endangered wildlife species and their natural habitats. By funding critical conservation initiatives, we can preserve biodiversity, prevent habitat loss, and ensure that future generations can experience the beauty of wildlife. Every dollar contributed supports on-the-ground protection efforts in areas of high ecological importance.",
       "location": "Africa, Southeast Asia, Amazon Rainforest",
@@ -132,7 +132,7 @@ export default function CarbonMarketplacePage() {
     },
     {
       "id": 5,
-      "name": "Urban Greening Initiative",
+      "name": "Urban Greening Initiative, by GreenWorks Company",
       "description": "Create green spaces in cities to improve air quality and community health.",
       "longDescription": "Help transform urban landscapes by supporting the creation of green spaces such as parks and community gardens. These green spaces not only improve air quality, but also promote mental well-being, reduce urban heat islands, and create places for local communities to connect with nature. Your support turns concrete jungles into thriving ecosystems.",
       "location": "Cities Worldwide",

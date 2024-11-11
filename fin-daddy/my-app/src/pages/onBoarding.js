@@ -304,7 +304,7 @@ const OnBoarding = () => {
                       }}}
                 />
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                  <InputLabel id="customer-type-label" sx={{ color: '#666666' }}>Customer Type</InputLabel>
+                  <InputLabel id="customer-type-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Customer Type</InputLabel>
                   <Select
                     labelId="customer-type-label"
                     id="customerType"
@@ -312,6 +312,7 @@ const OnBoarding = () => {
                     onChange={handleChange}
                     name="customerType"
                     label="Customer Type"
+                    sx={{'& .MuiMenuItem-root': {fontFamily: "Montserrat, sans-serif" }}}
                   >
                     <MenuItem value="Retail">Retail</MenuItem>
                   </Select>
