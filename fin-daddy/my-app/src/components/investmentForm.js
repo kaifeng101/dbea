@@ -216,9 +216,7 @@ const PlanDetail = () => {
   const [leverageRate, setLeverageRate] = useState(1);
   const [withdrawAmount, setWithdrawAmount] = useState(0.0);
   const [selectedWithdrawAccount, setSelectedWithdrawAccount] = useState("");
-  const [previousPlan, setPreviousPlan] = useState(null);
 
-  console.log("existing plan:", existingPlan);
   useEffect(() => {
     const title = plan.title;
     if (customerPlans) {
@@ -227,11 +225,40 @@ const PlanDetail = () => {
         .sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime)); // Sort by DateTime in descending order;
 
       if (matchingPlans.length > 0) {
-        setExistingPlan(matchingPlans[0]);
-        setPreviousPlan(matchingPlans[1]);
+        let totalAmount = 0;
+        // let maximumLeverage = 0
+
+        matchingPlans.forEach((plan) => {
+          const growthAmount = calculateGrowthAmount(
+            plan.Amount,
+            plan.DateTime
+          );
+          if (growthAmount) {
+            totalAmount += parseFloat(growthAmount); // Add up the growth amount
+          }
+          //           if (maximum_leverage) {
+          // maximumLeverage += parseFloat(plan.maximum_leverage)
+          //           }
+        });
+
+        console.log(
+          "matching plans:",
+          matchingPlans[matchingPlans.length - 1].DateTime
+        );
+        // Return an object representing the account with the total amount
+        const accountObject = {
+          Amount: totalAmount.toFixed(2),
+          Type: title,
+          DateTime: matchingPlans[matchingPlans.length - 1].DateTime,
+          maximum_leverage:
+            matchingPlans[matchingPlans.length - 1].maximum_leverage,
+        };
+        setExistingPlan(accountObject);
       }
     }
   }, [customerPlans, plan, investmentAmount]);
+
+  console.log(existingPlan);
 
   const calculateGrowthAmount = (amount, datetime) => {
     const principal = parseFloat(amount);
@@ -270,16 +297,13 @@ const PlanDetail = () => {
 
   const withdrawInvestment = async (amount) => {
     try {
-      const initialAmount = calculateGrowthAmount(
-        existingPlan?.Amount,
-        existingPlan?.DateTime
-      );
+      const initialAmount = existingPlan.Amount;
       const newAmount = initialAmount - amount;
       if (newAmount < 0) {
         alert(
           "You can only withdraw an amount less than or equal to the current amount."
         );
-        setWithdrawAmount(0)
+        setWithdrawAmount(0);
         return;
       }
       await axios.post(
@@ -313,13 +337,12 @@ const PlanDetail = () => {
         "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
 
       const basicAuth = "Basic " + btoa(`${username}:${password}`);
-      const response = await axios.put(url, content, {
+      await axios.put(url, content, {
         headers: {
           Authorization: basicAuth,
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       setWithdrawAmount(0);
       setSelectedWithdrawAccount("");
       return;
@@ -430,13 +453,9 @@ const PlanDetail = () => {
         maximumLeverageAmount = holdingAmount;
       }
       if (existingPlan) {
-        amtToPay =
-          amount +
-          calculateGrowthAmount(previousPlan?.Amount, previousPlan?.DateTime);
+        amtToPay = amount;
+        //  +  calculateGrowthAmount(previousPlan?.Amount, previousPlan?.DateTime);
       }
-      
-      //   console.log("Amount to pay", amtToPay);
-      //   console.log("Existing plan ", existingPlan);
 
       await axios.post(
         `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
@@ -465,19 +484,40 @@ const PlanDetail = () => {
   useEffect(() => {
     const getCustomerAccounts = async (customerId) => {
       try {
-        const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${customerId}/accounts`;
-        const username = "12173e30ec556fe4a951";
-        const password =
-          "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-
-        const basicAuth = "Basic " + btoa(`${username}:${password}`);
-        const response = await axios.get(url, {
+        const getAccountsId = `https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountType/GetAccountType?customerId=${customerId}
+`;
+        const response1 = await axios.get(getAccountsId, {
           headers: {
-            Authorization: basicAuth,
-            "Content-Type": "application/json",
+            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
           },
         });
-        setAccounts(response.data);
+        const depositId = response1.data?.accountId;
+        const savingsId = response1.data?.savingaccountId;
+        const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${customerId}/accounts`;
+        try {
+          const username = "12173e30ec556fe4a951";
+          const password =
+            "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+
+          const basicAuth = "Basic " + btoa(`${username}:${password}`);
+          const response = await axios.get(url, {
+            headers: {
+              Authorization: basicAuth,
+              "Content-Type": "application/json",
+            },
+          });
+
+          const depositAccount = response.data.find(
+            (account) => account?.accountId === depositId
+          );
+          const savingsAccount = response.data.find(
+            (account) => account?.accountId === savingsId
+          );
+
+          setAccounts([depositAccount, savingsAccount]);
+        } catch (error) {
+          console.error("Error fetching account details:", error);
+        }
       } catch (error) {
         console.error("Error fetching customer accounts: ", error);
       }
@@ -530,11 +570,11 @@ const PlanDetail = () => {
               <CardContent>
                 <Typography variant="h6">Current Investment Details</Typography>
                 <Typography variant="body1" sx={{ mt: 1 }}>
-                  <strong>Current Amount:</strong> $
-                  {calculateGrowthAmount(
+                  <strong>Current Amount:</strong> $ {existingPlan.Amount}
+                  {/* {calculateGrowthAmount(
                     existingPlan?.Amount,
                     existingPlan?.DateTime
-                  )}
+                  )} */}
                 </Typography>
                 <Typography variant="body1">
                   <strong>Earnings:</strong> $
@@ -575,20 +615,21 @@ const PlanDetail = () => {
                   }}
                 >
                   <option value="" disabled></option>
-                  {accounts.length > 0 &&
-                    accounts
-                      .filter(
-                        (account) =>
-                          account.balance >= parseFloat(investmentAmount)
-                      )
-                      .map((account) => (
-                        <option
-                          key={account.accountId}
-                          value={account.accountId}
-                        >
-                          {account.accountId} (balance: ${account.balance})
-                        </option>
-                      ))}
+
+                  <option
+                    key={accounts[0]?.accountId}
+                    value={accounts[0]?.accountId}
+                  >
+                    Deposit Account: {accounts[0]?.accountId} (balance: $
+                    {accounts[0]?.balance})
+                  </option>
+                  <option
+                    key={accounts[1]?.accountId}
+                    value={accounts[1]?.accountId}
+                  >
+                    Savings Account: {accounts[1]?.accountId} (balance: $
+                    {accounts[1]?.balance})
+                  </option>
                 </TextField>
                 {plan.title === "Leveraged Green Growth Package" && (
                   <TextField
@@ -598,7 +639,6 @@ const PlanDetail = () => {
                     fullWidth
                     sx={{ mb: 2, mt: 1 }}
                     value={existingPlan.maximum_leverage}
-                    //    onChange={(e) => setHoldingAmount(e.target.value)}
                   />
                 )}
                 <Button
@@ -645,15 +685,28 @@ const PlanDetail = () => {
                   }}
                 >
                   <option value="" disabled></option>
-                  {accounts.length > 0 &&
-                    accounts.map((account) => (
-                      <option key={account.accountId} value={account.accountId}>
-                        {account.accountId} (balance: ${account.balance})
-                      </option>
-                    ))}
+                  <option
+                    key={accounts[0]?.accountId}
+                    value={accounts[0]?.accountId}
+                  >
+                    Deposit Account: {accounts[0]?.accountId} (balance: $
+                    {accounts[0]?.balance})
+                  </option>
+                  <option
+                    key={accounts[1]?.accountId}
+                    value={accounts[1]?.accountId}
+                  >
+                    Savings Account: {accounts[1]?.accountId} (balance: $
+                    {accounts[1]?.balance})
+                  </option>
                 </TextField>
 
                 {/* Withdraw Button */}
+                {investmentAmount !== "" && (
+                  <div>
+                    Transaction fee: {(investmentAmount * 0.025).toFixed(2)}
+                  </div>
+                )}
                 <Button
                   variant="contained"
                   color="secondary"
@@ -718,20 +771,20 @@ const PlanDetail = () => {
                     }}
                   >
                     <option value="" disabled></option>
-                    {accounts.length > 0 &&
-                      accounts
-                        .filter(
-                          (account) =>
-                            account.balance >= parseFloat(investmentAmount)
-                        )
-                        .map((account) => (
-                          <option
-                            key={account.accountId}
-                            value={account.accountId}
-                          >
-                            {account.accountId} (balance: ${account.balance})
-                          </option>
-                        ))}
+                    <option
+                      key={accounts[0]?.accountId}
+                      value={accounts[0]?.accountId}
+                    >
+                      Deposit Account: {accounts[0]?.accountId} (balance: $
+                      {accounts[0]?.balance})
+                    </option>
+                    <option
+                      key={accounts[1]?.accountId}
+                      value={accounts[1]?.accountId}
+                    >
+                      Savings Account: {accounts[1]?.accountId} (balance: $
+                      {accounts[1]?.balance})
+                    </option>
                   </TextField>
                 )}
 
@@ -753,21 +806,20 @@ const PlanDetail = () => {
                       }}
                     >
                       <option value="" disabled></option>
-                      {accounts.length > 0 &&
-                        accounts
-                          .filter(
-                            (account) =>
-                              account.balance >=
-                              parseFloat(investmentAmount) * leverageRate
-                          )
-                          .map((account) => (
-                            <option
-                              key={account.accountId}
-                              value={account.accountId}
-                            >
-                              {account.accountId} (balance: ${account.balance})
-                            </option>
-                          ))}
+                      <option
+                        key={accounts[0]?.accountId}
+                        value={accounts[0]?.accountId}
+                      >
+                        Deposit Account: {accounts[0]?.accountId} (balance: $
+                        {accounts[0]?.balance})
+                      </option>
+                      <option
+                        key={accounts[1]?.accountId}
+                        value={accounts[1]?.accountId}
+                      >
+                        Savings Account: {accounts[1]?.accountId} (balance: $
+                        {accounts[1]?.balance})
+                      </option>
                     </TextField>
                     <TextField
                       label="Holding Amount"
@@ -781,6 +833,11 @@ const PlanDetail = () => {
                   </>
                 )}
 
+                {investmentAmount !== "" && (
+                  <div>
+                    Transaction fee: {(investmentAmount * 0.025).toFixed(2)}
+                  </div>
+                )}
                 <Button
                   variant="contained"
                   color="primary"
