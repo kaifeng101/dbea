@@ -11,10 +11,14 @@ function BillPayment() {
   const [transactionReference, setTransactionReference] = useState("");
   const [error, setError] = useState(null);
   const [transactionResult, setTransactionResult] = useState(null);
+  const [filteredBillingOrganizations, setFilteredBillingOrganizations] = useState([]);
 
   const user = useSelector(selectUser);
   const userID = user?.customerId;
-  const transactionDate = new Date().toLocaleDateString();
+
+  const today = new Date();
+    today.setDate(today.getDate() + 1); // Add 1 day to today's date
+    const nextDay = today.toISOString().split("T")[0]; // Get the next day in YYYY-MM-DD format
 
   // List of predefined billing organizations
   const billingOrganizations = [
@@ -40,7 +44,7 @@ function BillPayment() {
 
       if (response.status === 200) {
         const data = response.data;
-        console.log(data)
+        console.log(data);
         setBankAccounts([{ id: data.accountId, name: `Account ${data.accountId}` }]);
       }
     } catch (error) {
@@ -52,6 +56,21 @@ function BillPayment() {
   useEffect(() => {
     getAccounts();
   }, [getAccounts]);
+
+  const handleToAccountChange = (e) => {
+    const inputValue = e.target.value;
+    setSelectedToAccount(inputValue);
+    setFilteredBillingOrganizations(
+      billingOrganizations.filter((org) =>
+        org.name.toLowerCase().includes(inputValue.toLowerCase())
+      )
+    );
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSelectedToAccount(suggestion.name);
+    setFilteredBillingOrganizations([]);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -66,12 +85,12 @@ function BillPayment() {
     };
 
     try {
-        const username = "12173e30ec556fe4a951";
-        const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-        const basicAuth = "Basic " + btoa(`${username}:${password}`);
+      const username = "12173e30ec556fe4a951";
+      const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
       const response = await axios.put(putUrl, requestData, {
         headers: {
-          "Authorization": basicAuth,
+          Authorization: basicAuth,
           "Content-Type": "application/json",
         },
       });
@@ -108,19 +127,27 @@ function BillPayment() {
         </select>
 
         <label style={{ fontWeight: "bold" }}>Account To</label>
-        <select
+        <input
+          type="text"
           value={selectedToAccount}
-          onChange={(e) => setSelectedToAccount(e.target.value)}
+          onChange={handleToAccountChange}
           required
+          placeholder="Enter billing organization"
           style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
-        >
-          <option value="" disabled>Select a billing organization</option>
-          {billingOrganizations.map((org) => (
-            <option key={org.id} value={org.name}>
-              {org.name}
-            </option>
-          ))}
-        </select>
+        />
+        {filteredBillingOrganizations.length > 0 && (
+          <div style={{ border: "1px solid #ccc", borderRadius: "4px", backgroundColor: "#f9f9f9", marginTop: "5px" }}>
+            {filteredBillingOrganizations.map((org) => (
+              <div
+                key={org.id}
+                onClick={() => handleSuggestionClick(org)}
+                style={{ padding: "10px", cursor: "pointer" }}
+              >
+                {org.name}
+              </div>
+            ))}
+          </div>
+        )}
 
         <label style={{ fontWeight: "bold" }}>Amount ($)</label>
         <input
@@ -134,10 +161,11 @@ function BillPayment() {
 
         <label style={{ fontWeight: "bold" }}>Transaction Date</label>
         <input
-          type="text"
-          value={transactionDate}
-          disabled
-          style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px", backgroundColor: "#f9f9f9" }}
+          type="date"
+          min={nextDay}
+          onChange={(e) => setTransactionReference(e.target.value)}  // Adjust as needed
+          required
+          style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
         />
 
         <label style={{ fontWeight: "bold" }}>Transaction Reference</label>
