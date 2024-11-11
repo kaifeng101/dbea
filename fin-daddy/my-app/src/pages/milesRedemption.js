@@ -3,13 +3,28 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import "./style.css";
 import "./Redeem.css";
-import { Card, Typography, CardContent, Grid, Button, Checkbox, FormControlLabel } from "@mui/material";
+import { Card, Typography, CardContent, Grid, Button, Checkbox, FormControlLabel, Icon } from "@mui/material";
+import { FlightTakeoff, Hotel, DirectionsCar } from "@mui/icons-material";
+
 
 const offers = [
   { id: 1, name: "Hotel Stay", cost: 300 },
   { id: 2, name: "Flight Upgrade", cost: 500 },
   { id: 3, name: "Car Rental Discount", cost: 200 },
 ];
+
+const getOfferIcon = (name) => {
+  switch (name) {
+    case "Hotel Stay":
+      return <Hotel style={{ color: "green" }} />;
+    case "Flight Upgrade":
+      return <FlightTakeoff style={{ color: "blue" }} />;
+    case "Car Rental Discount":
+      return <DirectionsCar style={{ color: "red" }} />;
+    default:
+      return <Icon />;
+  }
+};
 
 const MilesRedemption = () => {
   const user = useSelector(selectUser);
@@ -23,6 +38,18 @@ const MilesRedemption = () => {
     JSON.parse(localStorage.getItem("convertedTransactionIds")) || []
   );
   const [selectAll, setSelectAll] = useState(false);
+
+  const formatDate = (dateString) => {
+    const options = { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit' 
+    };
+    return new Date(dateString).toLocaleString('en-GB', options).replace(",", "");
+  };
 
   useEffect(() => {
     const fetchMiles = async () => {
@@ -209,7 +236,9 @@ const MilesRedemption = () => {
                 <h3 className="sectionHeader" style={{ fontFamily: "'Montserrat', sans-serif" }}>Transaction History</h3>
                 <FormControlLabel
                   control={<Checkbox checked={selectAll} onChange={handleSelectAll} />}
-                  label="Select All"
+                  label="Select All" sx={{
+                    '& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}
+                  }}
                 />
                 <ul className="transactionList" style={{ fontFamily: "'Montserrat', sans-serif" }}>
                   {transactions.map((transaction) => (
@@ -232,7 +261,7 @@ const MilesRedemption = () => {
                       />
                       <div>ID: {transaction.Transaction_ID}</div>
                       <div>Amount: $ {transaction.Transaction_Amount}</div>
-                      <div className="transactionDate">{transaction.Created_At}</div>
+                      <div className="transactionDate">{formatDate(transaction.Created_At)}</div>
                     </li>
                   ))}
                 </ul>
@@ -266,9 +295,8 @@ const MilesRedemption = () => {
           <Card variant="outlined" key={offer.id} style={{marginBottom: "10px", backgroundColor: "#dcfce7"}}>
             <CardContent  style={{display: 'flex',
             justifyContent: 'space-between'}}>
-            <Grid item>{offer.name}</Grid>
-            
-            <p>Cost: {offer.cost} miles</p>
+            <Grid item>{getOfferIcon(offer.name)}  {offer.name}</Grid>
+            <Grid>Cost: {offer.cost} miles</Grid>
             <Button size="small" onClick={() => handleRedeemMiles(offer)} style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: "#44403c", color:'white' }}>
               Redeem Miles
             </Button>

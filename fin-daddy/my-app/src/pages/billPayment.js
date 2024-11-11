@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { selectUser } from "../redux/userSlice";
+import { Box, TextField } from '@mui/material';
 
 function BillPayment() {
   const [bankAccounts, setBankAccounts] = useState([]);
@@ -127,16 +128,17 @@ function BillPayment() {
         </select>
 
         <label style={{ fontWeight: "bold" }}>Account To</label>
-        <input
+        {/* <input
           type="text"
           value={selectedToAccount}
           onChange={handleToAccountChange}
           required
           placeholder="Enter billing organization"
-          style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
+          style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px", width: "100%" }}
         />
         {filteredBillingOrganizations.length > 0 && (
-          <div style={{ border: "1px solid #ccc", borderRadius: "4px", backgroundColor: "#f9f9f9", marginTop: "5px" }}>
+          <div style={{ border: "1px solid #ccc", borderRadius: "4px", backgroundColor: "#f9f9f9", marginTop: "5px", width: "100%", maxHeight: "200px",
+            overflowY: "auto"}}>
             {filteredBillingOrganizations.map((org) => (
               <div
                 key={org.id}
@@ -147,7 +149,66 @@ function BillPayment() {
               </div>
             ))}
           </div>
-        )}
+        )} */}
+
+<Box
+  display="flex"
+  flexDirection={{ xs: 'column', md: 'row' }}
+  alignItems="center"
+  gap={2}
+  mb={4}
+  position="relative"  // Ensures the dropdown is positioned relative to this container
+>
+  <TextField
+    label="Enter billing organization"
+    variant="outlined"
+    value={selectedToAccount}
+    onChange={handleToAccountChange}
+    fullWidth
+    required
+    placeholder="Enter billing organization"
+    sx={{
+      '& .MuiFormLabel-root': {
+        fontFamily: "'Montserrat', sans-serif",
+      },
+      '& .MuiInputBase-root': {
+        fontFamily: "'Montserrat', sans-serif",
+      },
+      width: "100%",  // Ensures full width within its parent container
+      maxWidth: "500px", // Optional: limit the max width to prevent it from becoming too wide
+    }}
+  />
+
+  {filteredBillingOrganizations.length > 0 && (
+    <div
+      style={{
+        position: "absolute", // Position it absolutely below the input field
+        top: "100%", // Position directly below the TextField
+        left: 0, // Align to the left of the TextField
+        border: "1px solid #ccc",
+        borderRadius: "4px",
+        backgroundColor: "#f9f9f9",
+        marginTop: "5px",
+        width: "100%", // Ensures the dropdown aligns with the input
+        maxHeight: "200px",
+        overflowY: "auto",
+      }}
+    >
+      {filteredBillingOrganizations.map((org) => (
+        <div
+          key={org.id}
+          onClick={() => handleSuggestionClick(org)}
+          style={{
+            padding: "10px",
+            cursor: "pointer",
+          }}
+        >
+          {org.name}
+        </div>
+      ))}
+    </div>
+  )}
+</Box>
 
         <label style={{ fontWeight: "bold" }}>Amount ($)</label>
         <input
