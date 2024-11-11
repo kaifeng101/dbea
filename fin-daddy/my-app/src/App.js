@@ -27,7 +27,7 @@ function App() {
           <div className="app-navbar">
             <NavBar />
           </div>
-          <div>
+          <div className="dashboard--content">
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/transaction" element={<Transaction />} />
