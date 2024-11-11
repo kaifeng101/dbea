@@ -434,14 +434,25 @@ const Analytics = () => {
                 </Typography>
                 <CardContent className="h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={milesData}>
+                    <BarChart data={milesData}
+                    barCategoryGap="10%" // Adjust the space between categories (bars)
+                    barGap={50} // Adjust the space between bars within a category
+                    >
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <YAxis 
+                      yAxisId="left"
+                        orientation="left"
+                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
+                        />
+                      <YAxis 
+                      yAxisId="right"
+                        orientation="right"
+                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
                       <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
                       <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <Bar dataKey="transactions" fill={COLORS.orange} name="Number of Transactions" />
-                      <Bar dataKey="miles" fill={COLORS.green} name="Miles Earned" />
+                      <Bar yAxisId="left" dataKey="transactions" fill={COLORS.orange} name="Number of Transactions" />
+                      <Bar yAxisId="right" dataKey="miles" fill={COLORS.green} name="Miles Earned" />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
