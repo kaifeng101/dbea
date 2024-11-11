@@ -63,6 +63,9 @@ const NavBar = () => {
         </div>
           {user ? ( 
             <>
+              <Link className="flex space-x-6" to="/analyticsDashboard">
+                <Button style={{ fontFamily: 'Montserrat, sans-serif'}}  color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/analyticsDashboard") ? "black" : "inherit"}}>Analytics</Button>
+              </Link>
               <Button color="inherit" onClick={handleClick} sx={{
                   color: isActiveLink("/transaction") ||
                     isActiveLink("/directDebitPayment") ||
@@ -90,9 +93,6 @@ const NavBar = () => {
                   History
                 </MenuItem>
               </Menu>
-              <Link className="flex space-x-6" to="/analyticsDashboard">
-                <Button style={{ fontFamily: 'Montserrat, sans-serif'}}  color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/analyticsDashboard") ? "black" : "inherit"}}>Analytics</Button>
-              </Link>
               <Link className="flex space-x-6" to="/carbonMarketplace">
                 <Button style={{ fontFamily: 'Montserrat, sans-serif'}}  color="inherit" sx={{ marginLeft: "8px", color: isActiveLink("/carbonMarketplace") ? "black" : "inherit" }}>Carbon Marketplace</Button>
               </Link>
