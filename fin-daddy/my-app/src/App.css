@@ -43,6 +43,7 @@
   background: rgb(241 245 249);
   border-radius: 20px;
   width: 100%; /* Fixed width */
+  height: 100vh;
   /* margin-left: 70px; */
   overflow: auto;
   display: flex;

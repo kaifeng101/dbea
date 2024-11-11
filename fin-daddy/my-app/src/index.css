@@ -21,3 +21,40 @@ code {
 body {
   font-family: 'Montserrat, sans-serif'
 }
+
+.tabs {
+  display: flex;
+  justify-content: space-around; /* Align tabs evenly */
+  border-radius: 25px; /* Rounded edges for the container */
+  overflow: hidden; /* Ensure rounded corners are visible */
+  background-color: #f0f0f0; /* Background color for the tab bar */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+}
+
+
+.tab {
+  flex: 1; /* Ensure each tab takes equal space */
+  padding: 10px 0; /* Vertical padding */
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 600; /* Bolder font for better visibility */
+  transition: background 0.3s, color 0.3s;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.tab:hover {
+  background: #e0e0e0; /* Background color on hover */
+}
+
+.tab.active {
+  background: #14532d; /* Active tab background color */
+  color: white; /* Text color for active tab */
+  font-family: 'Montserrat', sans-serif;
+}
+
+.tab-content {
+  margin-top: 10px;
+  background: white; /* White background for content */
+}
