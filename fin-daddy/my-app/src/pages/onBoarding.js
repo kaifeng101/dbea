@@ -52,8 +52,8 @@ const OnBoarding = () => {
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(0); // State for current step
     const [formData, setFormData] = useState({
-        Id: 0,
-        certificateNo: 0,
+        Id: '',
+        certificateNo: '',
         userNo: '',
         emailAddress: '',
         customerType: '',
@@ -89,10 +89,8 @@ const OnBoarding = () => {
         currentHousingStatus: '',
         noOfSocialAccounts: '',
         onlinePresence:'',
+        ageGroup:'',
     });
-    
-    const [isWorkingInSingapore, setIsWorkingInSingapore] = useState(false);
-    const [wantsDepositAccount, setWantsDepositAccount] = useState(false);
 
     const handleCurrentJobStatusChange = (e) => {
       setFormData({
@@ -123,28 +121,39 @@ const OnBoarding = () => {
     };
     
     const handleDepositCheckboxChange = (event) => {
-        setWantsDepositAccount(event.target.checked);
+        setFormData({
+          ...formData,
+            createDepositAccount: event.target.checked,
+      });
     };
 
     const handleCheckboxChange = (event) => {
-        setIsWorkingInSingapore(event.target.checked);
+
+        setFormData({
+          ...formData,
+            workingInSingapore:event.target.checked,
+      });
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         // Convert Id and certificateNo to numbers
-        if (name === 'Id' || name === 'certificateNo') {
-            setFormData({
-                ...formData,
-                [name]: Number(value),
-            });
-        } else {
-            setFormData({
-                ...formData,
-                [name]: value.trim(), // Trim whitespace from other input values
-            });
-        }
+        if (name === 'Id' || name === 'officeContactNumber' || name === 'officeContactNumberExt') {
+          setFormData({
+              ...formData,
+              [name]: Number(value),
+          });
+      } if (name === 'onlinePresence') { // Correct syntax here: else if
+          setFormData({
+              ...formData,
+              [name]: parseFloat(value), // Convert to number
+          });
+      } else {
+          setFormData({
+              ...formData,
+              [name]: value.trim(), // Trim whitespace from other input values
+          });
+      }
     };
 
     // Handle the click of the "Next" button
@@ -182,28 +191,19 @@ const OnBoarding = () => {
             console.error("Passwords do not match.");
             return;
         }
-
-        const dateOfBirth = new Date(formData.dateOfBirth);
-
-        // Check if dateOfBirth is valid
-        if (isNaN(dateOfBirth.getTime())) {
-            console.error("Invalid date format for dateOfBirth:", formData.dateOfBirth);
-            return;
-        }
-
-        // Format the date as YYYY-MM-DD
-        const formattedDate = dateOfBirth.toISOString().split('T')[0];
         
         const formattedData = {
-            ...formData,
-            dateOfBirth: formattedDate,
-        };
+        ...formData,
+        Id: Number(formData.Id), // Ensure Id is converted to a number
+        officeContactNumber: Number(formData.officeContactNumber), // Ensure officeContactNumber is converted to a number
+        officeContactNumberExt: Number(formData.officeContactNumberExt), // Ensure officeContactNumberExt is converted to a number
+    };
 
         // Log the form data being submitted
         console.log('Submitting data:', JSON.stringify(formattedData, null, 2));
 
         try {
-            const response = await axios.post('https://personal-ktq1wi49.outsystemscloud.com/IS444Account/rest/AccountRegistration/AddAccountRegistration', formattedData, {
+            const response = await axios.post('https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountRegistration/AddAccountRegistration', formattedData, {
                 headers: {
                     'X-Contacts-Key': 'c48b5803-757e-414d-9106-62ab010a9c8d',
                     'Content-Type': 'application/json',
@@ -213,10 +213,10 @@ const OnBoarding = () => {
             console.log('Registration successful:', response.data);
             alert("Registration successful!"); // Alert user of success
             // Reset form data after successful registration
-            navigate('localhost:3000');
+            navigate('');
             setFormData({
-              Id: 0,
-        certificateNo: 0,
+              Id: '' ,
+        certificateNo: '' ,
         userNo: '',
         emailAddress: '',
         customerType: '',
@@ -252,6 +252,7 @@ const OnBoarding = () => {
         currentHousingStatus: '',
         noOfSocialAccounts: '',
         onlinePresence:'',
+        ageGroup: '',
             });
         } catch (error) {
             // Log the full error response for debugging
@@ -288,7 +289,7 @@ const OnBoarding = () => {
             {currentStep === 0 && (
               <>
                 <TextField
-                      required
+                      type="number"
                       label="ID"
                       variant="outlined"
                       fullWidth
@@ -304,7 +305,7 @@ const OnBoarding = () => {
                       }}}
                 />
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                  <InputLabel id="customer-type-label" sx={{ color: '#666666' }}>Customer Type</InputLabel>
+                  <InputLabel id="customer-type-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Customer Type</InputLabel>
                   <Select
                     labelId="customer-type-label"
                     id="customerType"
@@ -313,13 +314,14 @@ const OnBoarding = () => {
                     name="customerType"
                     label="Customer Type"
                   >
-                    <MenuItem value="Retail">Retail</MenuItem>
+                    <MenuItem style={{fontFamily: "Montserrat, sans-serif"}}value="Retail">Retail</MenuItem>
                   </Select>
                 </FormControl>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                          required
+                      required
+                          onChange={handleChange}
                           label="User ID"
                           variant="outlined"
                           fullWidth
@@ -356,7 +358,8 @@ const OnBoarding = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        required
+                      required
+                        type="password"
                         label="Password"
                         variant="outlined"
                         fullWidth
@@ -374,7 +377,8 @@ const OnBoarding = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        required
+                      required
+                        type="password"
                         label="Confirm Password"
                         variant="outlined"
                         fullWidth
@@ -398,7 +402,7 @@ const OnBoarding = () => {
               <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        required
+                      required
                         label="Certificate ID"
                         variant="outlined"
                         fullWidth
@@ -415,7 +419,7 @@ const OnBoarding = () => {
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextField
+                    <TextField
                         required
                         type="date"
                         variant="outlined"
@@ -433,6 +437,26 @@ const OnBoarding = () => {
                       />
                     </Grid>
                 </Grid>
+                <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="age-group-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Age Range</InputLabel>
+                      <Select
+                        labelId="date-of-birth-label"
+                        id="ageGroup"
+                        value={formData.ageGroup}
+                        onChange={handleChange}
+                        name="ageGroup"
+                        label="Age Range"
+                      >
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="Less than 18 years">Less than 18 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="18 - 24 years">18 - 24 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="25 - 34 years">25 - 34 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="35 - 44 years">35 - 44 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="45 - 54 years">45 - 54 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="55 - 64 years">55 - 64 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="65 - 74 years">65 - 74 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="75 years and older">75 years and older</MenuItem>
+                      </Select>
+                    </FormControl>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
@@ -454,7 +478,7 @@ const OnBoarding = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        required
+                      required
                         label="Given Name"
                         variant="outlined"
                         fullWidth
@@ -473,37 +497,40 @@ const OnBoarding = () => {
                 </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                    <TextField
-                        required
-                        label="Number of Social Accounts"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                        name="noOfSocialAccounts"
+                    <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="no-of-social-accounts-label" sx={{ color: '#666666' }}>No of Social Accounts</InputLabel>
+                      <Select
+                        labelId="no-of-social-accounts-label"
+                        id="noOfSocialAccounts"
+                        value={formData.noOfSocialAccounts}
                         onChange={handleChange}
-                        sx={{
-                          '& .MuiInputLabel-root': {
-                            fontFamily: "'Montserrat', sans-serif",
-                          },
-                          '& .MuiInputBase-root': {
-                            fontFamily: "'Montserrat', sans-serif",
-                        }}}
-                      />
+                        name="noOfSocialAccounts"
+                        label="No of Social Accounts"
+                      >
+                        <MenuItem value="0 - 1">0 - 1</MenuItem>
+                        <MenuItem value="2 - 3">2 - 3</MenuItem>
+                        <MenuItem value="4 - 5">4 - 5</MenuItem>
+                        <MenuItem value="6 - 7">6 - 7</MenuItem>
+                        <MenuItem value="8 - 10">8 - 10</MenuItem>
+                        <MenuItem value="11+">11+</MenuItem>
+                      </Select>
+                    </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <Box sx={{ marginBottom: '20px' }}>
-                      <Typography variant="body1" sx={{ fontWeight: 600 }}>Online Presence</Typography>
+                      <Typography variant="body1" style={{fontFamily: "Montserrat, sans-serif"}}>Online Presence</Typography>
                       <input
+                      required
                         type="range"
                         name="onlinePresence"
                         value={formData.onlinePresence}
                         onChange={handleChange}
                         min={0}
                         max={1}
-                        step={0.01}
+                        step={0.1}
                         style={{ width: '100%', marginTop: '10px' }}
                       />
-                      <Typography variant="body2" sx={{ marginTop: '10px' }}>
+                      <Typography variant="body2" sx={{ marginTop: '10px' }} style={{fontFamily: "Montserrat, sans-serif"}}>
                         Value: {formData.onlinePresence}
                       </Typography>
                     </Box>
@@ -512,7 +539,6 @@ const OnBoarding = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        required
                         label="Country"
                         variant="outlined"
                         fullWidth
@@ -529,22 +555,27 @@ const OnBoarding = () => {
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
+                    <InputLabel id="gender-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}> Gender</InputLabel>
                       <RadioGroup
+                      required
                         row
                         name="gender"
                         value={formData.gender}
                         onChange={handleGenderChange}
                         sx={{ mt: 2 }}
                       >
-                        <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                        <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                        <FormControlLabel value="Male" control={<Radio />} label="Male" sx={{
+                  '& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}
+                }}/>
+                        <FormControlLabel value="Female" control={<Radio />} label="Female" sx={{
+                  '& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}
+                }}/>
                       </RadioGroup>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                     <TextField
-                  required
                   label="State"
                   variant="outlined"
                   fullWidth
@@ -562,7 +593,7 @@ const OnBoarding = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <TextField
-                  required
+                  
                   label="City"
                   variant="outlined"
                   fullWidth
@@ -581,8 +612,8 @@ const OnBoarding = () => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   {/* Housing Status Dropdown */}
-                  <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                    <InputLabel id="current-housing-status-label" sx={{ color: '#666666' }}>Current Housing Status</InputLabel>
+                  <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                    <InputLabel id="current-housing-status-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Current Housing Status</InputLabel>
                     <Select
                       labelId="current-housing-status-label"
                       id="currentHousingStatus"
@@ -591,7 +622,7 @@ const OnBoarding = () => {
                       label="Current Housing Status"
                     >
                       {housingStatusOptions.map((status) => (
-                        <MenuItem key={status} value={status}>
+                        <MenuItem style={{fontFamily: "Montserrat, sans-serif"}} key={status} value={status}>
                           {status}
                         </MenuItem>
                       ))}
@@ -639,7 +670,6 @@ const OnBoarding = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                     <TextField
-                  required
                   label="Phone Country Code"
                   variant="outlined"
                   fullWidth
@@ -657,7 +687,6 @@ const OnBoarding = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <TextField
-                  required
                   label="Phone Area Code"
                   variant="outlined"
                   fullWidth
@@ -718,8 +747,8 @@ const OnBoarding = () => {
               <>
               <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                      <InputLabel id="occupation-label" sx={{ color: '#666666' }}>Occupation</InputLabel>
+                    <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="occupation-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Occupation</InputLabel>
                       <Select
                         labelId="occupation-label"
                         id="occupation"
@@ -728,7 +757,7 @@ const OnBoarding = () => {
                         label="Occupation"
                       >
                         {occupationOptions.map((occupation) => (
-                          <MenuItem key={occupation} value={occupation}>
+                          <MenuItem key={occupation} value={occupation} sx={{ fontFamily: "Montserrat, sans-serif" }}>
                             {occupation}
                           </MenuItem>
                         ))}
@@ -736,8 +765,8 @@ const OnBoarding = () => {
                     </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                      <InputLabel id="position-title-label" sx={{ color: '#666666' }}>Position Title</InputLabel>
+                    <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="position-title-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Position Title</InputLabel>
                       <Select
                         labelId="position-title-label"
                         id="positionTitle"
@@ -746,7 +775,7 @@ const OnBoarding = () => {
                         label="Position Title"
                       >
                         {positionTitleOptions.map((positionTitle) => (
-                          <MenuItem key={positionTitle} value={positionTitle}>
+                          <MenuItem key={positionTitle} value={positionTitle} sx={{ fontFamily: "Montserrat, sans-serif" }}>
                             {positionTitle}
                           </MenuItem>
                         ))}
@@ -774,42 +803,63 @@ const OnBoarding = () => {
                 />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                    <TextField
-                  required
-                  label="Annual Salary"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name="salaryRange"
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    '& .MuiInputBase-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                  }}}
-                />
+                    <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="annual-salary-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Annual Salary</InputLabel>
+                      <Select
+                        labelId="annual-salary-label"
+                        id="annualSalary"
+                        value={formData.salaryRange}
+                        onChange={handleChange}
+                        name="salaryRange"
+                        label="Annual Salary"
+                        sx={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="Less than $20,000">Less than $20,000</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$20,000 - $29,999">$20,000 - $29,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$30,000 - $39,999">$30,000 - $39,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$40,000 - $49,999">$40,000 - $49,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$50,000 - $59,999">$50,000 - $59,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$60,000 - $69,999">$60,000 - $69,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$70,000 - $79,999">$70,000 - $79,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$80,000 - $89,999">$80,000 - $89,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$90,000 - $99,999">$90,000 - $99,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="$100,000 - $109,999">$100,000 - $109,999</MenuItem>
+                        <MenuItem sx={{  fontFamily: "Montserrat, sans-serif" }} value="Above $100,000">Above $100,000</MenuItem>
+                      </Select>
+                    </FormControl>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                    <TextField
-                  required
-                  label="Year Started Service"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name="yearOfService"
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    '& .MuiInputBase-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                  }}}
-                />
+                    <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                      <InputLabel id="year-of-service-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Year of Service</InputLabel>
+                      <Select
+                        labelId="year-of-service-label"
+                        id="yearOfService"
+                        value={formData.yearOfService}
+                        onChange={handleChange}
+                        name="yearOfService"
+                        label="Year of Service"
+                      >
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="Less than 1 year">Less than 1 year</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="1 - 2 years">1 - 2 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="3 - 4 years">3 - 4 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="5 - 6 years">5 - 6 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="7 - 8 years">7 - 8 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="9 - 10 years">9 - 10 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="11 - 12 years">11 - 12 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="13 - 14 years">13 - 14 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="15 - 16 years">15 - 16 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="17 - 18 years">17 - 18 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="19 - 20 years">19 - 20 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="21 - 22 years">21 - 22 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="23 - 24 years">23 - 24 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="25 - 26 years">25 - 26 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="27 - 28 years">27 - 28 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="29 - 30 years">29 - 30 years</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="More than 30 years">More than 30 years</MenuItem>
+                      </Select>
+                    </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <TextField
@@ -833,7 +883,7 @@ const OnBoarding = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                     <TextField
-                  required
+                  
                   label="Office Address 2"
                   variant="outlined"
                   fullWidth
@@ -851,7 +901,7 @@ const OnBoarding = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <TextField
-                  required
+                  
                   label="Office Address 3"
                   variant="outlined"
                   fullWidth
@@ -871,7 +921,8 @@ const OnBoarding = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                     <TextField
-                  required
+                    required
+                  type="number"
                   label="Office Contact Number Ext"
                   variant="outlined"
                   fullWidth
@@ -889,7 +940,8 @@ const OnBoarding = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <TextField
-                  required
+                    required
+                  type="number"
                   label="Office Contact Number"
                   variant="outlined"
                   fullWidth
@@ -907,8 +959,8 @@ const OnBoarding = () => {
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                    <InputLabel id="current-job-status-label" sx={{ color: '#666666' }}>Current Job Status</InputLabel>
+                  <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                    <InputLabel id="current-job-status-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Current Job Status</InputLabel>
                     <Select
                       labelId="current-job-status-label"
                       id="currentJobStatus"
@@ -917,7 +969,7 @@ const OnBoarding = () => {
                       label="Current Job Status"
                     >
                       {currentJobStatusOptions.map((status) => (
-                        <MenuItem key={status} value={status} sx={{'& .MuiTypography-root': {fontFamily: 'Montserrat, sans-serif'}}}>
+                        <MenuItem key={status} value={status} sx={{ fontFamily: "Montserrat, sans-serif" }}>
                           {status}
                         </MenuItem>
                       ))}
@@ -928,27 +980,25 @@ const OnBoarding = () => {
             )}
             {currentStep === 3 && (
               <>
-                <TextField
-                  label="Currency Preferred"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name="currency"
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    '& .MuiInputBase-root': {
-                      fontFamily: "'Montserrat', sans-serif",
-                  }}}
-                />
+              <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
+                  <InputLabel id="currency-label" sx={{ color: '#666666', fontFamily: "Montserrat, sans-serif" }}>Currency Preferred</InputLabel>
+                  <Select
+                    labelId="currency-label"
+                    id="currency"
+                    value={formData.currency}
+                    onChange={handleChange}
+                    name="currency"
+                    label="Currency"
+                  >
+                    <MenuItem style={{fontFamily: "Montserrat, sans-serif"}}value="SGD">SGD</MenuItem>
+                  </Select>
+                </FormControl>
               <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                     <FormControlLabel
                         control={
                             <Checkbox
-                                checked={isWorkingInSingapore}
+                                checked={formData.workingInSingapore}
                                 onChange={handleCheckboxChange}
                                 color="primary"
                             />
@@ -963,7 +1013,7 @@ const OnBoarding = () => {
                     <FormControlLabel
                       control={
                           <Checkbox
-                              checked={wantsDepositAccount}
+                              checked={formData.createDepositAccount}
                               onChange={handleDepositCheckboxChange}
                               color="primary"
                           />

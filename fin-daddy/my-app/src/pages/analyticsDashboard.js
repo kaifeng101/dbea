@@ -2,11 +2,10 @@ import React, {useEffect, useState, useCallback} from "react";
 import axios from 'axios';
 import { selectUser } from "../redux/userSlice";
 import { useSelector } from "react-redux";
-import { Tab, Tabs, Box, Card, CardContent, Typography, Grid} from "@mui/material";
+import { Card, CardContent, Typography, Grid} from "@mui/material";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 
 const Analytics = () => {
-  const [value, setValue] = React.useState('one');
   const [carbonTypeData, setCarbonTypeData] = useState([]);
   const [monthlyCarbon, setMonthlyCarbon] = useState([]);
   const [currentMiles, setCurrentMiles] = useState(0);
@@ -23,8 +22,17 @@ const Analytics = () => {
   const [milesData, setMilesData] = useState([]);
   const [investmentsData, setInvestmentsData] = useState([]);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const [tabValue, setTabValue] = useState(0); // Track which tab is selected
+  const tabs = [
+    { id: 0, label: "Transactions & Miles" },
+    { id: 1, label: "Carbon Analysis" }, 
+    { id: 2, label: "Investments" }
+  ];
+
+
+
+  const handleChangeTab = (event, newValue) => {
+    setTabValue(newValue); // Change active tab
   };
 
   const getCarbonData = useCallback(async () => {
@@ -323,8 +331,8 @@ const Analytics = () => {
   return (
     <div className="m-10 mt-24">
       <Grid container spacing={4} style={{ marginBottom: '20px' }}>
-        {summaryData.map((item, index) => (
-          <Grid item xs={12} sm={6} md={2.4} key={index}>
+        {summaryData.slice(0,3).map((item, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
             <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', fontFamily: "Montserrat, sans-serif", minHeight: "100%", minwidth: "100%"}}>
               <CardContent>
                 <Typography variant="subtitle1" component="div" style={{ color: '#555', marginBottom: '5px', fontFamily: "Montserrat, sans-serif" }}>
@@ -334,7 +342,28 @@ const Analytics = () => {
                   {item.value}
                 </Typography>
                 {(item.title === 'Carbon Footprint' || item.title === 'Carbon Credits') && (
-                  <Typography variant="body2" component="div" style={{ color: '#777', marginTop: '5px' }}>
+                  <Typography variant="body2" component="div" style={{ color: '#777', marginTop: '5px', fontFamily: "Montserrat, sans-serif" }}>
+                    {item.title === 'Carbon Footprint'
+                      ? 'kg CO2e emitted'
+                      : 'earned from sustainable transactions'}
+                  </Typography>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+        {summaryData.slice(3,6).map((item, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', fontFamily: "Montserrat, sans-serif", minHeight: "100%", minwidth: "100%"}}>
+              <CardContent>
+                <Typography variant="subtitle1" component="div" style={{ color: '#555', marginBottom: '5px', fontFamily: "Montserrat, sans-serif" }}>
+                  {item.title}
+                </Typography>
+                <Typography variant="h5" component="div" style={{ fontWeight: 'bold', color: '#333', fontFamily: "Montserrat, sans-serif" }}>
+                  {item.value}
+                </Typography>
+                {(item.title === 'Carbon Footprint' || item.title === 'Carbon Credits') && (
+                  <Typography variant="body2" component="div" style={{ color: '#777', marginTop: '5px', fontFamily: "Montserrat, sans-serif" }}>
                     {item.title === 'Carbon Footprint'
                       ? 'kg CO2e emitted'
                       : 'earned from sustainable transactions'}
@@ -346,39 +375,52 @@ const Analytics = () => {
         ))}
       </Grid>
 
-      <Box sx={{ width: '100%' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          textColor="secondary"
-          indicatorColor="secondary"
-          aria-label="secondary tabs example"
-        >
-          <Tab value="one" label="Transactions & Miles" />
-          <Tab value="two" label="Carbon Analysis" />
-          <Tab value="three" label="Investments" />
-        </Tabs>
-      </Box>
+      <div className="tabs mb-8">
+        {tabs
+          .filter(tab => !tab.role || tab.role.includes(user?.role)) // Filter based on role
+          .map((tab) => (
+            <button
+              key={tab.id}
+              className={`tab ${tabValue === tab.id ? 'active' : ''}`}
+              onClick={(event) => handleChangeTab(event, tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+      </div>
 
-      {value === 'one' && (
-        <div className="m-10">
+      {tabValue === 0 && (
+        <div key={tabValue}>
           <div className="mt-12" style={{ display: 'flex', flexWrap: 'wrap', gap: '65px', justifyContent: 'space-between' }}>
             <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
               {/* Chart 1 */}
               <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px' }}>
+                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}>
                   Spending vs Savings
                 </Typography>
                 <CardContent className="h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={transactionsData}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="spending" strokeWidth={3} stroke="#8884d8" />
-                      <Line type="monotone" dataKey="saving" strokeWidth={3} stroke="#82ca9d" />
+                      <XAxis dataKey="name" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <YAxis 
+                        yAxisId="left"
+                        orientation="left"
+                        stroke="#8884d8"
+                        label={{ value: 'Spending ($)', angle: -90, position: 'insideLeft', fontFamily: "'Montserrat', sans-serif" }}
+                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
+                      />
+                      <YAxis 
+                        yAxisId="right"
+                        orientation="right"
+                        stroke="#82ca9d"
+                        label={{ value: 'Savings ($)', angle: 90, position: 'insideRight', fontFamily: "'Montserrat', sans-serif" }}
+                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
+                      />
+                      <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <Line yAxisId="left" type="monotone" dataKey="spending" strokeWidth={3} stroke="#8884d8" />
+                      <Line yAxisId="right" type="monotone" dataKey="saving" strokeWidth={3} stroke="#82ca9d" />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -387,19 +429,30 @@ const Analytics = () => {
             <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
               {/* Chart 2 */}
               <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px' }}>
+                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}>
                   Monthly Transactions & Miles
                 </Typography>
                 <CardContent className="h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={milesData}>
+                    <BarChart data={milesData}
+                    barCategoryGap="10%" // Adjust the space between categories (bars)
+                    barGap={50} // Adjust the space between bars within a category
+                    >
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="transactions" fill={COLORS.orange} name="Number of Transactions" />
-                      <Bar dataKey="miles" fill={COLORS.green} name="Miles Earned" />
+                      <XAxis dataKey="month" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <YAxis 
+                      yAxisId="left"
+                        orientation="left"
+                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
+                        />
+                      <YAxis 
+                      yAxisId="right"
+                        orientation="right"
+                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <Bar yAxisId="left" dataKey="transactions" fill={COLORS.orange} name="Number of Transactions" />
+                      <Bar yAxisId="right" dataKey="miles" fill={COLORS.green} name="Miles Earned" />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -409,13 +462,13 @@ const Analytics = () => {
         </div>
       )}
 
-      {value === 'two' && (
+      {tabValue === 1 && (
         <div className="m-10">
           <div className="mt-12" style={{ display: 'flex', flexWrap: 'wrap', gap: '65px', justifyContent: 'space-between' }}>
             <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
             {/* Chart 3 */}
             <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-              <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px' }}>
+              <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}>
                 Carbon Output Distribution
               </Typography>
               <CardContent className="h-[400px]">
@@ -431,11 +484,15 @@ const Analytics = () => {
                       paddingAngle={2}
                       dataKey="value"
                       label={({ name, value }) => `${name} (${value})`}
+                      style={{ fontFamily: 'Montserrat, sans-serif' }}
                     >
                       <Cell fill={COLORS.red} />
                       <Cell fill={COLORS.green} />
                     </Pie>
-                    <Tooltip />
+                    <Tooltip contentStyle={{
+            fontFamily: "'Montserrat', sans-serif",  // Customize font family
+            fontSize: 12,  // Customize font size
+          }}/>
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -444,17 +501,17 @@ const Analytics = () => {
             <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
               {/* Chart 4 */}
               <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px' }}> 
+                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}> 
                   Monthly Carbon Output Analysis
                 </Typography>
                 <CardContent className="h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={monthlyCarbon}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
+                      <XAxis dataKey="month" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
+                      <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
                       <Bar dataKey="type1" stackId="a" fill={COLORS.red} name="Carbon Emitted" />
                       <Bar dataKey="type2" stackId="a" fill={COLORS.green} name="Carbon Credits Earned" />
                     </BarChart>
@@ -466,13 +523,13 @@ const Analytics = () => {
         </div>
       )}
 
-      {value === 'three' && (
+      {tabValue === 2 && (
         <div className="m-10">
           <div className="mt-12" style={{ display: 'flex', flexWrap: 'wrap', gap: '65px', justifyContent: 'space-between' }}>
             <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
               {/* Chart 5 */}
               <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px' }}>
+                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}>
                   Investment Distribution by Bundle
                 </Typography>
                 <CardContent className="h-[400px]">
@@ -486,12 +543,16 @@ const Analytics = () => {
                         outerRadius={100}
                         dataKey="value"
                         label={({ name, value }) => `${name}: $${value}`}
+                        style={{ fontFamily: 'Montserrat, sans-serif' }}
                       >
                         {investmentDistribution.map((entry) => (
                           <Cell key={entry.name} fill={BUNDLE_COLORS[entry.name]} />
                         ))}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip contentStyle={{
+            fontFamily: "'Montserrat', sans-serif",  // Customize font family
+            fontSize: 12,  // Customize font size
+          }}/>
                     </PieChart>
                   </ResponsiveContainer>
                 </CardContent>
