@@ -269,7 +269,7 @@ const PlanDetail = () => {
         setExistingPlan(accountObject); // Update the state with the new account details
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerPlans, plan?.title, investmentAmount]);
 
   const calculateGrowthAmount = (amount, datetime) => {
@@ -706,22 +706,25 @@ const PlanDetail = () => {
                   </option>
                 </TextField>
                 {plan.title === "Leveraged Green Growth Package" && (
-                  <TextField
-                    label="Holding Amount"
-                    variant="outlined"
-                    disabled
-                    fullWidth
-                    sx={{
-                      mt: 2,
-                      "& .MuiFormLabel-root": {
-                        fontFamily: "'Montserrat', sans-serif",
-                      },
-                      "& .MuiInputBase-root": {
-                        fontFamily: "'Montserrat', sans-serif",
-                      },
-                    }}
-                    value={existingPlan.maximum_leverage}
-                  />
+                  <>
+
+                    <Slider
+                      value={leverageRate}
+                      step={1}
+                      min={1}
+                      max={maxLeverageRate || 50}
+                      onChange={(e, newValue) => setLeverageRate(newValue)}
+                      valueLabelDisplay="auto"
+                      style={{ fontFamily: "Montserrat, sans-serif" }}
+                    />
+                    <Typography
+                      variant="body1"
+                      sx={{ mb: 2 }}
+                      style={{ fontFamily: "Montserrat, sans-serif" }}
+                    >
+                      <strong>Leverage Rate:</strong> {leverageRate}x
+                    </Typography>
+                  </>
                 )}
                 {investmentAmount !== "" && (
                   <div style={{ fontFamily: "Montserrat, sans-serif" }}>
