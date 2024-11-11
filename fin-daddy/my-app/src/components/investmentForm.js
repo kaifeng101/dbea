@@ -222,41 +222,31 @@ const PlanDetail = () => {
     if (customerPlans) {
       const matchingPlans = customerPlans
         .filter((plan) => plan.Type === title)
-        .sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime)); // Sort by DateTime in descending order;
-
+        .sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime)); // Sort by DateTime in descending order
+  
       if (matchingPlans.length > 0) {
         let totalAmount = 0;
-        // let maximumLeverage = 0
-
+  
+        // Iterate over the matching plans to calculate the total amount including growth
         matchingPlans.forEach((plan) => {
-          const growthAmount = calculateGrowthAmount(
-            plan.Amount,
-            plan.DateTime
-          );
+          const growthAmount = calculateGrowthAmount(plan.Amount, plan.DateTime);
           if (growthAmount) {
-            totalAmount += parseFloat(growthAmount); // Add up the growth amount
+            totalAmount += parseFloat(growthAmount); // Add growth amount
           }
-          //           if (maximum_leverage) {
-          // maximumLeverage += parseFloat(plan.maximum_leverage)
-          //           }
         });
-
-        console.log(
-          "matching plans:",
-          matchingPlans[matchingPlans.length - 1].DateTime
-        );
-        // Return an object representing the account with the total amount
+  
+        const latestPlan = matchingPlans[matchingPlans.length - 1];
         const accountObject = {
-          Amount: totalAmount.toFixed(2),
+          Amount: totalAmount.toFixed(2), // Ensure this reflects the accurate total amount
           Type: title,
-          DateTime: matchingPlans[matchingPlans.length - 1].DateTime,
-          maximum_leverage:
-            matchingPlans[matchingPlans.length - 1].maximum_leverage,
+          DateTime: latestPlan.DateTime,
+          maximum_leverage: latestPlan.maximum_leverage, // Assuming 'maximum_leverage' should be updated with the last plan
         };
-        setExistingPlan(accountObject);
+  
+        setExistingPlan(accountObject); // Update the state with the new account details
       }
     }
-  }, [customerPlans, plan, investmentAmount]);
+  }, [customerPlans, plan, investmentAmount]);  
 
   console.log(existingPlan);
 
