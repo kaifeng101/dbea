@@ -244,16 +244,16 @@ const Analytics = () => {
   ];
 
   return (
-    <div className="m-20  mt-24">
+    <div className="m-20 mt-24">
        <Grid container spacing={3} style={{ marginBottom: '20px' }}>
         {summaryData.map((item, index) => (
           <Grid item xs={12} sm={6} md={2.4} key={index}>
-            <Card style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Card style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', fontFamily: "Montserrat, sans-serif"}}>
               <CardContent>
-                <Typography variant="subtitle1" component="div" style={{ color: '#555', marginBottom: '5px' }}>
+                <Typography variant="subtitle1" component="div" style={{ color: '#555', marginBottom: '5px', fontFamily: "Montserrat, sans-serif" }}>
                   {item.title}
                 </Typography>
-                <Typography variant="h5" component="div" style={{ fontWeight: 'bold', color: '#333' }}>
+                <Typography variant="h5" component="div" style={{ fontWeight: 'bold', color: '#333', fontFamily: "Montserrat, sans-serif" }}>
                   {item.value}
                 </Typography>
               </CardContent>
