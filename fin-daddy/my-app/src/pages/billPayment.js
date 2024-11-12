@@ -256,7 +256,6 @@ function BillPayment() {
           placeholder="Enter transaction reference"
           type="text"
           //value={transactionReference}
-          required
           style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
         />
 
