@@ -107,7 +107,7 @@ function BillPayment() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto", fontFamily: "Montserrat, sans-serif", marginTop: "96px" }}>
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto", fontFamily: "Montserrat, sans-serif", marginTop: "58px" }}>
       <h1 style={{ textAlign: "center", color: "#44403c",fontSize: "30px", marginBottom:"10px" }}>Bill Payment Details</h1>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
@@ -128,28 +128,6 @@ function BillPayment() {
         </select>
 
         <label style={{ fontWeight: "bold" }}>Account To</label>
-        {/* <input
-          type="text"
-          value={selectedToAccount}
-          onChange={handleToAccountChange}
-          required
-          placeholder="Enter billing organization"
-          style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px", width: "100%" }}
-        />
-        {filteredBillingOrganizations.length > 0 && (
-          <div style={{ border: "1px solid #ccc", borderRadius: "4px", backgroundColor: "#f9f9f9", marginTop: "5px", width: "100%", maxHeight: "200px",
-            overflowY: "auto"}}>
-            {filteredBillingOrganizations.map((org) => (
-              <div
-                key={org.id}
-                onClick={() => handleSuggestionClick(org)}
-                style={{ padding: "10px", cursor: "pointer" }}
-              >
-                {org.name}
-              </div>
-            ))}
-          </div>
-        )} */}
 
 <Box
   display="flex"
@@ -161,7 +139,7 @@ function BillPayment() {
 >
   <TextField
     label="Enter billing organization"
-    variant="outlined"
+    variant="filled"
     value={selectedToAccount}
     onChange={handleToAccountChange}
     fullWidth

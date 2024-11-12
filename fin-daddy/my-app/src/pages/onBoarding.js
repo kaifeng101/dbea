@@ -446,6 +446,7 @@ const OnBoarding = () => {
                         onChange={handleChange}
                         name="ageGroup"
                         label="Age Range"
+                        sx={{ fontFamily: "Montserrat, sans-serif" }}
                       >
                         <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="Less than 18 years">Less than 18 years</MenuItem>
                         <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="18 - 24 years">18 - 24 years</MenuItem>
@@ -498,7 +499,7 @@ const OnBoarding = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                     <FormControl required fullWidth margin="normal" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '5px' } }}>
-                      <InputLabel id="no-of-social-accounts-label" sx={{ color: '#666666' }}>No of Social Accounts</InputLabel>
+                      <InputLabel id="no-of-social-accounts-label" sx={{ fontFamily: "Montserrat, sans-serif" }}>No of Social Accounts</InputLabel>
                       <Select
                         labelId="no-of-social-accounts-label"
                         id="noOfSocialAccounts"
@@ -507,12 +508,12 @@ const OnBoarding = () => {
                         name="noOfSocialAccounts"
                         label="No of Social Accounts"
                       >
-                        <MenuItem value="0 - 1">0 - 1</MenuItem>
-                        <MenuItem value="2 - 3">2 - 3</MenuItem>
-                        <MenuItem value="4 - 5">4 - 5</MenuItem>
-                        <MenuItem value="6 - 7">6 - 7</MenuItem>
-                        <MenuItem value="8 - 10">8 - 10</MenuItem>
-                        <MenuItem value="11+">11+</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="0 - 1">0 - 1</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="2 - 3">2 - 3</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="4 - 5">4 - 5</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="6 - 7">6 - 7</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="8 - 10">8 - 10</MenuItem>
+                        <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="11+">11+</MenuItem>
                       </Select>
                     </FormControl>
                     </Grid>
@@ -620,6 +621,7 @@ const OnBoarding = () => {
                       value={formData.currentHousingStatus}
                       onChange={handleHousingStatusChange}
                       label="Current Housing Status"
+                      sx={{ fontFamily: "Montserrat, sans-serif" }}
                     >
                       {housingStatusOptions.map((status) => (
                         <MenuItem style={{fontFamily: "Montserrat, sans-serif"}} key={status} value={status}>
@@ -755,6 +757,7 @@ const OnBoarding = () => {
                         value={formData.occupation}
                         onChange={handleOccupationChange}
                         label="Occupation"
+                        sx={{ fontFamily: "Montserrat, sans-serif" }}
                       >
                         {occupationOptions.map((occupation) => (
                           <MenuItem key={occupation} value={occupation} sx={{ fontFamily: "Montserrat, sans-serif" }}>
@@ -773,6 +776,7 @@ const OnBoarding = () => {
                         value={formData.positionTitle}
                         onChange={handlePositionTitleChange}
                         label="Position Title"
+                        sx={{ fontFamily: "Montserrat, sans-serif" }}
                       >
                         {positionTitleOptions.map((positionTitle) => (
                           <MenuItem key={positionTitle} value={positionTitle} sx={{ fontFamily: "Montserrat, sans-serif" }}>
@@ -840,6 +844,7 @@ const OnBoarding = () => {
                         onChange={handleChange}
                         name="yearOfService"
                         label="Year of Service"
+                        sx={{ fontFamily: "Montserrat, sans-serif" }}
                       >
                         <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="Less than 1 year">Less than 1 year</MenuItem>
                         <MenuItem sx={{ fontFamily: "Montserrat, sans-serif" }} value="1 - 2 years">1 - 2 years</MenuItem>
@@ -967,6 +972,7 @@ const OnBoarding = () => {
                       value={formData.currentJobStatus}
                       onChange={handleCurrentJobStatusChange}
                       label="Current Job Status"
+                      sx={{ fontFamily: "Montserrat, sans-serif" }}
                     >
                       {currentJobStatusOptions.map((status) => (
                         <MenuItem key={status} value={status} sx={{ fontFamily: "Montserrat, sans-serif" }}>
@@ -989,6 +995,7 @@ const OnBoarding = () => {
                     onChange={handleChange}
                     name="currency"
                     label="Currency"
+                    sx={{ fontFamily: "Montserrat, sans-serif" }}
                   >
                     <MenuItem style={{fontFamily: "Montserrat, sans-serif"}}value="SGD">SGD</MenuItem>
                   </Select>

@@ -159,7 +159,7 @@ const Transactions = () => {
 
   return (
     // <Card>
-    <div style={styles.container} className="mt-24">
+    <div style={styles.container} className="mt-16">
       <div style={styles.title}> Transaction Form</div>
       <form onSubmit={handleSubmit} style={styles.form}>
 
@@ -318,7 +318,7 @@ const styles = {
     fontFamily: "Montserrat, sans-serif",
   },
   title:{
-    fontSize: "20px",
+    fontSize: "30px",
     fontWeight: "bold",
     marginBottom: "10px"
   }

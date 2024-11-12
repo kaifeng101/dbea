@@ -27,7 +27,8 @@ const styles = {
     fontSize: "30px",
     margin: "10px",
     paddingLeft:"20px",
-    fontFamily: "Montserrat, sans-serif"
+    fontFamily: "Montserrat, sans-serif",
+    fontWeight: "bold"
   },
   menu:{
     fontFamily: "Montserrat, sans-serif"
