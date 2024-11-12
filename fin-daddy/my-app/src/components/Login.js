@@ -161,7 +161,6 @@ const LoginComponent = () => {
                   fontFamily: "'Montserrat', sans-serif",
                 },
               }}
-              type="number"
             />
             <TextField
               fullWidth
