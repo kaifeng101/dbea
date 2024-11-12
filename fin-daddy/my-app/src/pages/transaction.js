@@ -109,10 +109,18 @@ const Transactions = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!amount || !selectedAccount || !finalAmount || !uen || !uenCategoryId) {
+  
+    // Check if the rounded final amount is greater than the transaction amount
+    if (parseFloat(finalAmount) <= parseFloat(amount)) {
+      setErrorMessage("Final amount (rounded) must be larger than transaction amount.");
+      return;
+    }
+  
+    if (!amount || !selectedAccount || !finalAmount || !uen) {
       setErrorMessage("Please complete all fields before submitting.");
       return;
     }
+  
     setErrorMessage("");
     const currentDate = new Date().toISOString().split("T")[0];
   
@@ -123,9 +131,10 @@ const Transactions = () => {
       customerId: userID,
       accountId: selectedAccount,
       savingsId: savingsId,
-      dateCreated: currentDate
+      dateCreated: currentDate,
     };
-    console.log(transactionData)
+    console.log(transactionData);
+  
     try {
       const response = await axios.post(
         "https://personal-g2wuuy52.outsystemscloud.com/TransactionRoundUp/rest/PaymentToMerchant/AddPayment",
@@ -150,34 +159,33 @@ const Transactions = () => {
           setDepositBalance(responseData.depositBalance);
           setSavingsBalance(responseData.savingsBalance);
           setErrorMessage("");
-                    // Check if the amount is abnormally large and send SMS
-        if (finalAmount > 1000) {
-          //const smsMessage = `An abnormally large transaction of $${finalAmount} was just made by your account. Please log into your fin-daddy app to check if this transaction was initiated by you. Otherwise, please contact us at 1800 767 4491.`;
-
-          const smsData = {
-            mobile: user?.number, // Replace with the correct mobile property from user session
-            message: "An abnormally large transaction was just made by your account. If this was not you, contact us at 1800 767 4491.",
-          };
-
-          try {
-            const username = "12173e30ec556fe4a951";
-            const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-            const basicAuth = "Basic " + btoa(`${username}:${password}`);
-            await axios.post(
-              "https://smuedu-dev.outsystemsenterprise.com/SMULab_Notification/rest/Notification/SendSMS",
-              smsData,
-              {
-                headers: {
-                  "Authorization": basicAuth,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-            console.log("SMS alert sent successfully");
-          } catch (smsError) {
-            console.error("Error sending SMS alert:", smsError);
+  
+          // Check if the amount is abnormally large and send SMS
+          if (finalAmount > 1000) {
+            const smsData = {
+              mobile: user?.number,
+              message: "An abnormally large transaction was just made by your account. If this was not you, contact us at 1800 767 4491.",
+            };
+  
+            try {
+              const username = "12173e30ec556fe4a951";
+              const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+              const basicAuth = "Basic " + btoa(`${username}:${password}`);
+              await axios.post(
+                "https://smuedu-dev.outsystemsenterprise.com/SMULab_Notification/rest/Notification/SendSMS",
+                smsData,
+                {
+                  headers: {
+                    "Authorization": basicAuth,
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+              console.log("SMS alert sent successfully");
+            } catch (smsError) {
+              console.error("Error sending SMS alert:", smsError);
+            }
           }
-        }
         }
       }
     } catch (error) {
@@ -185,6 +193,7 @@ const Transactions = () => {
       alert("Failed to submit transaction.");
     }
   };
+  
   
 
   return (
