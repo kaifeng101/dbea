@@ -908,7 +908,6 @@ const InvestmentDetails = () => {
           </div>
         </div>
         {/* investment history */}
-
         <div>
           <InvestmentPlanTable transactionLogs={investmentPlans || []} />
         </div>
