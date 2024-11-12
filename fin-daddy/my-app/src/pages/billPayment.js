@@ -95,11 +95,8 @@ function BillPayment() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    // Generate a random two-digit transaction ID
+    
     const transactionId = Math.floor(10 + Math.random() * 90).toString();
-  
-    // Find the category ID for the selected account to (billing organization)
     const selectedOrg = billingOrganizations.find((org) => org.name === selectedToAccount);
     const categoryId = selectedOrg ? selectedOrg.categoryId : null;
   
@@ -129,7 +126,8 @@ function BillPayment() {
       });
   
       if (response.status === 200) {
-        setTransactionResult(response.data);
+        // Temporarily hold transaction data
+        const transactionData = response.data;
   
         // Define the post URL and data for the carbon check
         const postUrl = `https://personal-svyrscxo.outsystemscloud.com/CarbonAssigner/rest/CarbonCheck/Check`;
@@ -139,7 +137,7 @@ function BillPayment() {
           amount: parseFloat(amount),
           customerId: userID,
         };
-
+  
         // Make the POST request for the carbon check
         try {
           const postResponse = await axios.post(postUrl, postData, {
@@ -149,9 +147,10 @@ function BillPayment() {
             },
           });
           
-          // Set the carbon check message based on response
+          // Set transaction result and carbon check message only after both API calls succeed
           if (postResponse.data && postResponse.data.message) {
             setCarbonCheckMessage(postResponse.data.message);
+            setTransactionResult(transactionData);
           }
         } catch (postError) {
           console.error("Error during carbon check:", postError);
