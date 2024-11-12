@@ -374,7 +374,7 @@ const PlanDetail = () => {
       const response = await axios.get(url, {
         headers,
       });
-      const creditScore = response.data.CreditScore;
+      const creditScore = response.data;
       let leverage = 1;
 
       if (creditScore >= 300 && creditScore <= 580) {
@@ -390,7 +390,6 @@ const PlanDetail = () => {
       setMaxLeverageRate(leverage);
     } catch (error) {
       setMaxLeverageRate(2);
-      // console.log(error)
     }
   };
 
