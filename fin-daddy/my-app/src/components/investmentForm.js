@@ -15,13 +15,13 @@ import {
   getLowRiskChart,
   getMediumRiskChart,
   getHighRiskChart,
-} from "./InvestmentCharts";
+} from "./InvestmentChart";
 import InfoIcon from "@mui/icons-material/Info";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import axios from "axios";
-import InvestmentPlanTable from "./investmentHistory";
+import InvestmentPlanTable from "./InvestmentHistory";
 
 const planDetails = {
   1: {
