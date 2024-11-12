@@ -4,6 +4,7 @@ import { selectUser } from "../redux/userSlice";
 import { useSelector } from "react-redux";
 import { Card, CardContent, Typography, Grid, Alert, Slide, Snackbar} from "@mui/material";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
+// import { green } from "@mui/material/colors";
 
 function SlideTransition(props) {
   return <Slide {...props} direction="down" />;
@@ -29,7 +30,8 @@ const Analytics = () => {
   const [investmentsData, setInvestmentsData] = useState([]);
   const currentMonth = new Date().getMonth();
   const [selectedMonth, setSelectedMonth] = useState("");
-
+  const [transactionCount, setTransactionCount] = useState(0);
+  const [monthlyInvestments, setMonthlyInvestments] = useState([])
   const [tabValue, setTabValue] = useState(0); // Track which tab is selected
   const tabs = [
     { id: 0, label: "Transactions & Miles" },
@@ -40,6 +42,33 @@ const Analytics = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const monthOrder = {
+    Jan: 1,
+    Feb: 2,
+    Mar: 3,
+    Apr: 4,
+    May: 5,
+    Jun: 6,
+    Jul: 7,
+    Aug: 8,
+    Sep: 9,
+    Oct: 10,
+    Nov: 11,
+    Dec: 12,
+  };
+
+  const sortedData = [...transactionsData].sort((a, b) => {
+    return monthOrder[a.name] - monthOrder[b.name];
+  });
+
+  const sortedMilesData = [...milesData].sort((a, b) => {
+    return monthOrder[a.month] - monthOrder[b.month];
+  });
+
+  const sortedTransactionCount = Array.isArray(transactionCount)
+  ? [...transactionCount].sort((a, b) => monthOrder[a.month] - monthOrder[b.month])
+  : [];
 
 
   const handleChangeTab = (event, newValue) => {
@@ -179,10 +208,10 @@ const Analytics = () => {
       const monthlyData = data.reduce((acc, item) => {
         const month = new Date(item.Created_At).toLocaleString('default', { month: 'short' });
         if (!acc[month]) {
-          acc[month] = { name: month, spending: 0, saving: 0 }; // Assuming saving is to be calculated or provided separately
+          acc[month] = { name: month, spending: 0, savings: 0 }; // Assuming saving is to be calculated or provided separately
         }
         acc[month].spending += parseFloat(item.Transaction_Amount);
-        acc[month].saving += parseFloat(item.Rounded_Amount) - parseFloat(item.Transaction_Amount);
+        acc[month].savings += parseFloat(item.Rounded_Amount) - parseFloat(item.Transaction_Amount);
 
         return acc;
       }, {});
@@ -190,6 +219,7 @@ const Analytics = () => {
       const formattedData = Object.values(monthlyData).map(monthData => ({
         ...monthData,
         spending: monthData.spending.toFixed(2),
+        
       }));
 
       setTransactionsData(formattedData)
@@ -198,26 +228,34 @@ const Analytics = () => {
         item.Transaction_Count = 1;
       });
 
+
       const monthlyDataSecond = data.reduce((acc, item) => {
         const month = new Date(item.Created_At).toLocaleString('default', { month: 'short' });
-
+    
         if (!acc[month]) {
           acc[month] = { month, transactions: 0, miles: 0 };
         }
-
+    
         acc[month].transactions += 1; // Increment transaction count
         acc[month].miles += parseFloat(item.Miles_Convert); // Sum miles
-
+    
         return acc;
       }, {});
 
-      const formattedSecondData = Object.values(monthlyDataSecond).map(monthData => ({
-        ...monthData,
+      const transactionsArray = Object.values(monthlyDataSecond).map(monthData => ({
+        month: monthData.month,
+        transactions: monthData.transactions,
+      }));
+    
+      const milesArray = Object.values(monthlyDataSecond).map(monthData => ({
+        month: monthData.month,
         miles: parseFloat(monthData.miles).toFixed(2),
       }));
 
-      setMilesData(formattedSecondData)
-      
+      setMilesData(milesArray)
+      setTransactionCount(transactionsArray)
+
+
     }
     catch (error) {
       console.log("Error")
@@ -291,8 +329,33 @@ const Analytics = () => {
         };
       });
 
-      
       setInvestmentsData(investmentDistribution);
+
+      const monthlyTotals = data.reduce((acc, item) => {
+        const month = new Date(item.DateTime).toLocaleString('default', { month: 'short' });
+        console.log(month)
+        acc[month] = acc[month] || { bonds: 0, second: 0, leverage:0 };
+        if (item.Type === "Green Bonds") {
+          acc[month].bonds += parseFloat(item.Amount);
+        } else if (item.Type === "Green Investment Bundle") {
+          acc[month].second += parseFloat(item.Amount);
+        }
+        else{
+          acc[month].leverage += parseFloat(item.Amount);
+        }
+
+        return acc;
+      }, {});
+
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthlyInvestArray = months.map(month => ({
+        month,
+        bonds: parseFloat((monthlyTotals[month]?.bonds || 0).toFixed(1)),
+        second: parseFloat((monthlyTotals[month]?.second || 0).toFixed(1)),
+        leverage: parseFloat((monthlyTotals[month]?.leverage || 0).toFixed(1))
+      }));
+
+      setMonthlyInvestments(monthlyInvestArray);
       
     }
     catch (error) {
@@ -344,7 +407,6 @@ const Analytics = () => {
     setOpenSnackbar(false);
   };
 
-
   useEffect(() => {
     getAccounts()
     getCarbonData();
@@ -380,6 +442,28 @@ const Analytics = () => {
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
+
+  const renderLabel = (props) => {
+    const { value, x, y } = props;
+    if (value > 0) {
+        return (
+            <text 
+                x={x} 
+                y={y} 
+                dy={-4} 
+                fontSize={12} 
+                fontWeight="bold" 
+                fontFamily="Montserrat, sans-serif" 
+                fill="black"
+                textAnchor="middle"
+                
+            >
+                {value}
+            </text>
+        );
+    }
+    return null;
+};
 
   return (
     <div className="m-10 mt-24">
@@ -494,72 +578,70 @@ const Analytics = () => {
       {tabValue === 0 && (
         <div key={tabValue}>
           <div className="mt-12" style={{ display: 'flex', flexWrap: 'wrap', gap: '65px', justifyContent: 'space-between' }}>
-            <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
-              {/* Chart 1 */}
-              <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <div style={{ flex: '1 1 100%', marginBottom: '5px' }}>
+              <Card>
                 <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}>
                   Spending vs Savings
                 </Typography>
                 <CardContent className="h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={transactionsData}>
+                    <LineChart data={sortedData}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
-                      <YAxis 
-                        yAxisId="left"
-                        orientation="left"
-                        stroke="#8884d8"
-                        label={{ value: 'Spending ($)', angle: -90, position: 'insideLeft', fontFamily: "'Montserrat', sans-serif" }}
-                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
-                      />
-                      <YAxis 
-                        yAxisId="right"
-                        orientation="right"
-                        stroke="#82ca9d"
-                        label={{ value: 'Savings ($)', angle: 90, position: 'insideRight', fontFamily: "'Montserrat', sans-serif" }}
-                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
-                      />
-                      <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
-                      <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <Line yAxisId="left" type="monotone" dataKey="spending" strokeWidth={3} stroke="#8884d8" />
-                      <Line yAxisId="right" type="monotone" dataKey="saving" strokeWidth={3} stroke="#82ca9d" />
+                      <XAxis dataKey="name"   padding={{ left: 30, right: 30 }}                       />
+                      <YAxis domain={[0, 'dataMax + 950']} />
+                      <Tooltip />
+                      <Legend />
+                      <Line type="monotone" dataKey="spending" name="Spending" strokeWidth={3} stroke="#8884d8"   label={{ position: "top", fill: "black", fontWeight: 'bold', fontSize: 14, fontFamily: "Montserrat, sans-serif" }} />
+                      <Line type="monotone" dataKey="savings" name="Savings" strokeWidth={3} stroke="#82ca9d"   label={{ position: "top", fill: "black", fontWeight: 'bold', fontSize: 14, fontFamily: "Montserrat, sans-serif" }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
+
             <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
-              {/* Chart 2 */}
               <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}>
-                  Monthly Transactions & Miles
+                  Number of Transactions Made
                 </Typography>
                 <CardContent className="h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={milesData}
-                    barCategoryGap="10%" // Adjust the space between categories (bars)
-                    barGap={50} // Adjust the space between bars within a category
-                    >
+                    <BarChart data={sortedTransactionCount}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <YAxis 
-                      yAxisId="left"
-                        orientation="left"
-                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}
-                        />
-                      <YAxis 
-                      yAxisId="right"
-                        orientation="right"
-                        tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <Bar yAxisId="left" dataKey="transactions" fill={COLORS.orange} name="Number of Transactions" />
-                      <Bar yAxisId="right" dataKey="miles" fill={COLORS.green} name="Miles Earned" />
+                      <XAxis dataKey="month" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <Bar dataKey="transactions" stackId="a" fill={COLORS.red} name="Number of Transactions Made" 
+                      label={{ position: "center", fill: "white", fontWeight: 'bold', fontSize: 14, fontFamily: "Montserrat, sans-serif" }}/>
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
+
+            <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
+              <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}>
+                  Monthly Miles Earned
+                </Typography>
+                <CardContent className="h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={sortedMilesData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                      <Bar dataKey="miles" stackId="a" fill={COLORS.green} name="Miles Earned" 
+                      label={{ position: "center", fill: "white", fontWeight: 'bold', fontSize: 14, fontFamily: "Montserrat, sans-serif" }}/>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+
+            
           </div>
         </div>
       )}
@@ -586,15 +668,15 @@ const Analytics = () => {
                       paddingAngle={2}
                       dataKey="value"
                       label={({ name, value }) => `${name} (${value})`}
-                      style={{ fontFamily: 'Montserrat, sans-serif' }}
+                      style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold'  }}
                     >
-                      <Cell fill={COLORS.red} />
                       <Cell fill={COLORS.green} />
+                      <Cell fill={COLORS.red} />
                     </Pie>
                     <Tooltip contentStyle={{
-            fontFamily: "'Montserrat', sans-serif",  // Customize font family
-            fontSize: 12,  // Customize font size
-          }}/>
+                      fontFamily: "'Montserrat', sans-serif",  // Customize font family
+                      fontSize: 12,  // Customize font size
+                    }}/>
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -614,8 +696,10 @@ const Analytics = () => {
                       <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
                       <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
                       <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-                      <Bar dataKey="type1" stackId="a" fill={COLORS.red} name="Carbon Emitted" />
-                      <Bar dataKey="type2" stackId="a" fill={COLORS.green} name="Carbon Credits Earned" />
+                      <Bar dataKey="type1" stackId="a" fill={COLORS.red} name="Carbon Emitted" 
+                      label={{ position: "center", fill: "white", fontWeight: 'bold', fontSize: 14, fontFamily: "Montserrat, sans-serif" }}/>
+                      <Bar dataKey="type2" stackId="a" fill={COLORS.green} name="Carbon Credits Earned"
+                      label={{ position: "center", fill: "white", fontWeight: 'bold', fontSize: 14, fontFamily: "Montserrat, sans-serif" }} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -645,20 +729,47 @@ const Analytics = () => {
                         outerRadius={100}
                         dataKey="value"
                         label={({ name, value }) => `${name}: $${value}`}
-                        style={{ fontFamily: 'Montserrat, sans-serif' }}
+                        style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold'  }}
                       >
                         {investmentsData.map((entry) => (
                           <Cell key={entry.name} fill={BUNDLE_COLORS[entry.name]} />
                         ))}
                       </Pie>
                       <Tooltip contentStyle={{
-            fontFamily: "'Montserrat', sans-serif",  // Customize font family
-            fontSize: 12,  // Customize font size
-          }}/>
+                        fontFamily: "'Montserrat', sans-serif",  // Customize font family
+                        fontSize: 12,  // Customize font size
+                      }}/>
                     </PieChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
+            </div>
+            <div style={{ flex: '1 1 48%', marginBottom: '20px' }}>
+              <Card style={{ border: '1px solid rgba(0, 0, 0, 0.1)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <Typography gutterBottom variant="h5" component="div" style={{ marginTop: '20px', marginLeft: '20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 'bold' }}> 
+                    Monthly Investments
+                </Typography>
+                <CardContent className="h-[400px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={monthlyInvestments} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="month" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                            <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                            <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                            <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
+                            <Bar dataKey="bonds" fill="#0088FE" name="Green Bonds" 
+                                                    label={renderLabel} // Use custom label function
+                                                    />
+                            <Bar dataKey="second" fill="#00C49F" name="Green Investment Bundle"
+                                                    label={renderLabel} // Use custom label function
+                                                    />
+                            <Bar dataKey="leverage" fill="#FFBB28" name="Leverage"
+                                                    label={renderLabel} // Use custom label function
+                                                    />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </CardContent>
+            </Card>
             </div>
           </div>
         </div>
