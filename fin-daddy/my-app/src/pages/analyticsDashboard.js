@@ -315,7 +315,7 @@ const Analytics = () => {
       return;
     }
 
-    const url = `https://personal-grrpique.outsystemscloud.com/NotificationToCompany/rest/SendEmailToCust/getEmailContent?CustomerId=${userID}&CustName=${userName}&Email=${emailAddress}&Month=${selectedMonth}`
+    const url = `https://personal-grrpique.outsystemscloud.com/ReportSummary/rest/SendEmailToCust/getEmailContent?CustomerId=${userID}&CustName=${userName}&Email=${emailAddress}&Month=${selectedMonth}`
 
     try {
       const response = await axios.get(url, {
