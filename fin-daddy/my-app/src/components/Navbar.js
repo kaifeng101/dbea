@@ -83,7 +83,7 @@ const NavBar = () => {
                 <MenuItem style={{ fontFamily: 'Montserrat, sans-serif'}}  className="flex space-x-6" onClick={() => navigate("/transaction")}>
                   Transaction
                 </MenuItem>
-                <MenuItem style={{ fontFamily: 'Montserrat, sans-serif'}}  className="flex space-x-6" onClick={() => navigate("/directDebitPayment")}>
+                <MenuItem style={{ fontFamily: 'Montserrat, sans-serif'}}  className="flex space-x-6" onClick={() => navigate("/directDebitPayment/viewAll")}>
                   Direct Debit Payment
                 </MenuItem>
                 <MenuItem style={{ fontFamily: 'Montserrat, sans-serif'}}  className="flex space-x-6" onClick={() => navigate("/billPayment")}>

@@ -82,8 +82,8 @@ function Authorisation() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ color: "#4a90e2" }}>Direct Debit Payment Authorisation</h1>
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto", fontFamily: "Montserrat, sans-serif" }}>
+      <h1 style={{ textAlign: "center", color: "#44403c",fontSize: "30px" }}>Direct Debit Payment Authorisation</h1>
       
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "20px" }}>
         {/* From Section */}
@@ -127,14 +127,14 @@ function Authorisation() {
         <button 
           type="submit" 
           style={{
-            padding: "12px 20px",
-            backgroundColor: "#4a90e2",
-            color: "#fff",
+            padding: "0.75rem",
+            backgroundColor: "#44403c",
+            color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
-            fontWeight: "bold",
-            fontSize: "16px"
+            fontWeight: "600",
+            marginTop:"20px"
           }}
         >
           Authorize
