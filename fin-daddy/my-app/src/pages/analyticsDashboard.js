@@ -2,8 +2,12 @@ import React, {useEffect, useState, useCallback} from "react";
 import axios from 'axios';
 import { selectUser } from "../redux/userSlice";
 import { useSelector } from "react-redux";
-import { Card, CardContent, Typography, Grid} from "@mui/material";
+import { Card, CardContent, Typography, Grid, Alert, Slide, Snackbar} from "@mui/material";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="down" />;
+}
 
 const Analytics = () => {
   const [carbonTypeData, setCarbonTypeData] = useState([]);
@@ -18,9 +22,13 @@ const Analytics = () => {
   const apiKey = 'c48b5803-757e-414d-9106-62ab010a9c8d';
   const user = useSelector(selectUser);
   const userID = user?.customerId
+  const userName = user?.custName
+  const emailAddress = user?.email
   const [transactionsData, setTransactionsData] = useState([]);
   const [milesData, setMilesData] = useState([]);
   const [investmentsData, setInvestmentsData] = useState([]);
+  const currentMonth = new Date().getMonth();
+  const [selectedMonth, setSelectedMonth] = useState("");
 
   const [tabValue, setTabValue] = useState(0); // Track which tab is selected
   const tabs = [
@@ -29,6 +37,9 @@ const Analytics = () => {
     { id: 2, label: "Investments" }
   ];
 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
 
   const handleChangeTab = (event, newValue) => {
@@ -290,7 +301,50 @@ const Analytics = () => {
 
 
   }, [userID, apiKey]);
-  
+
+  const handleDropdownChange = (event) => {
+    const monthIndex = monthsDropdown.indexOf(event.target.value) + 1;
+    setSelectedMonth(monthIndex);
+  };
+
+  const handleButtonClick = async () => {
+    if (!selectedMonth) {
+      setSnackbarMessage("Please select a month.");
+      setSnackbarSeverity("error"); // Use "error" for failed submission
+      setOpenSnackbar(true);
+      return;
+    }
+
+    const url = `https://personal-grrpique.outsystemscloud.com/NotificationToCompany/rest/SendEmailToCust/getEmailContent?CustomerId=${userID}&CustName=${userName}&Email=${emailAddress}&Month=${selectedMonth}`
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          'X-Contacts-Key': apiKey,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if(response){
+        setSelectedMonth(null)
+        setSnackbarMessage("Email Sent Successfully ");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
+      }
+    }
+    catch (error) {
+      console.log("Error")
+    } 
+  }
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
+
   useEffect(() => {
     getCarbonData();
     getCurrentMiles();
@@ -316,17 +370,16 @@ const Analytics = () => {
     { title: 'Carbon Credits', value: carbonCredits, color: '#f97316' }
   ];
 
-  const investmentDistribution = [
-    { name: 'Basic Plan - Green Bonds', value: 4000 },
-    { name: 'Intermediate Plan - Green Investment Bundle', value: 3000 },
-    { name: 'Expert Plan - Leveraged Green Growth Package', value: 5000 },
-  ];
-
   const BUNDLE_COLORS = {
     'Basic Plan - Green Bonds': '#0088FE',
     'Intermediate Plan - Green Investment Bundle': '#00C49F',
-    'Expert Plan - Leveraged Green Growth Package': '#FFBB28',
+    'Leveraged Green Growth Package': '#FFBB28',
   };
+
+  const monthsDropdown = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
 
   return (
     <div className="m-10 mt-24">
@@ -374,6 +427,53 @@ const Analytics = () => {
           </Grid>
         ))}
       </Grid>
+      
+      <div className="tab-controls flex flex-col items-start mb-8">
+        <div className="mb-2">
+          <h2 className="text-lg font-semibold">Get Monthly Financial Summary and Environmental Impact Report</h2>
+        </div>
+
+        <div className="flex items-center">
+          <div className="dropdown">
+            <select
+              className="p-2 border rounded-md bg-white focus:outline-none"
+              onChange={handleDropdownChange} 
+              value={selectedMonth ? monthsDropdown[selectedMonth - 1] : ""}
+            >
+              <option value="" disabled selected>Select a Month</option>
+              {monthsDropdown.map((month, index) => (
+                <option key={index} value={month} disabled={index > currentMonth}>
+                  {month}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            className="ml-2 px-4 py-1.5 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none"
+            onClick={handleButtonClick}
+          >
+            Get Email
+          </button>
+        </div>
+      </div>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
 
       <div className="tabs mb-8">
         {tabs
@@ -545,7 +645,7 @@ const Analytics = () => {
                         label={({ name, value }) => `${name}: $${value}`}
                         style={{ fontFamily: 'Montserrat, sans-serif' }}
                       >
-                        {investmentDistribution.map((entry) => (
+                        {investmentsData.map((entry) => (
                           <Cell key={entry.name} fill={BUNDLE_COLORS[entry.name]} />
                         ))}
                       </Pie>
