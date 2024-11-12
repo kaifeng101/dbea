@@ -12,22 +12,42 @@ function BillPayment() {
   const [transactionReference, setTransactionReference] = useState("");
   const [error, setError] = useState(null);
   const [transactionResult, setTransactionResult] = useState(null);
+  const [carbonCheckMessage, setCarbonCheckMessage] = useState(""); // New state for carbon check message
   const [filteredBillingOrganizations, setFilteredBillingOrganizations] = useState([]);
 
   const user = useSelector(selectUser);
   const userID = user?.customerId;
 
   const today = new Date();
-    today.setDate(today.getDate() + 1); // Add 1 day to today's date
-    const nextDay = today.toISOString().split("T")[0]; // Get the next day in YYYY-MM-DD format
+  const mindate = today.toISOString().split("T")[0];
 
-  // List of predefined billing organizations
   const billingOrganizations = [
-    { id: "0000004455", name: "Adobe Premiere Pro - 0000004455" },
-    { id: "0000004457", name: "Amazon Prime - 0000004457" },
-    { id: "0000004476", name: "Netflix - 0000004476" },
-    { id: "0000004441", name: "Coffee Bean - 0000004441" },
-    { id: "0000004469", name: "Housing Development Board - 0000004469" },
+    { "id": "0000004455", "name": "Adobe Premiere Pro-0000004455", "categoryId": "21" },
+    { "id": "0000004457", "name": "Amazon Prime-0000004457", "categoryId": "21" },
+    { "id": "0000004458", "name": "America On Line-0000004458", "categoryId": "22" },
+    { "id": "0000004459", "name": "American Mobile-0000004459", "categoryId": "22" },
+    { "id": "0000004460", "name": "British Telecom-0000004460", "categoryId": "22" },
+    { "id": "0000004461", "name": "China Mobile-0000004461", "categoryId": "22" },
+    { "id": "0000004462", "name": "China Telecom-0000004462", "categoryId": "22" },
+    { "id": "0000004441", "name": "Coffee Bean-0000004441", "categoryId": "21" },
+    { "id": "0000004464", "name": "Deliveroo Plus-0000004464", "categoryId": "21" },
+    { "id": "0000004465", "name": "Deutsche Telekom-0000004465", "categoryId": "22" },
+    { "id": "0000004466", "name": "English Premier League-0000004466", "categoryId": "21" },
+    { "id": "0000004468", "name": "Great Eastern Life-0000004468", "categoryId": "21" },
+    { "id": "0000004469", "name": "Housing Development Board-0000004469", "categoryId": "21" },
+    { "id": "0000004471", "name": "M1-0000004471", "categoryId": "22" },
+    { "id": "0000004472", "name": "Malaysia Telekom-0000004472", "categoryId": "22" },
+    { "id": "0000004473", "name": "Maxis-0000004473", "categoryId": "22" },
+    { "id": "0000004475", "name": "MyFitnessPal-0000004475", "categoryId": "21" },
+    { "id": "0000004476", "name": "Netflix-0000004476", "categoryId": "18" },
+    { "id": "0000004454", "name": "SingTel-0000004454", "categoryId": "22" },
+    { "id": "0000004488", "name": "Starhub-0000004488", "categoryId": "22" },
+    { "id": "0000004489", "name": "Strava-0000004489", "categoryId": "21" },
+    { "id": "0000004491", "name": "The Business Times-0000004491", "categoryId": "21" },
+    { "id": "0000004492", "name": "The Strait Times-0000004492", "categoryId": "21" },
+    { "id": "0000004494", "name": "Verizon-0000004494", "categoryId": "21" },
+    { "id": "0000004495", "name": "Vodafone-0000004495", "categoryId": "21" },
+    { "id": "0000004496", "name": "Zoom-0000004496", "categoryId": "21" }
   ];
 
   const getAccounts = useCallback(async () => {
@@ -39,13 +59,12 @@ function BillPayment() {
       const response = await axios.get(url, {
         headers: {
           "Content-Type": "application/json",
-          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Use the required header
+          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
         },
       });
 
       if (response.status === 200) {
         const data = response.data;
-        console.log(data);
         setBankAccounts([{ id: data.accountId, name: `Account ${data.accountId}` }]);
       }
     } catch (error) {
@@ -61,21 +80,31 @@ function BillPayment() {
   const handleToAccountChange = (e) => {
     const inputValue = e.target.value;
     setSelectedToAccount(inputValue);
-    setFilteredBillingOrganizations(
-      billingOrganizations.filter((org) =>
-        org.name.toLowerCase().includes(inputValue.toLowerCase())
-      )
+
+    // Filter billing organizations based on input
+    const matchedOrganizations = billingOrganizations.filter((org) =>
+      org.name.toLowerCase().includes(inputValue.toLowerCase())
     );
+    setFilteredBillingOrganizations(matchedOrganizations);
   };
 
   const handleSuggestionClick = (suggestion) => {
     setSelectedToAccount(suggestion.name);
-    setFilteredBillingOrganizations([]);
+    setFilteredBillingOrganizations([]); // Clear suggestions after selection
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    
+    const transactionId = Math.floor(10 + Math.random() * 90).toString();
+    const selectedOrg = billingOrganizations.find((org) => org.name === selectedToAccount);
+    const categoryId = selectedOrg ? selectedOrg.categoryId : null;
+  
+    if (!categoryId) {
+      setError("Invalid billing organization selected. Please try again.");
+      return;
+    }
+  
     const putUrl = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${userID}/WithdrawCash`;
     const requestData = {
       consumerId: "api",
@@ -84,7 +113,7 @@ function BillPayment() {
       amount: parseFloat(amount),
       narrative: "Bill payment",
     };
-
+  
     try {
       const username = "12173e30ec556fe4a951";
       const password = "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
@@ -95,20 +124,48 @@ function BillPayment() {
           "Content-Type": "application/json",
         },
       });
-
+  
       if (response.status === 200) {
-        console.log(response.data);
-        setTransactionResult(response.data);
+        // Temporarily hold transaction data
+        const transactionData = response.data;
+  
+        // Define the post URL and data for the carbon check
+        const postUrl = `https://personal-svyrscxo.outsystemscloud.com/CarbonAssigner/rest/CarbonCheck/Check`;
+        const postData = {
+          transactionId: transactionId,
+          categoryId: categoryId,
+          amount: parseFloat(amount),
+          customerId: userID,
+        };
+  
+        // Make the POST request for the carbon check
+        try {
+          const postResponse = await axios.post(postUrl, postData, {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
+            },
+          });
+          
+          // Set transaction result and carbon check message only after both API calls succeed
+          if (postResponse.data && postResponse.data.message) {
+            setCarbonCheckMessage(postResponse.data.message);
+            setTransactionResult(transactionData);
+          }
+        } catch (postError) {
+          console.error("Error during carbon check:", postError);
+        }
       }
     } catch (error) {
       console.log("Error during transaction:", error);
       setError("Transaction failed. Please try again.");
     }
   };
+  
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto", fontFamily: "Montserrat, sans-serif", marginTop: "96px" }}>
-      <h1 style={{ textAlign: "center", color: "#44403c",fontSize: "30px", marginBottom:"10px" }}>Bill Payment Details</h1>
+      <h1 style={{ textAlign: "center", color: "#44403c", fontSize: "30px", marginBottom: "10px" }}>Bill Payment Details</h1>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         
@@ -128,86 +185,51 @@ function BillPayment() {
         </select>
 
         <label style={{ fontWeight: "bold" }}>Account To</label>
-        {/* <input
-          type="text"
-          value={selectedToAccount}
-          onChange={handleToAccountChange}
-          required
-          placeholder="Enter billing organization"
-          style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px", width: "100%" }}
-        />
-        {filteredBillingOrganizations.length > 0 && (
-          <div style={{ border: "1px solid #ccc", borderRadius: "4px", backgroundColor: "#f9f9f9", marginTop: "5px", width: "100%", maxHeight: "200px",
-            overflowY: "auto"}}>
-            {filteredBillingOrganizations.map((org) => (
-              <div
-                key={org.id}
-                onClick={() => handleSuggestionClick(org)}
-                style={{ padding: "10px", cursor: "pointer" }}
-              >
-                {org.name}
-              </div>
-            ))}
-          </div>
-        )} */}
+        <Box display="flex" flexDirection="column" position="relative">
+          <TextField
+            label="Enter account to"
+            variant="outlined"
+            value={selectedToAccount}
+            onChange={handleToAccountChange}
+            required
+            sx={{
+              '& .MuiFormLabel-root': { fontFamily: "'Montserrat', sans-serif" },
+              '& .MuiInputBase-root': { fontFamily: "'Montserrat', sans-serif" },
+            }}
+          />
 
-<Box
-  display="flex"
-  flexDirection={{ xs: 'column', md: 'row' }}
-  alignItems="center"
-  gap={2}
-  mb={1}
-  position="relative"  // Ensures the dropdown is positioned relative to this container
->
-  <TextField
-    label="Enter billing organization"
-    variant="outlined"
-    value={selectedToAccount}
-    onChange={handleToAccountChange}
-    fullWidth
-    required
-    sx={{
-      '& .MuiFormLabel-root': {
-        fontFamily: "'Montserrat', sans-serif",
-      },
-      '& .MuiInputBase-root': {
-        fontFamily: "'Montserrat', sans-serif",
-      },
-      width: "100%",  // Ensures full width within its parent container
-      maxWidth: "500px", // Optional: limit the max width to prevent it from becoming too wide
-    }}
-  />
-
-  {filteredBillingOrganizations.length > 0 && (
-    <div
-      style={{
-        position: "absolute", // Position it absolutely below the input field
-        top: "100%", // Position directly below the TextField
-        left: 0, // Align to the left of the TextField
-        border: "1px solid #ccc",
-        borderRadius: "4px",
-        backgroundColor: "#f9f9f9",
-        marginTop: "5px",
-        width: "100%", // Ensures the dropdown aligns with the input
-        maxHeight: "200px",
-        overflowY: "auto",
-      }}
-    >
-      {filteredBillingOrganizations.map((org) => (
-        <div
-          key={org.id}
-          onClick={() => handleSuggestionClick(org)}
-          style={{
-            padding: "10px",
-            cursor: "pointer",
-          }}
-        >
-          {org.name}
-        </div>
-      ))}
-    </div>
-  )}
-</Box>
+          {filteredBillingOrganizations.length > 0 && (
+            <div
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                backgroundColor: "#f9f9f9",
+                marginTop: "5px",
+                width: "100%",
+                maxHeight: "200px",
+                overflowY: "auto",
+                zIndex: 10, // Ensure the dropdown appears above other elements
+              }}
+            >
+              {filteredBillingOrganizations.map((org) => (
+                <div
+                  key={org.id}
+                  onClick={() => handleSuggestionClick(org)}
+                  style={{
+                    padding: "10px",
+                    cursor: "pointer",
+                    fontFamily: "'Montserrat', sans-serif",
+                  }}
+                >
+                  {org.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </Box>
 
         <label style={{ fontWeight: "bold" }}>Amount ($)</label>
         <input
@@ -222,8 +244,8 @@ function BillPayment() {
         <label style={{ fontWeight: "bold" }}>Transaction Date</label>
         <input
           type="date"
-          min={nextDay}
-          onChange={(e) => setTransactionReference(e.target.value)}  // Adjust as needed
+          min={mindate}
+          onChange={(e) => setTransactionReference(e.target.value)}
           required
           style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
         />
@@ -233,8 +255,6 @@ function BillPayment() {
           placeholder="Enter transaction reference"
           type="text"
           //value={transactionReference}
-          //onChange={(e) => setTransactionReference(e.target.value)}
-          required
           style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "4px" }}
         />
 
@@ -256,8 +276,9 @@ function BillPayment() {
       </form>
 
       {transactionResult && (
-        <div style={{ marginTop: "20px", padding: "15px", border: "1px solid #328511", borderRadius: "4px" }}>
-          <p><strong>Transaction Successful!</strong></p>
+        <div style={{ marginTop: "20px", padding: "15px", border: "1px solid #328511", borderRadius: "4px", backgroundColor:"white"}}>
+          <p><strong>Transaction Successful</strong></p>
+          {carbonCheckMessage && <p>{carbonCheckMessage}</p>}
           <p>Balance Before: ${transactionResult.balanceBefore}</p>
           <p>Balance After: ${transactionResult.balanceAfter}</p>
           <p>Transaction ID: {transactionResult.transactionId}</p>
@@ -270,3 +291,5 @@ function BillPayment() {
 }
 
 export default BillPayment;
+
+

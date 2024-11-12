@@ -5,10 +5,8 @@ import { useSelector } from "react-redux";
 
 const Transactions = () => {
   const [amount, setAmount] = useState("");
-  //const [category, setCategory] = useState("shopping");
   const [roundUpChoice, setRoundUpChoice] = useState("nearest dollar");
   const [customRoundUp, setCustomRoundUp] = useState("");
-  //const [paymentMethod] = useState("QR payment");
   const [finalAmount, setFinalAmount] = useState("");
   const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState("");
@@ -16,9 +14,34 @@ const Transactions = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [depositBalance, setDepositBalance] = useState(null);
   const [savingsBalance, setSavingsBalance] = useState(null);
-  const [savingsId, setSavingsId] = useState(""); // New state for savingsId
+  const [savingsId, setSavingsId] = useState("");
+  const [uen, setUen] = useState("");
+  const [uenCategoryId, setUenCategoryId] = useState(null);
   const user = useSelector(selectUser);
   const userID = user?.customerId;
+
+  const uenList = [
+    { "uen": "UEN3528", "categoryId": "1" },
+    { "uen": "UEN7681", "categoryId": "2" },
+    { "uen": "UEN1943", "categoryId": "3" },
+    { "uen": "UEN8296", "categoryId": "4"},
+    { "uen": "UEN5730", "categoryId": "5" },
+    { "uen": "UEN2409", "categoryId": "6" },
+    { "uen": "UEN3156", "categoryId": "7" },
+    { "uen": "UEN6598", "categoryId": "8" },
+    { "uen": "UEN1284", "categoryId": "9" },
+    { "uen": "UEN9841", "categoryId": "10" },
+    { "uen": "UEN5073", "categoryId": "11" },
+    { "uen": "UEN7265", "categoryId": "12" },
+    { "uen": "UEN1902", "categoryId": "13" },
+    { "uen": "UEN8307", "categoryId": "14" },
+    { "uen": "UEN2748", "categoryId": "15" },
+    { "uen": "UEN4306", "categoryId": "16" },
+    { "uen": "UEN6429", "categoryId": "17" },
+    { "uen": "UEN9175", "categoryId": "18" },
+    { "uen": "UEN5820", "categoryId": "19" },
+    { "uen": "UEN3601", "categoryId": "20" }
+  ];
 
   const getAccounts = useCallback(async () => {
     const url = `https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountType/GetAccountType?customerId=${userID}`;
@@ -32,7 +55,7 @@ const Transactions = () => {
       if (response.status === 200) {
         const data = response.data;
         setBankAccounts([{ id: data.accountId, name: `Account ${data.accountId}` }]);
-        setSavingsId(data.savingaccountId); // Store the savingaccountId as savingsId
+        setSavingsId(data.savingaccountId);
       }
     } catch (error) {
       console.log("Error:", error);
@@ -43,16 +66,22 @@ const Transactions = () => {
     getAccounts();
   }, [getAccounts]);
 
-  const handleAccountChange = (event) => {
-    setSelectedAccount(event.target.value);
+  const handleUenChange = (e) => {
+    const inputUen = e.target.value;
+    setUen(inputUen);
+
+    // Find the UEN and set category ID
+    const matchedUen = uenList.find((item) => item.uen === inputUen);
+    setUenCategoryId(matchedUen ? matchedUen.categoryId : null);
   };
 
   const handleAmountChange = (e) => setAmount(e.target.value);
-  //const handleCategoryChange = (e) => setCategory(e.target.value);
+
   const handleRoundUpChange = (e) => {
     setRoundUpChoice(e.target.value);
     if (e.target.value !== "other") setCustomRoundUp("");
   };
+
   const handleCustomRoundUpChange = (e) => setCustomRoundUp(e.target.value);
 
   useEffect(() => {
@@ -80,21 +109,23 @@ const Transactions = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!amount || !selectedAccount || !finalAmount) {
+    if (!amount || !selectedAccount || !finalAmount || !uen || !uenCategoryId) {
       setErrorMessage("Please complete all fields before submitting.");
       return;
     }
     setErrorMessage("");
+    const currentDate = new Date().toISOString().split("T")[0];
   
     const transactionData = {
-      transactionAmount: amount,
+      transactionAmount: parseFloat(amount),
       roundedAmount: finalAmount,
-      categoryId: 1,
+      categoryId: uenCategoryId,
       customerId: userID,
       accountId: selectedAccount,
-      savingsId: savingsId, // Include savingsId in transaction data
+      savingsId: savingsId,
+      dateCreated: currentDate
     };
-  
+    console.log(transactionData)
     try {
       const response = await axios.post(
         "https://personal-g2wuuy52.outsystemscloud.com/TransactionRoundUp/rest/PaymentToMerchant/AddPayment",
@@ -106,20 +137,20 @@ const Transactions = () => {
           },
         }
       );
-      console.log(transactionData)
   
-      // Check if the response indicates an insufficient balance
       if (response.status === 200) {
-        if (response.data.status === "Insufficient balance") {
+        const responseData = response.data;
+        if (responseData.status === "Insufficient balance") {
           setErrorMessage("Insufficient balance.");
-          setSuccessMessage(""); // Clear any previous success message
+          setSuccessMessage("");
         } else {
-          // Assume transaction is successful if no insufficient balance status
-          setSuccessMessage("Transaction Successful!");
-          setDepositBalance(response.data.depositBalance);
-          setSavingsBalance(response.data.savingsBalance);
-          setErrorMessage(""); // Clear any previous error message
-          // Check if the amount is abnormally large and send SMS
+          // Parse and extract the message from the status JSON
+          const parsedStatus = JSON.parse(responseData.status);
+          setSuccessMessage(parsedStatus.message); // Set only the message part
+          setDepositBalance(responseData.depositBalance);
+          setSavingsBalance(responseData.savingsBalance);
+          setErrorMessage("");
+                    // Check if the amount is abnormally large and send SMS
         if (finalAmount > 1000) {
           //const smsMessage = `An abnormally large transaction of $${finalAmount} was just made by your account. Please log into your fin-daddy app to check if this transaction was initiated by you. Otherwise, please contact us at 1800 767 4491.`;
 
@@ -147,7 +178,6 @@ const Transactions = () => {
             console.error("Error sending SMS alert:", smsError);
           }
         }
-      
         }
       }
     } catch (error) {
@@ -158,14 +188,13 @@ const Transactions = () => {
   
 
   return (
-    // <Card>
     <div style={styles.container} className="mt-24">
       <div style={styles.title}> Transaction Form</div>
       <form onSubmit={handleSubmit} style={styles.form}>
-
+        
         <div style={styles.formGroup}>
           <label>Select Account:</label>
-          <select value={selectedAccount} onChange={handleAccountChange} required style={styles.select}>
+          <select value={selectedAccount} onChange={e => setSelectedAccount(e.target.value)} required style={styles.select}>
             <option value="">Select Account</option>
             {bankAccounts.map(account => (
               <option key={account.id} value={account.id}>
@@ -187,17 +216,17 @@ const Transactions = () => {
           />
         </div>
 
-        {/* <div style={styles.formGroup}>
-          <label>Spending Category:</label>
-          <select value={category} onChange={handleCategoryChange} required style={styles.select}>
-            <option value="shopping">Shopping</option>
-            <option value="household goods">Household Goods</option>
-            <option value="transportation">Transportation</option>
-            <option value="leisure & entertainment">Leisure & Entertainment</option>
-            <option value="travel & accommodation">Travel & Accommodation</option>
-            <option value="others">Others</option>
-          </select>
-        </div> */}
+        <div style={styles.formGroup}>
+          <label>UEN:</label>
+          <input
+            type="text"
+            value={uen}
+            onChange={handleUenChange}
+            placeholder="Enter UEN"
+            required
+            style={styles.input}
+          />
+        </div>
 
         <div style={styles.formGroup}>
           <label>Round-Up Choice:</label>

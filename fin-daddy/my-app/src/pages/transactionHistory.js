@@ -13,6 +13,7 @@ function TransactionHistory() {
   const [purposeFilter, setPurposeFilter] = useState("All");
   const [sortOption, setSortOption] = useState("");
 
+
   const user = useSelector(selectUser);
   const userID = user?.customerId;
 
@@ -82,6 +83,11 @@ function TransactionHistory() {
     return { purpose: "Transfer", className: "transfer-purpose" };
   };
 
+  // Generate random 9-digit reference number
+  const generateRandomReferenceNumber = () => {
+    return Math.floor(100000000 + Math.random() * 900000000).toString();
+  };
+
   // Filtered and sorted transactions
   const filteredAndSortedTransactions = transactions
     .filter((transaction) => {
@@ -97,8 +103,8 @@ function TransactionHistory() {
     });
 
   return (
-    <div style={{fontFamily: "Montserrat, sans-serif", margin:"100px"}}>
-      <h1 style={{color: "#44403c",fontSize: "30px"}}>Transaction History</h1>
+    <div style={{ fontFamily: "Montserrat, sans-serif", margin: "100px" }}>
+      <h1 style={{ color: "#44403c", fontSize: "30px" }}>Transaction History</h1>
 
       <form onSubmit={handleSubmit} className="transaction-form">
         <div className="form-group">
@@ -167,13 +173,15 @@ function TransactionHistory() {
               <th>Account To</th>
               <th>Amount</th>
               <th>Currency</th>
-              <th>Payment Mode</th>
               <th>Reference No.</th>
             </tr>
           </thead>
           <tbody>
             {filteredAndSortedTransactions.map((transaction) => {
               const { purpose, className } = determinePurpose(transaction);
+              const referenceNumber = transaction.transactionReferenceNumber === "?" && (purpose === "Withdraw" || purpose === "Deposit")
+                ? generateRandomReferenceNumber()
+                : transaction.transactionReferenceNumber;
 
               return (
                 <tr key={transaction.transactionId}>
@@ -183,8 +191,7 @@ function TransactionHistory() {
                   <td>{transaction.accountTo === '0' ? 'N.A.' : transaction.accountTo}</td>
                   <td>${transaction.transactionAmount}</td>
                   <td>{transaction.currency}</td>
-                  <td>Cash</td>
-                  <td>{transaction.transactionReferenceNumber}</td>
+                  <td>{referenceNumber}</td>
                 </tr>
               );
             })}
@@ -198,7 +205,7 @@ function TransactionHistory() {
 }
 
 const styles = {
-  filters:{
+  filters: {
     display: "flex",
     gap: "10px",
     marginTop: "20px"
