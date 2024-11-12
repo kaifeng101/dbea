@@ -346,9 +346,9 @@ const Analytics = () => {
 
 
   useEffect(() => {
+    getAccounts()
     getCarbonData();
     getCurrentMiles();
-    getAccounts()
     getSpending()
     getSaving()
     getInvestments()
