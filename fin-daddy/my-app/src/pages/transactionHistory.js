@@ -10,6 +10,8 @@ function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [purposeFilter, setPurposeFilter] = useState("All");
+  const [sortOption, setSortOption] = useState("");
 
   const user = useSelector(selectUser);
   const userID = user?.customerId;
@@ -73,9 +75,30 @@ function TransactionHistory() {
     fetchTransactions();
   };
 
+  // Helper to determine purpose and CSS class
+  const determinePurpose = (transaction) => {
+    if (transaction.accountTo === '0') return { purpose: "Withdraw", className: "withdraw-purpose" };
+    if (transaction.accountFrom === '0') return { purpose: "Deposit", className: "deposit-purpose" };
+    return { purpose: "Transfer", className: "transfer-purpose" };
+  };
+
+  // Filtered and sorted transactions
+  const filteredAndSortedTransactions = transactions
+    .filter((transaction) => {
+      const { purpose } = determinePurpose(transaction);
+      return purposeFilter === "All" || purpose === purposeFilter;
+    })
+    .sort((a, b) => {
+      if (sortOption === "DateAsc") return new Date(a.transactionDate) - new Date(b.transactionDate);
+      if (sortOption === "DateDesc") return new Date(b.transactionDate) - new Date(a.transactionDate);
+      if (sortOption === "AmountAsc") return a.transactionAmount - b.transactionAmount;
+      if (sortOption === "AmountDesc") return b.transactionAmount - a.transactionAmount;
+      return 0;
+    });
+
   return (
-    <div className="transaction-history">
-      <h1>Transaction History</h1>
+    <div style={{fontFamily: "Montserrat, sans-serif", margin:"100px"}}>
+      <h1 style={{color: "#44403c",fontSize: "30px"}}>Transaction History</h1>
 
       <form onSubmit={handleSubmit} className="transaction-form">
         <div className="form-group">
@@ -113,27 +136,58 @@ function TransactionHistory() {
         <button type="submit" className="fetch-btn">Fetch Transactions</button>
       </form>
 
-      {transactions.length > 0 ? (
+      {/* Filter and Sort Options */}
+      <div style={styles.filters}>
+        <label>Filter by Purpose:</label>
+        <select value={purposeFilter} onChange={(e) => setPurposeFilter(e.target.value)}>
+          <option value="All">All</option>
+          <option value="Withdraw">Withdraw</option>
+          <option value="Deposit">Deposit</option>
+          <option value="Transfer">Transfer</option>
+        </select>
+
+        <label>Sort by:</label>
+        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+          <option value="">None</option>
+          <option value="DateAsc">Date (Ascending)</option>
+          <option value="DateDesc">Date (Descending)</option>
+          <option value="AmountAsc">Amount (Ascending)</option>
+          <option value="AmountDesc">Amount (Descending)</option>
+        </select>
+      </div>
+
+      {/* Transactions Table */}
+      {filteredAndSortedTransactions.length > 0 ? (
         <table className="transaction-table">
           <thead>
             <tr>
               <th>Date</th>
+              <th>Purpose</th>
               <th>Account From</th>
               <th>Account To</th>
               <th>Amount</th>
               <th>Currency</th>
+              <th>Payment Mode</th>
+              <th>Reference No.</th>
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction) => (
-              <tr key={transaction.transactionId}>
-                <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
-                <td>{transaction.accountFrom}</td>
-                <td>{transaction.accountTo}</td>
-                <td>{transaction.transactionAmount}</td>
-                <td>{transaction.currency}</td>
-              </tr>
-            ))}
+            {filteredAndSortedTransactions.map((transaction) => {
+              const { purpose, className } = determinePurpose(transaction);
+
+              return (
+                <tr key={transaction.transactionId}>
+                  <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
+                  <td className={className}>{purpose}</td>
+                  <td>{transaction.accountFrom === '0' ? 'N.A.' : transaction.accountFrom}</td>
+                  <td>{transaction.accountTo === '0' ? 'N.A.' : transaction.accountTo}</td>
+                  <td>${transaction.transactionAmount}</td>
+                  <td>{transaction.currency}</td>
+                  <td>Cash</td>
+                  <td>{transaction.transactionReferenceNumber}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       ) : (
@@ -141,6 +195,14 @@ function TransactionHistory() {
       )}
     </div>
   );
+}
+
+const styles = {
+  filters:{
+    display: "flex",
+    gap: "10px",
+    marginTop: "20px"
+  }
 }
 
 export default TransactionHistory;

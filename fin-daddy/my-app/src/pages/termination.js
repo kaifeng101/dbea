@@ -111,11 +111,11 @@ function Termination() {
   
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ textAlign: "center", color: "#4a90e2" }}>I want to terminate payment for:</h1>
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto", fontFamily: "Montserrat, sans-serif" }}>
+      <h1 style={{ textAlign: "center", color: "#44403c",fontSize: "25px"  }}>I want to terminate payment for:</h1>
 
       <form onSubmit={handleSubmit} style={{ marginTop: "20px", display: "flex", flexDirection: "column" }}>
-        <label htmlFor="accountSelect" style={{ fontWeight: "bold", marginBottom: "5px" }}>Select an account:</label>
+        <label htmlFor="accountSelect" style={{ fontWeight: "bold", marginBottom: "5px" }}>Account:</label>
         
         <select
           id="accountSelect"
@@ -135,14 +135,14 @@ function Termination() {
         <button
           type="submit"
           style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            color: "#fff",
-            backgroundColor: "#4a90e2",
+            padding: "0.75rem",
+            backgroundColor: "#44403c",
+            color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
-            alignSelf: "flex-start"
+            fontWeight: "600",
+            marginTop:"20px"
           }}
         >
           Submit
@@ -151,11 +151,11 @@ function Termination() {
 
       {showTable && (
         <div style={{ marginTop: "30px" }}>
-          <h2 style={{ color: "#4a90e2", marginBottom: "20px" }}>I want to terminate payment for: {selectedAccount}</h2>
+          <h2 style={{ color: "black", marginBottom: "20px" }}>All direct debit authorisations for {selectedAccount}</h2>
 
           <table style={{ width: "100%", borderCollapse: "collapse", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
             <thead>
-              <tr style={{ backgroundColor: "#4a90e2", color: "#fff", textAlign: "left" }}>
+              <tr style={{ backgroundColor: "#a8a39e", color: "#fff", textAlign: "left" }}>
                 <th style={{ padding: "10px" }}>Payee/References</th>
                 <th style={{ padding: "10px" }}>Actions</th>
               </tr>
