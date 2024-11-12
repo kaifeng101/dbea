@@ -15,9 +15,20 @@ function Authorisation() {
   const billingOrganizations = [
     { id: "0000004455", name: "Adobe Premiere Pro - 0000004455" },
     { id: "0000004457", name: "Amazon Prime - 0000004457" },
+    { id: "0000004458", name: "America On Line - 0000004458"},
+    { id: "0000004459", name: "American Mobile - 0000004459"},
+    { id: "0000004471", name: "M1 - 0000004471" },
+    { id: "0000004460", name: "British Telecom - 0000004460" },
+    { id: "0000004461", name: "China Mobile - 0000004461" },
+    { id: "0000004472", name: "Malaysia Telekom-0000004472" },
+    { id: "0000004465", name: "Deutsche Telekom - 0000004465" },
+    { id: "0000004473", name: "Maxis - 0000004473" },
+    { id: "0000004475", name: "MyFitnessPal - 0000004475" },
     { id: "0000004476", name: "Netflix - 0000004476" },
-    { id: "0000004441", name: "Coffee Bean - 0000004441" },
-    { id: "0000004469", name: "Housing Development Board - 0000004469" },
+    { id: "0000004454", name: "SingTel - 0000004454" },
+    { id: "0000004488", name: "Starhub - 0000004488" },
+    { id: "0000004494", name: "Verizon - 0000004494" },
+    { id: "0000004495", name: "Vodafone - 0000004495" },
   ];
 
   const getAccounts = useCallback(async () => {
