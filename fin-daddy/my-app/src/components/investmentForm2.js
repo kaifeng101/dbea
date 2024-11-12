@@ -21,6 +21,7 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import axios from "axios";
+import InvestmentPlanTable from "./investmentHistory";
 
 const planDetails = {
   1: {
@@ -905,6 +906,11 @@ const InvestmentDetails = () => {
               </Card>
             )}
           </div>
+        </div>
+        {/* investment history */}
+
+        <div>
+          <InvestmentPlanTable transactionLogs={investmentPlans || []} />
         </div>
       </Container>
       <Snackbar
