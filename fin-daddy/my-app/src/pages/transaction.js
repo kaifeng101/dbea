@@ -21,26 +21,26 @@ const Transactions = () => {
   const userID = user?.customerId;
 
   const uenList = [
-    { "uen": "UEN3528", "categoryId": 1 },
-    { "uen": "UEN7681", "categoryId": 2 },
-    { "uen": "UEN1943", "categoryId": 3 },
-    { "uen": "UEN8296", "categoryId": 4 },
-    { "uen": "UEN5730", "categoryId": 5 },
-    { "uen": "UEN2409", "categoryId": 6 },
-    { "uen": "UEN3156", "categoryId": 7 },
-    { "uen": "UEN6598", "categoryId": 8 },
-    { "uen": "UEN1284", "categoryId": 9 },
-    { "uen": "UEN9841", "categoryId": 10 },
-    { "uen": "UEN5073", "categoryId": 11 },
-    { "uen": "UEN7265", "categoryId": 12 },
-    { "uen": "UEN1902", "categoryId": 13 },
-    { "uen": "UEN8307", "categoryId": 14 },
-    { "uen": "UEN2748", "categoryId": 15 },
-    { "uen": "UEN4306", "categoryId": 16 },
-    { "uen": "UEN6429", "categoryId": 17 },
-    { "uen": "UEN9175", "categoryId": 18 },
-    { "uen": "UEN5820", "categoryId": 19 },
-    { "uen": "UEN3601", "categoryId": 20 }
+    { "uen": "UEN3528", "categoryId": "1" },
+    { "uen": "UEN7681", "categoryId": "2" },
+    { "uen": "UEN1943", "categoryId": "3" },
+    { "uen": "UEN8296", "categoryId": "4"},
+    { "uen": "UEN5730", "categoryId": "5" },
+    { "uen": "UEN2409", "categoryId": "6" },
+    { "uen": "UEN3156", "categoryId": "7" },
+    { "uen": "UEN6598", "categoryId": "8" },
+    { "uen": "UEN1284", "categoryId": "9" },
+    { "uen": "UEN9841", "categoryId": "10" },
+    { "uen": "UEN5073", "categoryId": "11" },
+    { "uen": "UEN7265", "categoryId": "12" },
+    { "uen": "UEN1902", "categoryId": "13" },
+    { "uen": "UEN8307", "categoryId": "14" },
+    { "uen": "UEN2748", "categoryId": "15" },
+    { "uen": "UEN4306", "categoryId": "16" },
+    { "uen": "UEN6429", "categoryId": "17" },
+    { "uen": "UEN9175", "categoryId": "18" },
+    { "uen": "UEN5820", "categoryId": "19" },
+    { "uen": "UEN3601", "categoryId": "20" }
   ];
 
   const getAccounts = useCallback(async () => {
@@ -115,9 +115,9 @@ const Transactions = () => {
     }
     setErrorMessage("");
     const currentDate = new Date().toISOString().split("T")[0];
-
+  
     const transactionData = {
-      transactionAmount: amount,
+      transactionAmount: parseFloat(amount),
       roundedAmount: finalAmount,
       categoryId: uenCategoryId,
       customerId: userID,
@@ -125,7 +125,7 @@ const Transactions = () => {
       savingsId: savingsId,
       dateCreated: currentDate
     };
-    console.log(transactionData)
+  
     try {
       const response = await axios.post(
         "https://personal-g2wuuy52.outsystemscloud.com/TransactionRoundUp/rest/PaymentToMerchant/AddPayment",
@@ -137,14 +137,18 @@ const Transactions = () => {
           },
         }
       );
+  
       if (response.status === 200) {
-        if (response.data.status === "Insufficient balance") {
+        const responseData = response.data;
+        if (responseData.status === "Insufficient balance") {
           setErrorMessage("Insufficient balance.");
           setSuccessMessage("");
         } else {
-          setSuccessMessage("Transaction Successful!");
-          setDepositBalance(response.data.depositBalance);
-          setSavingsBalance(response.data.savingsBalance);
+          // Parse and extract the message from the status JSON
+          const parsedStatus = JSON.parse(responseData.status);
+          setSuccessMessage(parsedStatus.message); // Set only the message part
+          setDepositBalance(responseData.depositBalance);
+          setSavingsBalance(responseData.savingsBalance);
           setErrorMessage("");
         }
       }
@@ -153,6 +157,7 @@ const Transactions = () => {
       alert("Failed to submit transaction.");
     }
   };
+  
 
   return (
     <div style={styles.container} className="mt-24">
