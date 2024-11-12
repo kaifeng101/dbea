@@ -430,7 +430,7 @@ const Analytics = () => {
       
       <div className="tab-controls flex flex-col items-start mb-8">
         <div className="mb-2">
-          <h2 className="text-lg font-semibold">Get Monthly Financial Summary and Environmental Impact Report</h2>
+          <h2 className="text-lg font-semibold" style={{fontFamily: "Montserrat, sans-serif" }}>Get Monthly Financial Summary and Environmental Impact Report</h2>
         </div>
 
         <div className="flex items-center">
@@ -439,10 +439,11 @@ const Analytics = () => {
               className="p-2 border rounded-md bg-white focus:outline-none"
               onChange={handleDropdownChange} 
               value={selectedMonth ? monthsDropdown[selectedMonth - 1] : ""}
+              style={{fontFamily: "Montserrat, sans-serif" }}
             >
-              <option value="" disabled selected>Select a Month</option>
+              <option value="" disabled selected style={{fontFamily: "Montserrat, sans-serif" }}>Select a Month</option>
               {monthsDropdown.map((month, index) => (
-                <option key={index} value={month} disabled={index > currentMonth}>
+                <option key={index} value={month} disabled={index > currentMonth} style={{fontFamily: "Montserrat, sans-serif" }}> 
                   {month}
                 </option>
               ))}
@@ -450,8 +451,9 @@ const Analytics = () => {
           </div>
 
           <button
-            className="ml-2 px-4 py-1.5 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none"
+            className="ml-2 px-4 py-1.5 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 focus:outline-none"
             onClick={handleButtonClick}
+            style={{fontFamily: "Montserrat, sans-serif" }}
           >
             Get Email
           </button>
