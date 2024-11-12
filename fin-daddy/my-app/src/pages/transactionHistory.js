@@ -173,7 +173,6 @@ function TransactionHistory() {
               <th>Account To</th>
               <th>Amount</th>
               <th>Currency</th>
-              <th>Payment Mode</th>
               <th>Reference No.</th>
             </tr>
           </thead>
@@ -192,7 +191,6 @@ function TransactionHistory() {
                   <td>{transaction.accountTo === '0' ? 'N.A.' : transaction.accountTo}</td>
                   <td>${transaction.transactionAmount}</td>
                   <td>{transaction.currency}</td>
-                  <td>{transaction.paymentMode}</td>
                   <td>{referenceNumber}</td>
                 </tr>
               );
