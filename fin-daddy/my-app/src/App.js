@@ -14,16 +14,16 @@ import Profile from "./pages/profile";
 import ViewAll from "./pages/viewAll";
 import Authorisation from "./pages/authorisation";
 import Termination from "./pages/termination";
-import BillPayment from "./pages/billPayment"
-import InvestmentForm from "./components/investmentForm";
-import TransactionHistory from "./pages/transactionHistory"
+import BillPayment from "./pages/billPayment";
+import TransactionHistory from "./pages/transactionHistory";
+import InvestmentDetails from "./components/investmentForm2";
 
 function App() {
   return (
     <>
       <Router>
         <div>
-        {/* {user && ( */}
+          {/* {user && ( */}
           <div className="app-navbar">
             <NavBar />
           </div>
@@ -32,14 +32,21 @@ function App() {
               <Route path="/" element={<Login />} />
               <Route path="/transaction" element={<Transaction />} />
               <Route path="/billPayment" element={<BillPayment />} />
-              <Route path="/directDebitPayment" element={<DirectDebitPayment />}>
+              <Route
+                path="/directDebitPayment"
+                element={<DirectDebitPayment />}
+              >
                 <Route path="viewAll" element={<ViewAll />} />
                 <Route path="authorisation" element={<Authorisation />} />
                 <Route path="termination" element={<Termination />} />
               </Route>
-              <Route path="/transactionHistory" element={<TransactionHistory />} />
+              <Route
+                path="/transactionHistory"
+                element={<TransactionHistory />}
+              />
               <Route path="/investments" element={<Investments />} />
-              <Route path="/investmentForm/:id" element={<InvestmentForm />} />
+              <Route path="/investmentForm2/:id" element={<InvestmentDetails />} />
+
               <Route
                 path="/carbonMarketplace"
                 element={<CarbonMarketplace />}

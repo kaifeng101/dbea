@@ -36,36 +36,66 @@ const investments = [
   },
 ];
 
-
 const InvestmentComponent = () => {
-  
   return (
-    <Container maxWidth="md" sx={{ marginTop: "100px" }} >
-      <Typography variant="h4" align="center" gutterBottom style={{fontFamily: "Montserrat, sans-serif"}}>
+    <Container maxWidth="md" sx={{ marginTop: "100px" }}>
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        style={{ fontFamily: "Montserrat, sans-serif" }}
+      >
         Investment Plans
       </Typography>
       <Grid container spacing={4}>
         {investments.map((investment, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index} >
-            <Card variant="outlined" sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-              <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <Typography variant="h5" gutterBottom style={{fontFamily: "Montserrat, sans-serif"}}>
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card
+              variant="outlined"
+              sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+            >
+              <CardContent
+                sx={{
+                  flexGrow: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  style={{ fontFamily: "Montserrat, sans-serif" }}
+                >
                   {investment.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph style={{fontFamily: "Montserrat, sans-serif"}}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  paragraph
+                  style={{ fontFamily: "Montserrat, sans-serif" }}
+                >
                   {investment.description}
                 </Typography>
-                <Typography variant="subtitle2" color="text.primary" style={{fontFamily: "Montserrat, sans-serif"}}>
+                <Typography
+                  variant="subtitle2"
+                  color="text.primary"
+                  style={{ fontFamily: "Montserrat, sans-serif" }}
+                >
                   {investment.riskLevel} - {investment.returns}
                 </Typography>
                 <Button
                   variant="contained"
                   color="primary"
                   fullWidth
-                  sx={{ marginTop: "15px", backgroundColor: "#44403c", color:'white' }}
+                  sx={{
+                    marginTop: "15px",
+                    backgroundColor: "#44403c",
+                    color: "white",
+                  }}
                   component={Link}
-                  style={{fontFamily: "Montserrat, sans-serif"}}
-                  to={`/investmentForm/${investment.id}`}
+                  style={{ fontFamily: "Montserrat, sans-serif" }}
+                  to={`/investmentForm2/${investment.id}`}
                 >
                   Invest Now
                 </Button>
