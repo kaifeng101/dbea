@@ -192,7 +192,7 @@ export default function CarbonMarketplacePage() {
 
   const confirmCheckout = async () => {
       try {
-        const response = await fetch('https://personal-svyrscxo.outsystemscloud.com/CarbonTrading/rest/SellCarbon/SellCarbon?creditNeeded=' + finalTotalCost, {
+        const response = await fetch('https://personal-svyrscxo.outsystemscloud.com/CarbonMarketplace/rest/SellCarbon/SellCarbon?creditNeeded=' + finalTotalCost, {
             method: 'POST',
             headers: {
                 'X-Contacts-Key': 'c48b5803-757e-414d-9106-62ab010a9c8d',
