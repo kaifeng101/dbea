@@ -8,46 +8,20 @@ import {
   Button,
   Slider,
   InputAdornment,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
+  getLowRiskChart,
+  getMediumRiskChart,
+  getHighRiskChart,
+} from "./InvestmentChart";
 import InfoIcon from "@mui/icons-material/Info";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import axios from "axios";
-
-const lowRiskData = [
-  { year: "2019", risk: 1, return: 8 },
-  { year: "2020", risk: 1.5, return: 10 },
-  { year: "2021", risk: 2, return: 11 },
-  { year: "2022", risk: 2.2, return: 9 },
-  { year: "2023", risk: 2.5, return: 6 },
-];
-
-const mediumRiskData = [
-  { year: "2019", risk: 5, return: 13 },
-  { year: "2020", risk: 5.5, return: 12 },
-  { year: "2021", risk: 6, return: 11 },
-  { year: "2022", risk: 6.5, return: 16 },
-  { year: "2023", risk: 7, return: 9 },
-];
-
-const highRiskData = [
-  { year: "2019", risk: 10, return: 20 },
-  { year: "2020", risk: 11, return: 26 },
-  { year: "2021", risk: 12, return: 17 },
-  { year: "2022", risk: 13, return: 20 },
-  { year: "2023", risk: 15, return: 21 },
-];
+import InvestmentPlanTable from "./InvestmentHistory";
 
 const planDetails = {
   1: {
@@ -76,295 +50,161 @@ const planDetails = {
   },
 };
 
-const getLowRiskChart = () => {
-  return (
-    <div style={{ flex: "1 1 48%" }}>
-      <Card variant="outlined">
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="div"
-          style={{
-            marginTop: "20px",
-            marginLeft: "20px",
-            marginRight: "20px",
-            fontFamily: "Montserrat, sans-serif",
-          }}
-        >
-          Basic Plan - Green Bonds
-        </Typography>
-        <CardContent className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={lowRiskData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }} />
-              <YAxis  tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Line
-                type="monotone"
-                dataKey="risk"
-                stroke="#2c7a7b"
-                strokeWidth={3}
-                name="Risk (%)"
-              />
-              <Line
-                type="monotone"
-                dataKey="return"
-                stroke="#2b6cb0"
-                strokeWidth={3}
-                name="Return (%)"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
-
-const getMediumRiskChart = () => {
-  return (
-    <div style={{ flex: "1 1 48%" }}>
-      <Card variant="outlined">
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="div"
-          style={{
-            marginTop: "20px",
-            marginLeft: "20px",
-            marginRight: "20px",
-            fontFamily: "Montserrat, sans-serif",
-          }}
-        >
-          Intermediate Plan - Green Investment Bundle
-        </Typography>
-        <CardContent className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={mediumRiskData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Line
-                type="monotone"
-                dataKey="risk"
-                stroke="#2c7a7b"
-                strokeWidth={3}
-                name="Risk (%)"
-              />
-              <Line
-                type="monotone"
-                dataKey="return"
-                stroke="#2b6cb0"
-                strokeWidth={3}
-                name="Return (%)"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
-const getHighRiskChart = () => {
-  return (
-    <div style={{ flex: "1 1 48%" }}>
-      <Card variant="outlined" sx={{ padding: "3px" }}>
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="div"
-          style={{
-            marginTop: "20px",
-            marginLeft: "20px",
-            marginRight: "20px",
-            fontFamily: "Montserrat, sans-serif",
-          }}
-        >
-          Expert Plan - Leveraged Green Growth Package
-        </Typography>
-        <CardContent className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={highRiskData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <YAxis tick={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Tooltip contentStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Legend wrapperStyle={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12 }}/>
-              <Line
-                type="monotone"
-                dataKey="risk"
-                stroke="#2c7a7b"
-                strokeWidth={3}
-                name="Risk (%)"
-              />
-              <Line
-                type="monotone"
-                dataKey="return"
-                stroke="#2b6cb0"
-                strokeWidth={3}
-                name="Return (%)"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
-
-const PlanDetail = () => {
+const InvestmentDetails = () => {
   const { id } = useParams();
   const plan = planDetails[id];
   const user = useSelector(selectUser);
   const customerId = user.customerId;
 
-  const [customerPlans, setCurrentPlans] = useState(null);
-  const [investmentAmount, setInvestmentAmount] = useState("");
+  const [investmentAmount, setInvestmentAmount] = useState(0.0);
   const [selectedFromAccount, setSelectedFromAccount] = useState("");
-  const [accounts, setAccounts] = useState([]);
-  const [existingPlan, setExistingPlan] = useState(null);
-  const [maxLeverageRate, setMaxLeverageRate] = useState(1);
-  const [holdingAmount, setHoldingAmount] = useState("");
-  const [leverageRate, setLeverageRate] = useState(1);
   const [withdrawAmount, setWithdrawAmount] = useState(0.0);
   const [selectedWithdrawAccount, setSelectedWithdrawAccount] = useState("");
 
-  useEffect(() => {
-    if (!plan?.title || !customerPlans) return; // Early return if plan title or customerPlans is not available
+  const [investmentPlans, setInvestmentPlans] = useState([]);
+  const [depositAccount, setDepositAccount] = useState([]);
+  const [savingsAccount, setSavingsAccount] = useState([]);
+  const [maxLeverageRate, setMaxLeverageRate] = useState(1);
 
-    const title = plan.title;
-    if (customerPlans) {
-      const matchingPlans = customerPlans
-        .filter((plan) => plan.Type === title)
-        .sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime)); // Sort by DateTime in descending order
+  const [currentPlan, setCurrentPlan] = useState([]);
+  const [leverageRate, setLeverageRate] = useState(1);
 
-      if (matchingPlans.length > 0) {
-        let totalAmount = 0;
-        let maxLeverage = 0;
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
-        matchingPlans.forEach((plan) => {
-          const growthAmount = calculateGrowthAmount(
-            plan.Amount,
-            plan.DateTime
-          );
-          if (growthAmount) {
-            totalAmount += parseFloat(growthAmount); // Add growth amount
-          }
-          if (plan.maximum_leverage) {
-            maxLeverage += parseFloat(plan.maximum_leverage);
-          }
-        });
-
-        const latestPlan = matchingPlans[matchingPlans.length - 1];
-        const accountObject = {
-          Amount: totalAmount.toFixed(2), // Ensure this reflects the accurate total amount
-          Type: title,
-          DateTime: latestPlan.DateTime,
-          maximum_leverage: maxLeverage, // Assuming 'maximum_leverage' should be updated with the last plan
-        };
-
-        setExistingPlan(accountObject); // Update the state with the new account details
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [customerPlans, plan?.title, investmentAmount]);
-
-  const calculateGrowthAmount = (amount, datetime) => {
-    const principal = parseFloat(amount);
-    const rate = plan.rate;
-    if (!principal || isNaN(principal) || !datetime) return;
-
-    const startDate = new Date(datetime);
-    const currentDate = new Date();
-
-    const monthsDifference =
-      (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
-      currentDate.getMonth() -
-      startDate.getMonth();
-
-    const daysInMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    ).getDate();
-    const remainingDaysInMonth = daysInMonth - startDate.getDate();
-
-    if (monthsDifference <= 0 && remainingDaysInMonth <= 0) return;
-
-    let growthAmount = principal * Math.pow(1 + rate, monthsDifference);
-
-    if (remainingDaysInMonth > 0) {
-      const dailyRate = rate / 30;
-      growthAmount *= Math.pow(1 + dailyRate, remainingDaysInMonth);
-    }
-    if (isNaN(growthAmount)) {
-      return false;
-    }
-
-    return growthAmount.toFixed(2);
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
-  const withdrawInvestment = async (amount) => {
+  const calculateEarnings = (amount) => {
+    let totalEarnings = 0;
+
+    investmentPlans.forEach((plan) => {
+      const investDate = new Date(plan.DateTime);
+      const current = new Date();
+
+      // Calculate the difference in months between the invest date and current date
+      const monthsDifference =
+        (current.getFullYear() - investDate.getFullYear()) * 12 +
+        (current.getMonth() - investDate.getMonth());
+
+      // Calculate earnings using compound interest formula: A = P * (1 + r)^n
+      const earnings =
+        amount * Math.pow(1 + plan.rate, monthsDifference) - amount;
+      totalEarnings += earnings;
+    });
+
+    return totalEarnings;
+  };
+
+  const getCustomerAccounts = async (customerId) => {
     try {
-      const initialAmount = existingPlan.Amount;
-      const newAmount = initialAmount - amount;
-      if (newAmount < 0) {
-        alert(
-          "You can only withdraw an amount less than or equal to the current amount."
-        );
-        setWithdrawAmount(0);
-        return;
-      }
-      await axios.post(
-        `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
-        {
-          customerId: customerId,
-          type: plan.title,
-          amount: -amount,
-          maximum_leverage: existingPlan.maximum_leverage,
+      const getAccountsId = `https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountType/GetAccountType?customerId=${customerId}`;
+      const response1 = await axios.get(getAccountsId, {
+        headers: {
+          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d",
         },
-        {
-          headers: {
-            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
-          },
-        }
-      );
-      await fetchCustomerPlan(customerId);
+      });
 
-      const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/DepositCash
-`;
-      const content = {
-        consumerId: customerId,
-        transactionId: 1,
-        accountId: selectedWithdrawAccount,
-        amount: withdrawAmount,
-        narrative: "string",
-      };
+      if (!response1.data) {
+        console.error("Error: No data returned from GetAccountType API.");
+        setSnackbar({
+          open: true,
+          message:
+            "Customer has no accounts. Please create one before continuing.",
+          severity: "error",
+        });
+        return;
+      } else if (!response1.data.accountId && !response1.data.savingaccountId) {
+        console.error(
+          "Error: Unable to retrieve data returned from GetAccountType API."
+        );
+        setSnackbar({
+          open: true,
+          message:
+            "Customer has no accounts. Please create one before continuing.",
+          severity: "error",
+        });
+        return "";
+      }
 
+      const { accountId: depositId, savingaccountId: savingsId } =
+        response1.data;
+
+      const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${customerId}/accounts`;
       const username = "12173e30ec556fe4a951";
       const password =
         "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-
       const basicAuth = "Basic " + btoa(`${username}:${password}`);
-      await axios.put(url, content, {
+
+      const response = await axios.get(url, {
         headers: {
           Authorization: basicAuth,
           "Content-Type": "application/json",
         },
       });
-      setWithdrawAmount(0);
-      setSelectedWithdrawAccount("");
-      return;
+
+      const depositAccount = response.data.find(
+        (account) => account?.accountId === depositId
+      );
+      const savingsAccount = response.data.find(
+        (account) => account?.accountId === savingsId
+      );
+
+      setDepositAccount(depositAccount);
+      setSavingsAccount(savingsAccount);
     } catch (error) {
-      console.error("Error Withdrawing Investment: ", error);
+      setSnackbar({
+        open: true,
+        message: "Error fetching customer accounts.",
+        severity: "error",
+      });
+      console.error("Error fetching customer accounts: ", error);
     }
   };
+  useEffect(() => {
+    getCustomerAccounts(customerId);
+  }, [customerId]);
 
-  const getCustomerCreditScore = async (certificateNo) => {
+  //only get for that particular plan than i am looking at
+  const getInvestmentPlans = useCallback(
+    async (customerId) => {
+      try {
+        const url = `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/GetInvestments?CustomerId=${customerId}`;
+        const headers = {
+          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
+        };
+        const response = await axios.get(url, {
+          headers,
+        });
+
+        const title = plan.title;
+        const allPlans = response.data;
+        const relatedPlans = allPlans
+          .filter((plan) => plan.Type === title)
+          .sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime));
+
+        setInvestmentPlans(relatedPlans);
+        setCurrentPlan(relatedPlans[0]);
+      } catch (error) {
+        return "";
+      }
+    },
+    [plan.title]
+  );
+  useEffect(() => {
+    getInvestmentPlans(customerId);
+  }, [getInvestmentPlans, customerId]);
+
+  useEffect(() => {
+    setCurrentPlan(investmentPlans[0]);
+  }, [investmentPlans]);
+
+  //using credit score to get maximum leverage rate - highest investment plan only
+  const getMaxLeverageRate = async (certificateNo) => {
     try {
       const url = `https://personal-svyrscxo.outsystemscloud.com/CreditScore/rest/CreditScore/GetCreditScore?CertificateNo=${certificateNo}
 `;
@@ -392,43 +232,81 @@ const PlanDetail = () => {
       setMaxLeverageRate(2);
     }
   };
-
   useEffect(() => {
     if (plan.title === "Leveraged Green Growth Package") {
-      getCustomerCreditScore(user.certificate);
+      getMaxLeverageRate(user.certificate);
     }
   }, [plan, user]);
-
-  const fetchCustomerPlan = async (customerId) => {
-    try {
-      const url = `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/GetInvestments?CustomerId=${customerId}`;
-      const headers = {
-        "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
-      };
-      const response = await axios.get(url, {
-        headers,
-      });
-
-      setCurrentPlans(response.data);
-    } catch (error) {
-      setCurrentPlans(null);
-    }
-  };
-
   useEffect(() => {
-    fetchCustomerPlan(customerId);
-  }, [customerId]);
+    if (maxLeverageRate) {
+      setLeverageRate(maxLeverageRate);
+    }
+  }, [maxLeverageRate]);
 
-  const makePayment = async (amount) => {
+  //to make payments to investment packages etc
+  const withdrawFromAccount = async (amount, accountId, customerId) => {
     try {
       const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/WithdrawCash`;
       const content = {
         consumerId: customerId,
         transactionId: "-",
-        accountId: selectedFromAccount,
+        accountId: accountId,
         amount: amount,
         narrative: "-",
       };
+      const username = "12173e30ec556fe4a951";
+      const password =
+        "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
+
+      const basicAuth = "Basic " + btoa(`${username}:${password}`);
+
+      const response = await axios.put(url, content, {
+        headers: {
+          Authorization: basicAuth,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const addInvestmentPlan = async (amount, maxLeverage, type) => {
+    try {
+      const response = await axios.post(
+        `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
+        {
+          customerId: user.customerId,
+          type: type,
+          amount: amount,
+          maximum_leverage: maxLeverage,
+        },
+        {
+          headers: {
+            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
+          },
+        }
+      );
+      getInvestmentPlans(user.customerId);
+      return response.data;
+    } catch (error) {
+      console.error("Error adding investment object: ", error);
+    }
+  };
+
+  const depositToAccount = async (amount, accountId) => {
+    try {
+      const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/account/${customerId}/DepositCash
+`;
+      const content = {
+        consumerId: customerId,
+        transactionId: 1,
+        accountId: accountId,
+        amount: amount,
+        narrative: "deposit",
+      };
+
       const username = "12173e30ec556fe4a951";
       const password =
         "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
@@ -440,123 +318,152 @@ const PlanDetail = () => {
           "Content-Type": "application/json",
         },
       });
-
-      console.log("Payment successful:", response.data);
-      return true;
+      return response.data;
     } catch (error) {
-      console.error("Error making payment:", error.response || error.message);
-      return false;
+      console.error("Error Withdrawing Investment: ", error);
     }
   };
 
-  const handleInvestmentSubmit = async (amount) => {
+  //handle add investment funds
+  const handleAddFunds = async (amount, accountId) => {
     try {
-      let amtToPay = amount + amount * 0.025;
-
-      if (plan.title === "Leveraged Green Growth Package") {
-        amtToPay *= leverageRate;
+      //handle errors
+      let account = [];
+      if (accountId === savingsAccount.accountId) {
+        account = savingsAccount;
+      } else {
+        account = depositAccount;
       }
-      const pay = await makePayment(amtToPay);
-      if (!pay) {
+      if (account.balance < amount) {
+        setSnackbar({
+          open: true,
+          message: "Not enough balance in account. Try another account",
+          severity: "error",
+        });
         return;
       }
 
-      let maximumLeverageAmount = "";
+      const transactionFee = amount * 0.025; //include transaction fees
+      let leveragedAmount = 0;
       if (plan.title === "Leveraged Green Growth Package") {
-        maximumLeverageAmount = holdingAmount;
+        leveragedAmount = amount * leverageRate;
       }
-      if (existingPlan) {
-        amtToPay = amount;
-        //  +  calculateGrowthAmount(previousPlan?.Amount, previousPlan?.DateTime);
+      const totalAmount = leveragedAmount + transactionFee;
+
+      try {
+        await withdrawFromAccount(
+          totalAmount,
+          account.accountId,
+          user.customerId
+        );
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: "Unable To Add Funds. Please try again",
+          severity: "error",
+        });
+        return;
       }
 
-      await axios.post(
-        `https://personal-elwlcep1.outsystemscloud.com/Investment/rest/Investment/AddInvestment`,
-        {
-          customerId: customerId,
-          type: plan.title,
-          amount: amtToPay,
-          maximum_leverage: maximumLeverageAmount,
-        },
-        {
-          headers: {
-            "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // Add the API Key here
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setInvestmentAmount("");
-      setSelectedFromAccount("");
-      setSelectedWithdrawAccount("");
+      let newAmount = amount;
+      if (investmentPlans.length > 0) {
+        newAmount = parseFloat(investmentPlans[0].Amount) + parseFloat(amount); // Add to existing plan amount if available
+      }
+
+      try {
+        await addInvestmentPlan(newAmount, leveragedAmount, plan.title);
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: "Unable To Add Investment Plan. Please try again",
+          severity: "error",
+        });
+        return; // Exit the function on failure
+      }
+
+      setInvestmentAmount(0.0);
+      setSelectedFromAccount([]);
+      setSnackbar({
+        open: true,
+        message: "Successfully Added Funds.",
+        severity: "success",
+      });
     } catch (error) {
-      console.error("Error adding investment: ", error);
+      setSnackbar({
+        open: true,
+        message: "Unable To Add Investment Plan. Please try again",
+        severity: "error",
+      });
+      console.error(error);
     }
   };
 
-  const getCustomerAccounts = useCallback(async () => {
+  //handle withdraw investment funds
+  const handleWithdrawFunds = async (amount, accountId) => {
     try {
-      const getAccountsId = `https://personal-svyrscxo.outsystemscloud.com/AccountRegistration/rest/AccountType/GetAccountType?customerId=${user.customerId}`;
-      const response1 = await axios.get(getAccountsId, {
-        headers: {
-          "X-Contacts-Key": "c48b5803-757e-414d-9106-62ab010a9c8d", // API Key
-        },
+      let account = [];
+      if (accountId === savingsAccount.accountId) {
+        account = savingsAccount;
+      } else {
+        account = depositAccount;
+      }
+      if (amount > currentPlan.Amount) {
+        setSnackbar({
+          open: true,
+          message:
+            "Not enough balance in investment account. Withdraw a lower amount.",
+          severity: "error",
+        });
+        return;
+      }
+
+      const transactionFee = amount * 0.025; //include transaction fees
+      const newAmount = amount - transactionFee;
+      try {
+        await depositToAccount(newAmount, account.accountId);
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: "Unable to withdraw funds. Please try again.",
+          severity: "error",
+        });
+        return;
+      }
+
+      // Update the investment plan with the new amount after withdrawal
+      try {
+        await addInvestmentPlan(
+          investmentPlans[0].Amount - amount, // Subtract the withdrawn amount
+          currentPlan.Maximum_Leverage,
+          plan.title
+        );
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: "Unable to update investment plan. Please try again.",
+          severity: "error",
+        });
+        return;
+      }
+
+      // Reset state variables and show success message
+      setWithdrawAmount(0.0);
+      setSelectedWithdrawAccount([]);
+      setSnackbar({
+        open: true,
+        message: "Successfully withdrew funds.",
+        severity: "success",
       });
-
-      // Handle case where response is empty or malformed
-      if (!response1.data) {
-        console.error("Error: No data returned from GetAccountType API.");
-        return;
-      }
-
-      const { accountId: depositId, savingaccountId: savingsId } =
-        response1.data;
-
-      // Handle missing IDs
-      if (!depositId || !savingsId) {
-        console.error("Error: Missing account IDs in response.");
-        return;
-      }
-
-      const url = `https://smuedu-dev.outsystemsenterprise.com/gateway/rest/customer/${user.customerId}/accounts`;
-      const username = "12173e30ec556fe4a951";
-      const password =
-        "2fbbd75fd60a8389b82719d2dbc37f1eb9ed226f3eb43cfa7d9240c72fd5+bfc89ad4-c17f-4fe9-82c2-918d29d59fe0";
-      const basicAuth = "Basic " + btoa(`${username}:${password}`);
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: basicAuth,
-          "Content-Type": "application/json",
-        },
-      });
-
-      // Ensure accounts are found
-      const depositAccount = response.data.find(
-        (account) => account?.accountId === depositId
-      );
-      const savingsAccount = response.data.find(
-        (account) => account?.accountId === savingsId
-      );
-
-      if (!depositAccount || !savingsAccount) {
-        console.error("Error: One or more accounts not found.");
-        return;
-      }
-
-      setAccounts([depositAccount, savingsAccount]);
     } catch (error) {
-      console.error("Error fetching customer accounts: ", error);
+      // General catch-all error handling for unexpected errors
+      console.error("Error during withdrawal:", error);
+      setSnackbar({
+        open: true,
+        message: "Unable to process the withdrawal. Please try again.",
+        severity: "error",
+      });
     }
-  }, [user.customerId]);
-  useEffect(() => {
-    getCustomerAccounts();
-  }, [getCustomerAccounts]);
-
-  useEffect(() => {
-    if (maxLeverageRate) {
-      setLeverageRate(maxLeverageRate);
-    }
-  }, [maxLeverageRate]);
+  };
 
   if (!plan)
     return (
@@ -566,344 +473,139 @@ const PlanDetail = () => {
     );
 
   return (
-    <Container sx={{ marginTop: "100px" }} className="flex flex-col  gap-3 ">
-      {/* Investment Plan Card */}
-      <Card
-        variant="outlined"
-        sx={{ padding: "3px", flexBasis: { xs: "100%" } }}
-      >
-        <CardContent>
-          <Typography
-            variant="h4"
-            gutterBottom
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-          >
-            {plan.title}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-          >
-            {plan.description}
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            sx={{ mt: 2 }}
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-          >
-            <strong>Risk Level:</strong> {plan.riskLevel}
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-          >
-            <strong>Expected Return:</strong> {plan.expectedReturn}
-          </Typography>
-          <Typography
-            variant="body2"
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              display: "flex",
-              marginTop: "5px",
-              alignItems: "center",
-              fontSize: "0.75rem", // makes the text smaller
-              color: "brown",
-            }}
-          >
-            <InfoIcon fontSize="small" style={{ marginRight: "8px" }} />
-            For more information or assistance regarding our investment plans,
-            feel free to contact us at
-            <span
-              className="cursor-pointer italic"
-              style={{ marginLeft: "5px", marginRight: "5px" }}
+    <>
+      <Container sx={{ marginTop: "100px" }} className="flex flex-col  gap-3 ">
+        {/* Investment Plan Card */}
+        <Card
+          variant="outlined"
+          sx={{ padding: "3px", flexBasis: { xs: "100%" } }}
+        >
+          <CardContent>
+            <Typography
+              variant="h4"
+              gutterBottom
+              style={{ fontFamily: "Montserrat, sans-serif" }}
             >
-              findaddy@gmail.com
-            </span>
-            for personalized investment coaching (fees apply).
-          </Typography>
-        </CardContent>
-      </Card>
-      <div className="flex gap-3 md:flex-row flex-col w-full">
-        <div className="md:w-3/5">
-          {plan.title === "Green Bonds" && getLowRiskChart()}
-          {plan.title === "Green Investment Bundle" && getMediumRiskChart()}
-          {plan.title === "Leveraged Green Growth Package" &&
-            getHighRiskChart()}
-        </div>
+              {plan.title}
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              style={{ fontFamily: "Montserrat, sans-serif" }}
+            >
+              {plan.description}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              sx={{ mt: 2 }}
+              style={{ fontFamily: "Montserrat, sans-serif" }}
+            >
+              <strong>Risk Level:</strong> {plan.riskLevel}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              style={{ fontFamily: "Montserrat, sans-serif" }}
+            >
+              <strong>Expected Return:</strong> {plan.expectedReturn}
+            </Typography>
+            <Typography
+              variant="body2"
+              style={{
+                fontFamily: "Montserrat, sans-serif",
+                display: "flex",
+                marginTop: "5px",
+                alignItems: "center",
+                fontSize: "0.75rem",
+                color: "brown",
+              }}
+            >
+              <InfoIcon fontSize="small" style={{ marginRight: "8px" }} />
+              For more information or assistance regarding our investment plans,
+              feel free to contact us at findaddy@gmail.com for personalized
+              investment coaching (fees apply).
+            </Typography>
+          </CardContent>
+        </Card>
+        <div className="flex gap-3 md:flex-row flex-col w-full">
+          <div className="md:w-3/5">
+            {plan.title === "Green Bonds" && getLowRiskChart()}
+            {plan.title === "Green Investment Bundle" && getMediumRiskChart()}
+            {plan.title === "Leveraged Green Growth Package" &&
+              getHighRiskChart()}
+          </div>
 
-        {/* Investment Form Section */}
-        <div className="md:w-2/5">
-          {existingPlan !== null ? (
-            <Card sx={{}} variant="outlined">
-              <CardContent>
-                <Typography
-                  variant="h6"
-                  style={{ fontFamily: "Montserrat, sans-serif" }}
-                >
-                  Current Investment Details
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mt: 1 }}
-                  style={{ fontFamily: "Montserrat, sans-serif" }}
-                >
-                  <strong>Current Amount:</strong> $ {existingPlan.Amount}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  style={{ fontFamily: "Montserrat, sans-serif" }}
-                >
-                  <strong>Earnings:</strong> $
-                  {(
-                    calculateGrowthAmount(
-                      existingPlan?.Amount,
-                      existingPlan?.DateTime
-                    ) - existingPlan.Amount
-                  ).toFixed(2) || 0}
-                </Typography>
-                {plan.title === "Leveraged Green Growth Package" && (
+          {/* Investment Form Section */}
+          <div className="md:w-2/5">
+            {investmentPlans.length > 0 ? (
+              <Card sx={{}} variant="outlined">
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    style={{ fontFamily: "Montserrat, sans-serif" }}
+                  >
+                    Current Investment Details
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ mt: 1 }}
+                    style={{ fontFamily: "Montserrat, sans-serif" }}
+                  >
+                    <strong>Current Amount:</strong> $ {currentPlan.Amount}
+                  </Typography>
                   <Typography
                     variant="body1"
                     style={{ fontFamily: "Montserrat, sans-serif" }}
                   >
-                    <strong>Current Holding Amount:</strong> $
-                    {existingPlan?.maximum_leverage || existingPlan.Amount}
+                    <strong>Earnings:</strong> $
+                    {calculateEarnings(currentPlan?.Amount).toFixed(2) ||
+                      "Not available"}
                   </Typography>
-                )}
-                <TextField
-                  label="Add Investment Amount"
-                  variant="outlined"
-                  fullWidth
-                  sx={{
-                    mt: 2,
-                    "& .MuiFormLabel-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    "& .MuiInputBase-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                  }}
-                  value={investmentAmount}
-                  onChange={(e) => setInvestmentAmount(e.target.value)}
-                />
-                <TextField
-                  select
-                  label="Account"
-                  value={selectedFromAccount}
-                  onChange={(e) => setSelectedFromAccount(e.target.value)}
-                  required
-                  fullWidth
-                  disabled={
-                    !investmentAmount || isNaN(parseFloat(investmentAmount))
-                  }
-                  sx={{
-                    mt: 2,
-                    "& .MuiFormLabel-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    "& .MuiInputBase-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                  }}
-                  SelectProps={{
-                    native: true,
-                  }}
-                >
-                  <option value="" disabled></option>
-                  <option
-                    key={accounts[0]?.accountId}
-                    value={accounts[0]?.accountId}
-                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                  >
-                    Deposit Account: {accounts[0]?.accountId} (balance: $
-                    {accounts[0]?.balance})
-                  </option>
-                  <option
-                    key={accounts[1]?.accountId}
-                    value={accounts[1]?.accountId}
-                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                  >
-                    Savings Account: {accounts[1]?.accountId} (balance: $
-                    {accounts[1]?.balance})
-                  </option>
-                </TextField>
-                {plan.title === "Leveraged Green Growth Package" && (
-                  <>
-                    <Slider
-                      value={leverageRate}
-                      step={1}
-                      min={1}
-                      max={maxLeverageRate || 50}
-                      onChange={(e, newValue) => setLeverageRate(newValue)}
-                      valueLabelDisplay="auto"
-                      style={{ fontFamily: "Montserrat, sans-serif" }}
-                    />
+                  {plan.title === "Leveraged Green Growth Package" && (
                     <Typography
                       variant="body1"
-                      sx={{ mb: 2 }}
                       style={{ fontFamily: "Montserrat, sans-serif" }}
                     >
-                      <strong>Leverage Rate:</strong> {leverageRate}x
+                      <strong>Current Holding Amount:</strong> $
+                      {currentPlan?.Maximum_Leverage || "Not available"}
                     </Typography>
-                  </>
-                )}
-                {investmentAmount !== "" && (
-                  <div style={{ fontFamily: "Montserrat, sans-serif" }}>
-                    Transaction fee: {(investmentAmount * 0.025).toFixed(2)}
-                  </div>
-                )}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{ mt: 2, backgroundColor: "#44403c", color: "white" }}
-                  style={{ fontFamily: "Montserrat, sans-serif" }}
-                  onClick={() => handleInvestmentSubmit(investmentAmount)}
-                >
-                  Add Funds
-                </Button>
-
-                <hr className="bg-black border-1 border my-4" />
-                <TextField
-                  label="Withdraw Amount"
-                  variant="outlined"
-                  fullWidth
-                  type="number"
-                  value={withdrawAmount}
-                  onChange={(e) => {
-                    setWithdrawAmount(e.target.value);
-                  }}
-                  sx={{
-                    mt: 2,
-                    "& .MuiFormLabel-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    "& .MuiInputBase-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                  }}
-                  inputProps={{
-                    max: calculateGrowthAmount(
-                      existingPlan?.Amount,
-                      existingPlan?.DateTime
-                    ),
-                  }}
-                />
-                <TextField
-                  select
-                  label="Account To"
-                  value={selectedWithdrawAccount}
-                  onChange={(e) => setSelectedWithdrawAccount(e.target.value)}
-                  required
-                  fullWidth
-                  disabled={
-                    !withdrawAmount || isNaN(parseFloat(withdrawAmount))
-                  }
-                  sx={{
-                    mt: 2,
-                    "& .MuiFormLabel-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    "& .MuiInputBase-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                  }}
-                  SelectProps={{
-                    native: true,
-                  }}
-                >
-                  <option value="" disabled></option>
-                  <option
-                    key={accounts[0]?.accountId}
-                    value={accounts[0]?.accountId}
-                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                  >
-                    Deposit Account: {accounts[0]?.accountId} (balance: $
-                    {accounts[0]?.balance})
-                  </option>
-                  <option
-                    key={accounts[1]?.accountId}
-                    value={accounts[1]?.accountId}
-                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                  >
-                    Savings Account: {accounts[1]?.accountId} (balance: $
-                    {accounts[1]?.balance})
-                  </option>
-                </TextField>
-
-                {withdrawAmount !== 0 && (
-                  <div style={{ fontFamily: "Montserrat, sans-serif" }}>
-                    Transaction fee: {(withdrawAmount * 0.025).toFixed(2)}
-                  </div>
-                )}
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                  sx={{ mt: 2, backgroundColor: "16a34a", color: "white" }}
-                  onClick={() =>
-                    withdrawInvestment(withdrawAmount - withdrawAmount * 0.025)
-                  }
-                  style={{ fontFamily: "Montserrat, sans-serif" }}
-                >
-                  Withdraw Funds
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card sx={{ padding: "3px" }} variant="outlined">
-              <CardContent>
-                <Typography
-                  variant="h6"
-                  style={{ fontFamily: "Montserrat, sans-serif" }}
-                >
-                  Start Investing in This Plan
-                </Typography>
-
-                <TextField
-                  label="Investment Amount"
-                  variant="outlined"
-                  fullWidth
-                  sx={{
-                    mt: 2,
-                    "& .MuiFormLabel-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                    "& .MuiInputBase-root": {
-                      fontFamily: "'Montserrat', sans-serif",
-                    },
-                  }}
-                  onChange={(e) => setInvestmentAmount(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">$</InputAdornment>
-                    ),
-                  }}
-                  value={investmentAmount}
-                  required
-                />
-                {plan.title === "Leveraged Green Growth Package" && (
-                  <>
-                    <Slider
-                      value={leverageRate}
-                      step={1}
-                      min={1}
-                      max={maxLeverageRate || 50}
-                      onChange={(e, newValue) => setLeverageRate(newValue)}
-                      valueLabelDisplay="auto"
-                      style={{ fontFamily: "Montserrat, sans-serif" }}
-                    />
-                    <Typography
-                      variant="body1"
-                      sx={{ mb: 2 }}
-                      style={{ fontFamily: "Montserrat, sans-serif" }}
-                    >
-                      <strong>Leverage Rate:</strong> {leverageRate}x
-                    </Typography>
-                  </>
-                )}
-                {plan.title !== "Leveraged Green Growth Package" && (
+                  )}
+                  {plan.title === "Leveraged Green Growth Package" && (
+                    <>
+                      <Slider
+                        value={leverageRate}
+                        step={1}
+                        min={1}
+                        max={maxLeverageRate || 2}
+                        onChange={(e, newValue) => setLeverageRate(newValue)}
+                        valueLabelDisplay="auto"
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{ mb: 2 }}
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        <strong>Leverage Rate:</strong> {leverageRate}x
+                      </Typography>
+                    </>
+                  )}
+                  <TextField
+                    label="Add Investment Amount"
+                    variant="outlined"
+                    type="number"
+                    fullWidth
+                    sx={{
+                      mt: 2,
+                      "& .MuiFormLabel-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                      "& .MuiInputBase-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                    }}
+                    value={investmentAmount}
+                    onChange={(e) => setInvestmentAmount(e.target.value)}
+                  />
                   <TextField
                     select
                     label="Account"
@@ -928,110 +630,304 @@ const PlanDetail = () => {
                     }}
                   >
                     <option value="" disabled></option>
-                    <option
-                      style={{ fontFamily: "Montserrat, sans-serif" }}
-                      key={accounts[0]?.accountId}
-                      value={accounts[0]?.accountId}
-                    >
-                      Deposit Account: {accounts[0]?.accountId} (balance: $
-                      {accounts[0]?.balance})
-                    </option>
-                    <option
-                      style={{ fontFamily: "Montserrat, sans-serif" }}
-                      key={accounts[1]?.accountId}
-                      value={accounts[1]?.accountId}
-                    >
-                      Savings Account: {accounts[1]?.accountId} (balance: $
-                      {accounts[1]?.balance})
-                    </option>
+                    {depositAccount !== null && (
+                      <option
+                        key={depositAccount.accountId}
+                        value={depositAccount.accountId}
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        Deposit Account: {depositAccount.accountId} (balance: $
+                        {depositAccount.balance})
+                      </option>
+                    )}
+
+                    {savingsAccount !== null && (
+                      <option
+                        key={savingsAccount.accountId}
+                        value={savingsAccount.accountId}
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        Savings Account: {savingsAccount.accountId} (balance: $
+                        {savingsAccount.balance})
+                      </option>
+                    )}
                   </TextField>
-                )}
+                  {investmentAmount !== 0 && (
+                    <div style={{ fontFamily: "Montserrat, sans-serif" }}>
+                      Transaction fee: {(investmentAmount * 0.025).toFixed(2)}
+                    </div>
+                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{ mt: 2, backgroundColor: "#44403c", color: "white" }}
+                    style={{ fontFamily: "Montserrat, sans-serif" }}
+                    onClick={() =>
+                      handleAddFunds(investmentAmount, selectedFromAccount)
+                    }
+                  >
+                    Add Funds
+                  </Button>
 
-                {plan.title === "Leveraged Green Growth Package" && (
-                  <>
-                    <TextField
-                      select
-                      label="Account"
-                      value={selectedFromAccount}
-                      onChange={(e) => setSelectedFromAccount(e.target.value)}
-                      required
-                      fullWidth
-                      disabled={
-                        !investmentAmount || isNaN(parseFloat(investmentAmount))
-                      }
-                      sx={{
-                        mt: 2,
-                        "& .MuiFormLabel-root": {
-                          fontFamily: "'Montserrat', sans-serif",
-                        },
-                        "& .MuiInputBase-root": {
-                          fontFamily: "'Montserrat', sans-serif",
-                        },
-                      }}
-                      SelectProps={{
-                        native: true,
-                      }}
-                    >
-                      <option value="" disabled></option>
+                  <hr className="bg-black border-1 border my-4" />
+                  <TextField
+                    label="Withdraw Amount"
+                    variant="outlined"
+                    fullWidth
+                    type="number"
+                    value={withdrawAmount}
+                    onChange={(e) => {
+                      setWithdrawAmount(e.target.value);
+                    }}
+                    sx={{
+                      mt: 2,
+                      "& .MuiFormLabel-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                      "& .MuiInputBase-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                    }}
+                    inputProps={{
+                      max:
+                        calculateEarnings(currentPlan?.Amount) +
+                        currentPlan.Amount,
+                    }}
+                  />
+                  <TextField
+                    select
+                    label="Account To"
+                    value={selectedWithdrawAccount}
+                    onChange={(e) => setSelectedWithdrawAccount(e.target.value)}
+                    required
+                    fullWidth
+                    disabled={
+                      !withdrawAmount || isNaN(parseFloat(withdrawAmount))
+                    }
+                    sx={{
+                      mt: 2,
+                      "& .MuiFormLabel-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                      "& .MuiInputBase-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                    }}
+                    SelectProps={{
+                      native: true,
+                    }}
+                  >
+                    <option value="" disabled></option>
+                    {depositAccount !== null && (
                       <option
+                        key={depositAccount.accountId}
+                        value={depositAccount.accountId}
                         style={{ fontFamily: "Montserrat, sans-serif" }}
-                        key={accounts[0]?.accountId}
-                        value={accounts[0]?.accountId}
                       >
-                        Deposit Account: {accounts[0]?.accountId} (balance: $
-                        {accounts[0]?.balance})
+                        Deposit Account: {depositAccount.accountId} (balance: $
+                        {depositAccount.balance})
                       </option>
-                      <option
-                        style={{ fontFamily: "Montserrat, sans-serif" }}
-                        key={accounts[1]?.accountId}
-                        value={accounts[1]?.accountId}
-                      >
-                        Savings Account: {accounts[1]?.accountId} (balance: $
-                        {accounts[1]?.balance})
-                      </option>
-                    </TextField>
-                    <TextField
-                      label="Holding Amount"
-                      variant="outlined"
-                      disabled
-                      fullWidth
-                      sx={{
-                        mt: 2,
-                        "& .MuiFormLabel-root": {
-                          fontFamily: "'Montserrat', sans-serif",
-                        },
-                        "& .MuiInputBase-root": {
-                          fontFamily: "'Montserrat', sans-serif",
-                        },
-                      }}
-                      value={investmentAmount * leverageRate}
-                      onChange={(e) => setHoldingAmount(e.target.value)}
-                    />
-                  </>
-                )}
+                    )}
 
-                {investmentAmount !== "" && (
-                  <div style={{ fontFamily: "Montserrat, sans-serif" }}>
-                    Transaction fee: {(investmentAmount * 0.025).toFixed(2)}
-                  </div>
-                )}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{ mt: 2, backgroundColor: "#44403c", color: "white" }}
-                  style={{ fontFamily: "Montserrat, sans-serif" }}
-                  onClick={() => handleInvestmentSubmit(investmentAmount)}
-                >
-                  Start Investment
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+                    {savingsAccount !== null && (
+                      <option
+                        key={savingsAccount.accountId}
+                        value={savingsAccount.accountId}
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        Savings Account: {savingsAccount.accountId} (balance: $
+                        {savingsAccount.balance})
+                      </option>
+                    )}
+                  </TextField>
+
+                  {withdrawAmount !== 0 && (
+                    <div style={{ fontFamily: "Montserrat, sans-serif" }}>
+                      Transaction fee: {(withdrawAmount * 0.025).toFixed(2)}
+                    </div>
+                  )}
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    fullWidth
+                    sx={{ mt: 2, backgroundColor: "16a34a", color: "white" }}
+                    onClick={() =>
+                      handleWithdrawFunds(
+                        withdrawAmount,
+                        selectedWithdrawAccount
+                      )
+                    }
+                    style={{ fontFamily: "Montserrat, sans-serif" }}
+                  >
+                    Withdraw Funds
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card sx={{ padding: "3px" }} variant="outlined">
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    style={{ fontFamily: "Montserrat, sans-serif" }}
+                  >
+                    Start Investing in This Plan
+                  </Typography>
+
+                  <TextField
+                    label="Investment Amount"
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      mt: 2,
+                      "& .MuiFormLabel-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                      "& .MuiInputBase-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                    }}
+                    onChange={(e) => setInvestmentAmount(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">$</InputAdornment>
+                      ),
+                    }}
+                    value={investmentAmount}
+                    required
+                  />
+                  {plan.title === "Leveraged Green Growth Package" && (
+                    <>
+                      <Slider
+                        value={leverageRate}
+                        step={1}
+                        min={1}
+                        max={maxLeverageRate || 50}
+                        onChange={(e, newValue) => setLeverageRate(newValue)}
+                        valueLabelDisplay="auto"
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{ mb: 2 }}
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        <strong>Leverage Rate:</strong> {leverageRate}x
+                      </Typography>
+                    </>
+                  )}
+                  <TextField
+                    select
+                    label="Account"
+                    value={selectedFromAccount}
+                    onChange={(e) => setSelectedFromAccount(e.target.value)}
+                    required
+                    fullWidth
+                    disabled={
+                      !investmentAmount || isNaN(parseFloat(investmentAmount))
+                    }
+                    sx={{
+                      mt: 2,
+                      "& .MuiFormLabel-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                      "& .MuiInputBase-root": {
+                        fontFamily: "'Montserrat', sans-serif",
+                      },
+                    }}
+                    SelectProps={{
+                      native: true,
+                    }}
+                  >
+                    <option value="" disabled></option>
+                    <option value="" disabled></option>
+                    {depositAccount !== null && (
+                      <option
+                        key={depositAccount.accountId}
+                        value={depositAccount.accountId}
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        Deposit Account: {depositAccount.accountId} (balance: $
+                        {depositAccount.balance})
+                      </option>
+                    )}
+
+                    {savingsAccount !== null && (
+                      <option
+                        key={savingsAccount.accountId}
+                        value={savingsAccount.accountId}
+                        style={{ fontFamily: "Montserrat, sans-serif" }}
+                      >
+                        Savings Account: {savingsAccount.accountId} (balance: $
+                        {savingsAccount.balance})
+                      </option>
+                    )}
+                  </TextField>
+
+                  {plan.title === "Leveraged Green Growth Package" && (
+                    <>
+                      <TextField
+                        label="Holding Amount"
+                        variant="outlined"
+                        disabled
+                        fullWidth
+                        sx={{
+                          mt: 2,
+                          "& .MuiFormLabel-root": {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                          "& .MuiInputBase-root": {
+                            fontFamily: "'Montserrat', sans-serif",
+                          },
+                        }}
+                        value={investmentAmount * leverageRate}
+                      />
+                    </>
+                  )}
+
+                  {investmentAmount !== 0 && (
+                    <div style={{ fontFamily: "Montserrat, sans-serif" }}>
+                      Transaction fee: {(investmentAmount * 0.025).toFixed(2)}
+                    </div>
+                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{ mt: 2, backgroundColor: "#44403c", color: "white" }}
+                    style={{ fontFamily: "Montserrat, sans-serif" }}
+                    onClick={() =>
+                      handleAddFunds(investmentAmount, selectedFromAccount)
+                    }
+                  >
+                    Start Investment
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
-      </div>
-    </Container>
+        {/* investment history */}
+        <div>
+          <InvestmentPlanTable transactionLogs={investmentPlans || []} />
+        </div>
+      </Container>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
-export default PlanDetail;
+export default InvestmentDetails;
