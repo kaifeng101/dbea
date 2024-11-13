@@ -55,7 +55,7 @@ import {
                     : nextAmount - log.Amount;
   
                 // Determine if the change is positive or negative
-                const changeIndicator = change > 0 ? "+" : change < 0 ? "-" : "";
+                const changeIndicator = change > 0 ? "-" : change < 0 ? "+" : "";
                 const changeFormatted = Math.abs(change).toFixed(2);
   
                 return (
@@ -87,7 +87,7 @@ import {
                     <TableCell
                       sx={{
                         color:
-                          change > 0 ? "green" : change < 0 ? "red" : "black",
+                          change > 0 ? "red" : change < 0 ? "green" : "black",
                         fontFamily: "Montserrat, sans-serif",
                       }}
                     >
