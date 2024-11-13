@@ -81,7 +81,7 @@ import {
                       {log.Type}
                     </TableCell>
                     <TableCell sx={{ fontFamily: "Montserrat, sans-serif" }}>
-                      ${log.Amount.toFixed(2)}
+                      ${log.Amount?.toFixed(2)}
                     </TableCell>{" "}
                     {/* Display current transaction amount */}
                     <TableCell
